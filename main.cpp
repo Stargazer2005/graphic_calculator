@@ -7,6 +7,6 @@ using namespace Graph_lib;
 
 int main ()
 {
-  Graphic_window grw(Point(100, 100), 1000, 700, "DESMOS", 50);
-  grw.wait_for_button();
+    Graphic_window grw(Point(100, 100), 1000, 700, "DESMOS", 50);
+    grw.wait_for_button();
 }
