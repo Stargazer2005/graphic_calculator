@@ -4,6 +4,7 @@
 #include <exception>
 #include <iostream>
 #include <stdexcept>
+using namespace std;
 
 class Stack
 {
@@ -157,22 +158,50 @@ void print (std::vector<string> v)
   std::cout << "}" << std::endl;
 }
 
+bool c_in_s (char c, const string& s)
+{
+  return (s.find(c) != string::npos);
+}
+
+char transform_to_char (const string& s)
+{
+  if (s[0] >= '0' && s[0] <= '9')  // если число
+    return ('n');  // заменяем на спец. символ
+  else
+    return (s[0]);  // первая буква отражает название функции
+}
+
 vector<string> lexeme (const string& expr)
 {
-  //   if (!checker(expr))
-  //   {
-  //     throw std::runtime_error("Incorrect input");
-  //   }
+  // if (checker(expr))
+  // {
+  //   throw std::runtime_error("Incorrect input");
+  // }
   vector<string> lexs;
   string s;
-  for (char ch : expr)
+  const string oper = "+-*/^";
+  for (size_t i = 0; i < expr.size(); i++)
   {
-    switch (ch)
+    switch (expr[i])
     {
+    case '-':
+    {
+      if (s.size() > 0)
+      {
+        lexs.push_back(s);
+        s = "";
+      }
+      if (i == 0)
+        lexs.push_back("um");
+      else if (c_in_s(transform_to_char(lexs[lexs.size() - 1]), oper + "("))
+        lexs.push_back("um");
+      else
+        lexs.push_back("-");
+      break;
+    }
     case '(':
     case ')':
     case '+':
-    case '-':
     case '*':
     case '/':
     case '^':
@@ -182,7 +211,7 @@ vector<string> lexeme (const string& expr)
         lexs.push_back(s);
         s = "";
       }
-      s = (1, ch);
+      s = (1, expr[i]);
       lexs.push_back(s);
       s = "";
       break;
@@ -204,19 +233,19 @@ vector<string> lexeme (const string& expr)
         lexs.push_back(s);
         s = "";
       }
-      s += ch;
+      s += expr[i];
       break;
     }
     default:
     {
-      if (!isblank(ch))
+      if (!isblank(expr[i]))
       {
         if (s.size() > 0 && isdigit(s[0]))
         {
           lexs.push_back(s);
           s = "";
         }
-        s += ch;
+        s += expr[i];
       }
     }
     }

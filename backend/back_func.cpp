@@ -207,20 +207,35 @@ double calc (const vector<string>& rev_pol, double x)
 
 vector<string> lexeme (const string& expr)
 {
-  if (checker(expr))
-  {
-    throw std::runtime_error("Incorrect input");
-  }
+  // if (checker(expr))
+  // {
+  //   throw std::runtime_error("Incorrect input");
+  // }
   vector<string> lexs;
   string s;
-  for (char ch : expr)
+  const string oper = "+-*/^";
+  for (size_t i = 0; i < expr.size(); i++)
   {
-    switch (ch)
+    switch (expr[i])
     {
+    case '-':
+    {
+      if (s.size() > 0)
+      {
+        lexs.push_back(s);
+        s = "";
+      }
+      if (i == 0)
+        lexs.push_back("um");
+      else if (c_in_s(transform_to_char(lexs[lexs.size() - 1]), oper + "("))
+        lexs.push_back("um");
+      else
+        lexs.push_back("-");
+      break;
+    }
     case '(':
     case ')':
     case '+':
-    case '-':
     case '*':
     case '/':
     case '^':
@@ -230,7 +245,7 @@ vector<string> lexeme (const string& expr)
         lexs.push_back(s);
         s = "";
       }
-      s = (1, ch);
+      s = (1, expr[i]);
       lexs.push_back(s);
       s = "";
       break;
@@ -252,19 +267,19 @@ vector<string> lexeme (const string& expr)
         lexs.push_back(s);
         s = "";
       }
-      s += ch;
+      s += expr[i];
       break;
     }
     default:
     {
-      if (!isblank(ch))
+      if (!isblank(expr[i]))
       {
         if (s.size() > 0 && isdigit(s[0]))
         {
           lexs.push_back(s);
           s = "";
         }
-        s += ch;
+        s += expr[i];
       }
     }
     }
