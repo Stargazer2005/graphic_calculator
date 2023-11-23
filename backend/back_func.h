@@ -1,15 +1,18 @@
 #include "std_lib_facilities.h"
 
 // делает Фёдор
-vector<string> reverse_polish (const vector<string>& lex);
 
+// фунция, которая переводит введеную пользователем строку в список лексем
 vector<string> lexeme (const string& expr);
 
-// мой контент
+// функция, которая переводит список лексем в обратную польскую запись
+vector<string> reverse_polish (const vector<string>& lex);
+
+// делает Дмитрий
+
+// функция, проверяющая на корректность скобок, отсутствие лишних символов, правильное использование
+// знаков и чисел возле них
 bool checker (const string& expr);
-// проверка на скобки, проверка на мусорные символы, на законченное выражение,
-// на отсутствие лишних переменных
 
-vector<char> transform_to_char (const vector<string>& strings);
-
+// функция, которая по обратной польской записи лексем и значению переменной x вычисляет значение y
 double calc (const vector<string>& rev_pol, double x);
