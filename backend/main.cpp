@@ -11,6 +11,7 @@ int main ()
 
     cout << endl;
     cout << calc(exemp1, 0) << endl;
-    cout << calc(exemp2, 3);
+    cout << calc(exemp2, 3) << endl;
+    cout << checker("1+-1*2(-9)");
     return 0;
 }
