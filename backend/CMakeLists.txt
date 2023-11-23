@@ -3,11 +3,11 @@ cmake_minimum_required(VERSION 3.20)
 set(TARGET "backend")
 
 set(HEADERS
-    functions.h
+    back_func.h
 )
 set(SOURCES
     main.cpp
-    functions.cpp
+    back_func.cpp
 )
 
 project(${TARGET} CXX)
