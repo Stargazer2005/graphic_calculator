@@ -14,5 +14,9 @@ vector<string> reverse_polish (const vector<string>& lex);
 // знаков и чисел возле них
 bool checker (const string& expr);
 
+// функция, проверяющая на корректность математические операции: отсутствие деления на ноль,
+// возведения отрицательного числа в дробную степень
+bool checker (const vector<string>& lexs);
+
 // функция, которая по обратной польской записи лексем и значению переменной x вычисляет значение y
 double calc (const vector<string>& rev_pol, double x);

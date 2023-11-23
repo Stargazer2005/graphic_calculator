@@ -1,0 +1,33 @@
+1
+1
+1
+1
+1
+1
+1
+1
+1
+exception: checker: multiple use of operation sign or point in one place
+1
+1
+exception: checker: invalid syntax near number
+1
+exception: checker: expression begin or end with unclosed operation sign or point
+exception: checker: expression begin or end with unclosed operation sign or point
+exception: checker: multiple use of operation sign or point in one place
+exception: checker: multiple use of operation sign or point in one place
+1
+exception: checker: incorrect use of floating point numbers
+exception: checker: unknown character
+1
+exception: checker: invalid syntax near number
+exception: checker: invalid syntax near number
+1
+1
+1
+1
+1
+1
+1
+exception: checker: expression begin or end with unclosed operation sign or point
+exception: checker: expression begin or end with unclosed operation sign or point

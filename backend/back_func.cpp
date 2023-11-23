@@ -45,44 +45,114 @@ bool c_in_s (char c, const string& s) { return (s.find(c) != string::npos); }
 
 bool checker (const string& expr)
 {
-    const string calc_chars = "x1234567890+-*/^sctelu()";  // строка со всеми разрешенными символами
+    // строка со всеми разрешенными символами
+    const string calc_chars = ".1234567890+-*/^sctelu()cosinexptal";
     const string oper = "+-*/^";  // строка с операциями
 
     // проверка на скобочки
     if (count(expr.begin(), expr.end(), '(') != count(expr.begin(), expr.end(), ')'))
     {
-        // throw invalid_argument("checker: number of () mismatch");
+        throw invalid_argument("checker: number of brackets mismatch");
         return false;
     }
-    // первый и последний символы не должны быть знаками
-    if (c_in_s(expr[0], oper) || c_in_s(expr[expr.size() - 1], oper))
+    // первый и последний символы не должны быть знаками или точками (кроме минуса)
+    if ((c_in_s(expr[0], oper + '.') && expr[0] != '-') ||
+        c_in_s(expr[expr.size() - 1], oper + '.'))
     {
-        // throw invalid_argument("checker: expression begin or end with unclosed operation sign");
+        throw invalid_argument(
+            "checker: expression begin or end with unclosed operation sign or point");
         return false;
     }
+    int count_brackets = 0;
     for (unsigned long long i = 0; i < expr.size(); i++)
     {
         char c = expr[i];
         // проверка на отсутсвие лишних символов
         if (!c_in_s(c, calc_chars))
         {
-            // throw invalid_argument("checker: unknown character");
+            throw invalid_argument("checker: unknown character");
             return false;
         }
-        // возле знака операции не должно быть других операций
+        // возле знака операции не должно быть других операций и точек
         // (елси это не минус, так как он может быть унарный)
         if (c_in_s(c, oper) && c != '-')
         {
-            if ((c_in_s(expr[i - 1], oper) || c_in_s(expr[i + 1], oper)) &&
+            if ((c_in_s(expr[i - 1], oper + '.') || c_in_s(expr[i + 1], oper + '.')) &&
                 (expr[i - 1] != '-' && expr[i + 1] != '-'))
             {
-                // throw invalid_argument("checker: multiple use of operation sign in one place");
+                throw invalid_argument(
+                    "checker: multiple use of operation sign or point in one place");
                 return false;
+            }
+        }
+        // возле точки должны быть только числа
+        if (c == '.')
+        {
+            if ((!isdigit(expr[i - 1]) || !isdigit(expr[i - 1])))
+            {
+                throw invalid_argument("checker: incorrect use of floating point numbers");
+                return false;
+            }
+        }
+        else if (c == '(')
+            count_brackets += 1;
+        else if (c == ')')
+        {
+            count_brackets -= 1;
+            // после очередной закрытой скобки их оказывается больше
+            if (count_brackets < 0)
+            {
+                throw invalid_argument("checker: extra bracket");
+                return false;
+            }
+        }
+        else if (isdigit(c))
+        {
+            // вспомогательная функция для проверки рядом стоящего с числом символа
+            auto is_neighborhood_ok = [&expr, &oper] (char s, char bracket)
+            { return (isdigit(s) || s == '.' || c_in_s(s, oper) || s == bracket); };
+            bool is_left_ok = 1, is_right_ok = 1;
+            if (i == 0)
+            {
+                // у числа справа может быть: число, точка, знак или ')'
+                is_right_ok = is_neighborhood_ok(expr[i + 1], ')');
+                // cout << expr[i - 1] << expr[i + 1] << " " << is_left_ok << is_right_ok << endl;
+                if (!is_right_ok)
+                {
+                    throw invalid_argument("checker: invalid syntax near number");
+                    return false;
+                }
+            }
+            else if (i == expr.size() - 1)
+            {
+                // у числа слева может быть: число, точка, знак или '('
+                is_left_ok = is_neighborhood_ok(expr[i - 1], '(');
+                // cout << expr[i - 1] << expr[i + 1] << " " << is_left_ok << is_right_ok << endl;
+                if (!is_left_ok)
+                {
+                    throw invalid_argument("checker: invalid syntax near number");
+                    return false;
+                }
+            }
+            else
+            {
+                // у числа справа может быть: число, точка, знак или ')'
+                is_right_ok = is_neighborhood_ok(expr[i + 1], ')');
+                // у числа слева может быть: число, точка, знак или '('
+                is_left_ok = is_neighborhood_ok(expr[i - 1], '(');
+                // cout << expr[i - 1] << expr[i + 1] << " " << is_left_ok << is_right_ok << endl;
+                if (!is_left_ok || !is_right_ok)
+                {
+                    throw invalid_argument("checker: invalid syntax near number");
+                    return false;
+                }
             }
         }
     }
     return true;
 }
+
+// bool checker (const vector<string>& lexs) {}
 
 // vector<char> transform_to_char (const vector<string>& strs)
 // {
