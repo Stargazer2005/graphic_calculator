@@ -1,5 +1,10 @@
 #pragma once
+#include <algorithm>
+#include <cassert>
+#include <cmath>
+#include <exception>
 #include <iostream>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -69,3 +74,33 @@ char transform_to_char (const string& s)
 //     }
 //     return res;
 // }
+
+bool is_float (string str)
+{
+    std::istringstream iss(str);
+    float f;
+    iss >> noskipws >> f;
+    return iss.eof() && !iss.fail();
+}
+
+void print (const vector<string>& v)
+{
+    cout << "{ ";
+    for (size_t i = 0; i < v.size(); i++)
+    {
+        cout << "'" << v[i] << "'"
+             << ", ";
+    }
+    cout << "}" << endl;
+}
+
+void print (const vector<char>& v)
+{
+    cout << "{ ";
+    for (size_t i = 0; i < v.size(); i++)
+    {
+        cout << "'" << v[i] << "'"
+             << ", ";
+    }
+    cout << "}" << endl;
+}

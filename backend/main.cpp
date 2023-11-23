@@ -1,5 +1,4 @@
 #include "back_func.h"
-#include "std_lib_facilities.h"
 
 int main ()
 {
@@ -20,7 +19,8 @@ int main ()
         getline(cin, s);
         try
         {
-            cout << checker(s) << endl;
+            cout << "string: " << s << endl;
+            cout << calc(reverse_polish(lexeme(s)), 1) << endl << endl;
         }
         catch (exception& exc)
         {

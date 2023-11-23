@@ -1,10 +1,10 @@
 #include "back_func.h"
 #include "back_helpers.h"
-#include <algorithm>
-#include <stdexcept>
 
-bool checker (const string& expr)
+bool checker (string expr)
 {
+    expr.erase(remove(expr.begin(), expr.end(), ' '), expr.end());
+
     // строка со всеми разрешенными символами
     const string calc_chars = ".1234567890+-*/^()cosinexptal";
     const string oper = "+-*/^";  // строка с операциями
@@ -128,15 +128,22 @@ bool checker (const vector<string>& lexs)
         string l = lexs[i];
         char l_c = transform_to_char(lexs[i]);
         // проверка деления на ноль
-        if (l_c == '/' && transform_to_char(lexs[i + 1]) == '0')
+        if (l_c == '/' && lexs[i + 1] == "0")
         {
             throw invalid_argument("zero division");
             return false;
         }
-        // проверка возведения отрицательного числа в дробную степень
-        if (l_c == '^' && stod(lexs[i - 1]) < 0 && c_in_s('.', lexs[i + 1]))
+        // проверка возведения отрицательного числа в дробную степень или в отрицательную дробь
+        if (l_c == '^' && lexs[i - 2] == "um" &&
+            (c_in_s('.', lexs[i + 1]) || (lexs[i + 1] == "um" && c_in_s('.', lexs[i + 2]))))
         {
             throw invalid_argument("raising a negative number to a floating point power");
+            return false;
+        }
+        // проверка возведения нуля в нулевую степень (или в минус нулевую)
+        if (l_c == '^' && lexs[i - 1] == "0" && (lexs[i + 1] == "0" || lexs[i + 2] == "0"))
+        {
+            throw invalid_argument("raising zero to the zero power");
             return false;
         }
         // проверка использования постороннего имени
@@ -153,14 +160,13 @@ bool checker (const vector<string>& lexs)
             }
         }
     }
+    return true;
 }
 
 vector<string> lexeme (const string& expr)
 {
-    // if (checker(expr))
-    // {
-    //   throw std::runtime_error("Incorrect input");
-    // }
+    if (!checker(expr))
+        return {};
     vector<string> lexs;
     string s;
     const string oper = "+-*/^";
@@ -236,18 +242,16 @@ vector<string> lexeme (const string& expr)
     }
     if (s.size() > 0)
         lexs.push_back(s);
+    cout << "lexeme:";
+    print(lexs);
+    return (lexs);
 }
 
-bool is_float (string str)
+vector<string> reverse_polish (const vector<string>& lexs)
 {
-    std::istringstream iss(str);
-    float f;
-    iss >> noskipws >> f;
-    return iss.eof() && !iss.fail();
-}
+    if (!checker(lexs))
+        return {};
 
-vector<string> reverse_polish (const vector<string>& lex)
-{
     vector<string> res;
     vector<string> oper;
     const string func = "sctel";
@@ -256,7 +260,7 @@ vector<string> reverse_polish (const vector<string>& lex)
 
     auto is_func = [&func, last] (string s) { return c_in_s(transform_to_char(s), func); };
 
-    for (auto str : lex)
+    for (auto str : lexs)
     {
         if (str == "um")
             oper.push_back(str);
@@ -333,6 +337,8 @@ vector<string> reverse_polish (const vector<string>& lex)
         res.push_back(last(oper));
         oper.pop_back();
     }
+    cout << "rev_pol:";
+    print(res);
     return res;
 }
 
