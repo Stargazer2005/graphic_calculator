@@ -28,6 +28,6 @@ exception: checker: invalid syntax near number
 1
 1
 1
-1
+exception: checker: empty brackets
 exception: checker: expression begin or end with unclosed operation sign or point
 exception: checker: expression begin or end with unclosed operation sign or point
