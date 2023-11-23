@@ -4,6 +4,7 @@
 #include <cmath>
 #include <exception>
 #include <iostream>
+#include <sstream>
 #include <stdexcept>
 using namespace std;
 
@@ -286,4 +287,104 @@ vector<string> lexeme (const string& expr)
   }
   if (s.size() > 0)
     lexs.push_back(s);
+}
+
+bool is_float (string str)
+{
+  std::istringstream iss(str);
+  float f;
+  iss >> noskipws >> f;
+  return iss.eof() && !iss.fail();
+}
+
+vector<string> reverse_polish (const vector<string>& lex)
+{
+  vector<string> res;
+  vector<string> oper;
+  const string func = "sctel";
+
+  auto last = [] (vector<string> v)
+  { return (v.size() > 0) ? v[v.size() - 1] : ""; };
+
+  auto is_func = [&func, last] (string s)
+  { return c_in_s(transform_to_char(s), func); };
+
+  for (auto str : lex)
+  {
+    if (str == "um")
+      oper.push_back(str);
+
+    else if (is_float(str))
+    {
+      res.push_back(str);
+      if (oper.size() > 0 && last(oper) == "um")
+      {
+        res.push_back(last(oper));
+        oper.pop_back();
+      }
+    }
+
+    else if (str == "^")
+    {
+      while (last(oper) == "^" || is_func(last(oper)))
+      {
+        res.push_back(last(oper));
+        oper.pop_back();
+      }
+      oper.push_back(str);
+    }
+
+    else if (str == "*" || str == "/")
+    {
+      while (last(oper) == "*" || last(oper) == "/" || last(oper) == "^" ||
+             is_func(last(oper)))
+      {
+        res.push_back(last(oper));
+        oper.pop_back();
+      }
+      oper.push_back(str);
+    }
+
+    else if (str == "+" || str == "-")
+    {
+      while (last(oper) == "*" || last(oper) == "/" || last(oper) == "^" ||
+             last(oper) == "+" || last(oper) == "-" || is_func(last(oper)))
+      {
+        res.push_back(last(oper));
+        oper.pop_back();
+      }
+      oper.push_back(str);
+    }
+
+    else if (str == "(")
+      oper.push_back(str);
+
+    else if (str == ")")
+    {
+      while (true)
+      {
+        if (last(oper) == "(")
+        {
+          oper.pop_back();
+          break;
+        }
+        else
+        {
+          res.push_back(last(oper));
+          oper.pop_back();
+        }
+      }
+    }
+
+    else if (is_func(str))
+      oper.push_back(str);
+    else if (str == "x")
+      oper.push_back(str);
+  }
+  while (oper.size() > 0)
+  {
+    res.push_back(last(oper));
+    oper.pop_back();
+  }
+  return res;
 }

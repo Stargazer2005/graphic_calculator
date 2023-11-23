@@ -14,6 +14,6 @@ int main ()
   //   cout << calc(exemp1, 0) << endl;
   //   cout << calc(exemp2, 3);
   //   return 0;
-  string s = "-314 + 424390 * 2 / (-1 - 5) ^ -2 * cos(x + -15)";
-  lexeme(s);
+  string s = "3+4*2/(1-5)^2";
+  reverse_polish(lexeme(s));
 }
