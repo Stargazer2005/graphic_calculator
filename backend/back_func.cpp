@@ -1,9 +1,14 @@
 #include "back_func.h"
 #include "back_helpers.h"
 
-bool checker (string expr)
+using namespace std;
+
+bool checker (const string& expression)
 {
-    expr.erase(remove(expr.begin(), expr.end(), ' '), expr.end());
+    // код, удаляющий пробелы
+    // regex r("\\s+");
+    // string expr = regex_replace(expression, r, "");
+    string expr = spaces_deleted(expression);
 
     // строка со всеми разрешенными символами
     const string calc_chars = ".1234567890+-*/^()cosinexptal";
@@ -29,8 +34,16 @@ bool checker (string expr)
         // проверка на отсутсвие лишних символов
         if (!c_in_s(c, calc_chars))
         {
-            throw invalid_argument("unknown character");
-            return false;
+            if (isalpha(c))
+            {
+                throw invalid_argument("usage of extra variable");
+                return false;
+            }
+            else
+            {
+                throw invalid_argument("unknown character");
+                return false;
+            }
         }
         // возле знака операции не должно быть других операций и точек
         // (если это не минус, так как он может быть унарный)
@@ -46,7 +59,7 @@ bool checker (string expr)
         // возле точки должны быть только числа
         if (c == '.')
         {
-            if ((!isdigit(expr[i - 1]) || !isdigit(expr[i - 1])))
+            if ((!isdigit(expr[i - 1]) || !isdigit(expr[i + 1])))
             {
                 throw invalid_argument("incorrect use of floating point numbers");
                 return false;
@@ -71,7 +84,8 @@ bool checker (string expr)
                 return false;
             }
         }
-        else if (isdigit(c))
+        // при строке из одной цифры, эта проверка не подходит
+        else if (isdigit(c) && expr.size() > 1)
         {
             // вспомогательная функция для проверки рядом стоящего с числом символа
             auto is_neighborhood_ok = [&expr, &oper] (char s, char bracket)
@@ -85,7 +99,7 @@ bool checker (string expr)
                 // cout << expr[i - 1] << expr[i + 1] << " " << is_left_ok << is_right_ok << endl;
                 if (!is_right_ok)
                 {
-                    throw invalid_argument("invalid syntax near number");
+                    throw invalid_argument("invalid syntax near digit");
                     return false;
                 }
             }
@@ -96,7 +110,7 @@ bool checker (string expr)
                 // cout << expr[i - 1] << expr[i + 1] << " " << is_left_ok << is_right_ok << endl;
                 if (!is_left_ok)
                 {
-                    throw invalid_argument("invalid syntax near number");
+                    throw invalid_argument("invalid syntax near digit");
                     return false;
                 }
             }
@@ -109,7 +123,7 @@ bool checker (string expr)
                 // cout << expr[i - 1] << expr[i + 1] << " " << is_left_ok << is_right_ok << endl;
                 if (!is_left_ok || !is_right_ok)
                 {
-                    throw invalid_argument("invalid syntax near number");
+                    throw invalid_argument("invalid syntax near digit");
                     return false;
                 }
             }
@@ -125,7 +139,7 @@ bool checker (const vector<string>& lexs)
     const vector<string> functions{"sin", "cos", "tan", "exp", "ln", "um"};
     for (size_t i = 0; i < lexs.size(); i++)
     {
-        string l = lexs[i];
+        // string l = lexs[i];
         char l_c = transform_to_char(lexs[i]);
         // проверка деления на ноль
         if (l_c == '/' && lexs[i + 1] == "0")
@@ -133,32 +147,36 @@ bool checker (const vector<string>& lexs)
             throw invalid_argument("zero division");
             return false;
         }
-        // проверка возведения отрицательного числа в дробную степень или в отрицательную дробь
-        if (l_c == '^' && lexs[i - 2] == "um" &&
-            (c_in_s('.', lexs[i + 1]) || (lexs[i + 1] == "um" && c_in_s('.', lexs[i + 2]))))
-        {
-            throw invalid_argument("raising a negative number to a floating point power");
-            return false;
-        }
-        // проверка возведения нуля в нулевую степень (или в минус нулевую)
-        if (l_c == '^' && lexs[i - 1] == "0" && (lexs[i + 1] == "0" || lexs[i + 2] == "0"))
-        {
-            throw invalid_argument("raising zero to the zero power");
-            return false;
-        }
+        // cout << i << " zero division: ok" << endl;
         // проверка использования постороннего имени
-        if (c_in_s(l_c, func))
+        if (isalpha(l_c) && !(is_float(lexs[i])))
         {
-            size_t j = func.find(l_c);
-            if (lexs[i] != functions[j])
+            if (c_in_s(l_c, func))
             {
-                if (lexs[i + 1] == "(")
-                    throw invalid_argument("usage of wrong function name");
-                else
-                    throw invalid_argument("usage of extra variable");
+                size_t j = func.find(l_c);
+                if (lexs[i] != functions[j])
+                {
+                    if (lexs.size() > 1)
+                    {
+                        if (lexs[i + 1] == "(")
+                            throw invalid_argument("usage of wrong function name");
+                        else
+                            throw invalid_argument("usage of extra variable");
+                        return false;
+                    }
+                    else
+                        throw invalid_argument("usage of extra variable");
+                    return false;
+                }
+            }
+            else if (l_c != 'x')  // если имя начинается не с разрешенной буквы и не является x,
+                                  // то оно постороннее
+            {
+                throw invalid_argument("usage of extra variable");
                 return false;
             }
         }
+        // cout << i << " name test: ok" << endl;
     }
     return true;
 }
@@ -167,6 +185,7 @@ vector<string> lexeme (const string& expr)
 {
     if (!checker(expr))
         return {};
+
     vector<string> lexs;
     string s;
     const string oper = "+-*/^";
@@ -201,7 +220,7 @@ vector<string> lexeme (const string& expr)
                 lexs.push_back(s);
                 s = "";
             }
-            s = (1, expr[i]);
+            s = expr[i];
             lexs.push_back(s);
             s = "";
             break;
@@ -242,8 +261,8 @@ vector<string> lexeme (const string& expr)
     }
     if (s.size() > 0)
         lexs.push_back(s);
-    cout << "lexeme:";
-    print(lexs);
+    // cout << "lexeme:";
+    // print(lexs);
     return (lexs);
 }
 
@@ -265,7 +284,7 @@ vector<string> reverse_polish (const vector<string>& lexs)
         if (str == "um")
             oper.push_back(str);
 
-        else if (is_float(str))
+        else if (is_float(str) || str == "x")
         {
             res.push_back(str);
             if (oper.size() > 0 && last(oper) == "um")
@@ -326,10 +345,7 @@ vector<string> reverse_polish (const vector<string>& lexs)
                 }
             }
         }
-
         else if (is_func(str))
-            oper.push_back(str);
-        else if (str == "x")
             oper.push_back(str);
     }
     while (oper.size() > 0)
@@ -337,8 +353,8 @@ vector<string> reverse_polish (const vector<string>& lexs)
         res.push_back(last(oper));
         oper.pop_back();
     }
-    cout << "rev_pol:";
-    print(res);
+    // cout << "rev_pol:";
+    // print(res);
     return res;
 }
 
@@ -423,5 +439,8 @@ double calc (const vector<string>& rev_pol, double x)
             }
         }
     }
-    return stack.last();  // последнее, что осталось в стэке после всех действий - и есть ответ
+    if (!isnan(stack.last()) && !isinf(stack.last()))
+        return stack.last();  // последнее, что осталось в стэке после всех действий - и есть ответ
+    else
+        throw invalid_argument("violation of domain of definition of function");
 }

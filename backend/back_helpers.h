@@ -104,3 +104,5 @@ void print (const vector<char>& v)
     }
     cout << "}" << endl;
 }
+
+string spaces_deleted (const string& s) { return (regex_replace(s, regex("\\s+"), "")); }

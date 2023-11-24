@@ -4,6 +4,7 @@
 #include <cmath>
 #include <exception>
 #include <iostream>
+#include <regex>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -23,7 +24,7 @@ vector<string> reverse_polish (const vector<string>& lexs);
 
 // функция, проверяющая на корректность скобок, отсутствие лишних символов, правильное использование
 // знаков и чисел возле них, правильное использование точки, правильное использование цифр
-bool checker (string expr);
+bool checker (const string& expression);
 
 // функция, проверяющая на корректность математические операции: отсутствие деления на ноль,
 // возведения отрицательного числа в дробную степень,
