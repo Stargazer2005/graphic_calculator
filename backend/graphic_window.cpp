@@ -2,6 +2,7 @@
 #include <Graph_lib/GUI.h>
 #include <Graph_lib/Graph.h>
 #include <Graph_lib/Simple_window.h>
+#include <iostream>
 
 using Graph_lib::Address;
 using Graph_lib::Axis;
@@ -59,8 +60,11 @@ void Graphic_window::cb_draw(Address, Address widget)
 void Graphic_window::draw_some_graph(std::string s)
 {
   auto func = [&s] (double x)
-  { return calc(reverse_polish(lexeme(s)), x); };
+  {
+    std::cout << (calc(reverse_polish(lexeme(s)), x)) << std::endl;
+    return calc(reverse_polish(lexeme(s)), x);
+  };
 
-  Graph_lib::Function f1{func, -20, 20, center, 4000, 25, 25};
+  Graph_lib::Function f1{func, 0, 20, center, 4000, 25, 25};
   attach(f1);
 }
