@@ -1,19 +1,21 @@
-#include "functions.h"
-#include <string>
+#include "graphic_window.h"
+#include <Graph_Lib/Graph.h>
+#include <Graph_lib/GUI.h>
+#include <Graph_lib/Window.h>
+#include <iostream>
+
+using namespace Graph_lib;
 
 int main ()
 {
-  // string s;
-  // getline(cin, s);
-  // vector<char> Rev_pol = reverse_polish(lexeme(s));
-  //   vector<string> exemp1{"1.2", "8", "+", "5", "-"};
-  //   vector<string> exemp2{"x", "4", "2", "*", "1", "5",
-  //                         "-", "2", "^", "/", "+"};
-
-  //   cout << endl;
-  //   cout << calc(exemp1, 0) << endl;
-  //   cout << calc(exemp2, 3);
-  //   return 0;
-  string s = "3+4*2/(1-5)^2";
-  reverse_polish(lexeme(s));
+  Graphic_window grw(Point(100, 100), 1000, 700, "DESMOS", 50);
+  std::cout << grw.get_func() << '\n';
+  while (grw.window_is_open())
+  {
+    grw.wait_for_button();
+    if (grw.get_func() != "")
+    {
+      std::cout << grw.get_func() << '\n';
+    }
+  }
 }
