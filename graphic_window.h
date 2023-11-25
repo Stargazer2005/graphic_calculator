@@ -16,8 +16,8 @@ constexpr double scale_coef = 1.2;
 
 class Graphic_window : public Graph_lib::Window
 {
-public:
-  Graphic_window(Point xy, int w, int h, const std::string& title, int scale);
+  public:
+    Graphic_window(Point xy, int w, int h, const std::string& title, int scale);
 
   void wait_for_button ()
   {
