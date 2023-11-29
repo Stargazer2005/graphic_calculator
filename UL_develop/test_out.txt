@@ -43,9 +43,9 @@ results:  { ''numbers'' }
 y = x----------------------------------2
 results:  { ''numbers'' }
 y = x-+-+-+-+-2
-results:  { ''Stack: empty, no last'' }
+results:  { ''invalid syntax near sign or point'' }
 y = x-+--+--+--+--2
-results:  { ''Stack: empty, no last'' }
+results:  { ''invalid syntax near sign or point'' }
 y = x.2
 results:  { ''invalid syntax of floating point numbers'' }
 y = x+.2
@@ -92,7 +92,11 @@ y = x^tan(sin(cos(x)))
 results:  { ''numbers'', ''violation of domain of definition of function'' }
 y = x^-x
 results:  { ''numbers'', ''violation of domain of definition of function'' }
+y = x-^6
+results:  { ''invalid syntax near sign or point'' }
 y = x^-0
+results:  { ''numbers'' }
+y = x^(-1)
 results:  { ''numbers'' }
 y = x^-1
 results:  { ''numbers'' }

@@ -45,7 +45,9 @@ x^0
 x^x
 x^tan(sin(cos(x)))
 x^-x
+x-^6
 x^-0
+x^(-1)
 x^-1
 x^-8
 x^8
