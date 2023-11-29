@@ -62,7 +62,7 @@ char transform_to_char (const std::string& s)
 bool is_float (std::string str)
 {
     std::istringstream iss(str);
-    float f;
+    double f;
     iss >> std::noskipws >> f;
     return iss.eof() && !iss.fail();
 }
@@ -72,10 +72,11 @@ void print (const std::vector<std::string>& v)
     std::cout << "{ ";
     for (size_t i = 0; i < v.size(); i++)
     {
-        std::cout << "'" << v[i] << "'"
-                  << ", ";
+        std::cout << "''" << v[i] << "''";
+        if (i != v.size() - 1)
+            std::cout << ", ";
     }
-    std::cout << "}" << std::endl;
+    std::cout << " }" << std::endl;
 }
 
 void print (const std::vector<char>& v)
@@ -83,10 +84,11 @@ void print (const std::vector<char>& v)
     std::cout << "{ ";
     for (size_t i = 0; i < v.size(); i++)
     {
-        std::cout << "'" << v[i] << "'"
-                  << ", ";
+        std::cout << "'" << v[i] << "'";
+        if (i != v.size() - 1)
+            std::cout << ", ";
     }
-    std::cout << "}" << std::endl;
+    std::cout << " }" << std::endl;
 }
 
 std::string spaces_deleted (const std::string& s)
