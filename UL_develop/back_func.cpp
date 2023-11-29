@@ -57,7 +57,13 @@ bool checker (const string& expression)
         if (c_in_s(c, oper) && c != '-')
         {
             if ((c_in_s(expr[i - 1], oper + '.') || c_in_s(expr[i + 1], oper + '.')) &&
-                (expr[i - 1] != '-' && expr[i + 1] != '-'))
+                expr[i + 1] != '-')  // но после знака минус стоять может
+            {
+                throw std::invalid_argument("invalid syntax near sign or point");
+                return false;
+            }
+            // минус не может стоять по обе стороны от знака
+            else if (expr[i - 1] == '-' && expr[i + 1] == '-')
             {
                 throw std::invalid_argument("invalid syntax near sign or point");
                 return false;
