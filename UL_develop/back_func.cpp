@@ -20,15 +20,15 @@ bool checker (const string& expression)
     const string oper = "+-*/^";  // строка с операциями
 
     // проверка на скобочки
-    if (count(expr.begin(), expr.end(), '(') != count(expr.begin(), expr.end(), ')'))
+    if (count(expr.begin(), expr.end(), open_br) != count(expr.begin(), expr.end(), closed_br))
     {
         throw std::invalid_argument("number of brackets mismatch");
         return false;
     }
     // первый и последний символы не должны быть знаками или точками (кроме
     // минуса)
-    if ((c_in_s(expr[0], oper + '.') && expr[0] != '-') ||
-        c_in_s(expr[expr.size() - 1], oper + '.'))
+    if ((c_in_s(expr[0], oper + point) && expr[0] != minus) ||
+        c_in_s(expr[expr.size() - 1], oper + point))
     {
         throw std::invalid_argument("invalid syntax at the end or beginning of an expression");
         return false;
@@ -59,23 +59,23 @@ bool checker (const string& expression)
         }
         // возле знака операции не должно быть других операций и точек
         // (если это не минус, так как он может быть унарный)
-        if (c_in_s(c, oper) && c != '-')
+        if (c_in_s(c, oper) && c != minus)
         {
-            if ((c_in_s(prev_c, oper + '.') || c_in_s(next_c, oper + '.')) &&
-                next_c != '-')  // но после знака минус стоять может
+            if ((c_in_s(prev_c, oper + point) || c_in_s(next_c, oper + point)) &&
+                next_c != minus)  // но после знака минус стоять может
             {
                 throw std::invalid_argument("invalid syntax near sign or point");
                 return false;
             }
             // минус не может стоять по обе стороны от знака
-            else if (prev_c == '-' && next_c == '-')
+            else if (prev_c == minus && next_c == minus)
             {
                 throw std::invalid_argument("invalid syntax near sign or point");
                 return false;
             }
         }
         // возле точки должны быть только числа
-        if (c == '.')
+        if (c == point)
         {
             if ((!isdigit(prev_c) || !isdigit(next_c)))
             {
@@ -84,17 +84,17 @@ bool checker (const string& expression)
             }
         }
         // считаем скобки
-        else if (c == '(')
+        else if (c == open_br)
         {
             count_brackets += 1;
             // и проверяем, что нету пустых
-            if (next_c == ')')
+            if (next_c == closed_br)
             {
                 throw std::invalid_argument("empty brackets");
                 return false;
             }
         }
-        else if (c == ')')
+        else if (c == closed_br)
         {
             count_brackets -= 1;
             // случай, когда после очередной закрытой скобки - закрытых скобок оказывается больше
@@ -110,13 +110,13 @@ bool checker (const string& expression)
             // вспомогательная функция для проверки рядом стоящего с числом
             // символа
             auto is_neighborhood_ok = [&expr, &oper] (char s, char bracket)
-            { return (isdigit(s) || s == '.' || c_in_s(s, oper) || s == bracket); };
+            { return (isdigit(s) || s == point || c_in_s(s, oper) || s == bracket); };
             bool is_left_ok = 1, is_right_ok = 1;
 
             if (i == 0)
             {
-                // у числа справа может быть: число, точка, знак или ')'
-                is_right_ok = is_neighborhood_ok(next_c, ')');
+                // у числа справа может быть: число, точка, знак или closed_br
+                is_right_ok = is_neighborhood_ok(next_c, closed_br);
                 // cout << expr[i - 1] << expr[i + 1] << " " << is_left_ok <<
                 // is_right_ok << endl;
                 if (!is_right_ok)
@@ -127,8 +127,8 @@ bool checker (const string& expression)
             }
             else if (i == expr.size() - 1)
             {
-                // у числа слева может быть: число, точка, знак или '('
-                is_left_ok = is_neighborhood_ok(prev_c, '(');
+                // у числа слева может быть: число, точка, знак или open_br
+                is_left_ok = is_neighborhood_ok(prev_c, open_br);
                 // cout << expr[i - 1] << expr[i + 1] << " " << is_left_ok <<
                 // is_right_ok << endl;
                 if (!is_left_ok)
@@ -139,10 +139,10 @@ bool checker (const string& expression)
             }
             else
             {
-                // у числа справа может быть: число, точка, знак или ')'
-                is_right_ok = is_neighborhood_ok(next_c, ')');
-                // у числа слева может быть: число, точка, знак или '('
-                is_left_ok = is_neighborhood_ok(prev_c, '(');
+                // у числа справа может быть: число, точка, знак или closed_br
+                is_right_ok = is_neighborhood_ok(next_c, closed_br);
+                // у числа слева может быть: число, точка, знак или open_br
+                is_left_ok = is_neighborhood_ok(prev_c, open_br);
                 // cout << expr[i - 1] << expr[i + 1] << " " << is_left_ok <<
                 // is_right_ok << endl;
                 if (!is_left_ok || !is_right_ok)
@@ -175,6 +175,7 @@ bool checker (const vector<string>& lexs)
                 {
                     if (lexs.size() > 1)
                     {
+                        // если есть скобка, то это лишняя функция
                         if (lexs[i + 1] == "(")
                             throw std::invalid_argument("usage of wrong function name");
                         else
@@ -210,7 +211,7 @@ vector<string> lexeme (const string& expr)
     {
         switch (expr[i])
         {
-        case '-':
+        case minus:
         {
             if (s.size() > 0)
             {
@@ -225,12 +226,12 @@ vector<string> lexeme (const string& expr)
                 lexs.push_back("-");
             break;
         }
-        case '(':
-        case ')':
-        case '+':
-        case '*':
-        case '/':
-        case '^':
+        case open_br:
+        case closed_br:
+        case plus:
+        case mul:
+        case divi:
+        case power:
         {
             if (s.size() > 0)
             {
@@ -242,7 +243,7 @@ vector<string> lexeme (const string& expr)
             s = "";
             break;
         }
-        case '.':
+        case point:
         case '0':
         case '1':
         case '2':
@@ -290,7 +291,7 @@ vector<string> reverse_polish (const vector<string>& lexs)
 
     vector<string> res;
     vector<string> oper;
-    const string func = "sctel";
+    const string func = "sctelu";
 
     auto last = [] (vector<string> v) { return (v.size() > 0) ? v[v.size() - 1] : ""; };
 
@@ -379,7 +380,7 @@ double calc (const vector<string>& rev_pol, double x)
 {
     const string oper = "+-*/^";   // строка с операциями
     const string func = "sctelu";  // строка с функциями
-                                   // (да, унарный минус - тоже функция)
+    // (да, унарный минус - тоже функция)
 
     Stack stack;
     for (auto& lex : rev_pol)
@@ -396,22 +397,22 @@ double calc (const vector<string>& rev_pol, double x)
             stack.pop();
             switch (curr)
             {
-            case 's':
+            case c_sin:
                 stack.push(sin(l));
                 break;
-            case 'c':
+            case c_cos:
                 stack.push(cos(l));
                 break;
-            case 't':
+            case c_tan:
                 stack.push(tan(l));
                 break;
-            case 'e':
+            case c_exp:
                 stack.push(exp(l));
                 break;
-            case 'l':
+            case c_ln:
                 stack.push(log(l));
                 break;
-            case 'u':
+            case uminus:
                 stack.push(-l);
                 break;
             }
@@ -425,19 +426,19 @@ double calc (const vector<string>& rev_pol, double x)
             stack.pop();
             switch (curr)
             {
-            case '+':
+            case plus:
                 stack.push(p + l);
                 break;
-            case '-':
+            case minus:
                 stack.push(p - l);
                 break;
-            case '*':
+            case mul:
                 stack.push(p * l);
                 break;
-            case '/':
+            case divi:
                 stack.push(p / l);
                 break;
-            case '^':
+            case power:
                 stack.push(pow(p, l));
                 break;
             }
@@ -446,7 +447,7 @@ double calc (const vector<string>& rev_pol, double x)
         {
             switch (curr)
             {
-            case 'n':
+            case number:
                 stack.push(stod(lex));
                 break;
             case 'x':
