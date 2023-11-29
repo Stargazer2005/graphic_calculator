@@ -59,23 +59,18 @@ int main ()
         std::cout << "y = " << s << std::endl;
         for (double x = -10; x < 10; x += 0.1)
         {
-            // std::cout << "      x = " << x << "; y = ";
             try
             {
                 res.push_back(std::to_string(calc(reverse_polish(lexeme(s)), x)));
-                // std::cout << calc(reverse_polish(lexeme(s)), x) << ";";
             }
             catch (std::exception& exc)
             {
                 res.push_back(exc.what());
-                // std::cout << exc.what() << ";";
             }
             catch (...)
             {
                 res.push_back("exception");
-                // std::cout << "exception;";
             }
-            // std::cout << std::endl;
         }
         auto det_res = simple_modify(res);
         std::cout << "results: "
