@@ -36,8 +36,13 @@ bool checker (const string& expression)
     int count_brackets = 0;
     for (size_t i = 0; i < expr.size(); i++)
     {
-        char c = expr[i];     // текущий символ
-        char prev_c, next_c;  // предыдущий и следующий символы
+        char c = expr[i];                 // текущий символ
+        char prev_c = ' ', next_c = ' ';  // предыдущий и следующий символы
+        if (i > 0)
+            prev_c = expr[i - 1];
+        if (i < (expr.size() - 1))
+            next_c = expr[i + 1];
+
         // проверка на отсутсвие лишних символов
         if (!c_in_s(c, calc_chars))
         {
@@ -56,14 +61,14 @@ bool checker (const string& expression)
         // (если это не минус, так как он может быть унарный)
         if (c_in_s(c, oper) && c != '-')
         {
-            if ((c_in_s(expr[i - 1], oper + '.') || c_in_s(expr[i + 1], oper + '.')) &&
-                expr[i + 1] != '-')  // но после знака минус стоять может
+            if ((c_in_s(prev_c, oper + '.') || c_in_s(next_c, oper + '.')) &&
+                next_c != '-')  // но после знака минус стоять может
             {
                 throw std::invalid_argument("invalid syntax near sign or point");
                 return false;
             }
             // минус не может стоять по обе стороны от знака
-            else if (expr[i - 1] == '-' && expr[i + 1] == '-')
+            else if (prev_c == '-' && next_c == '-')
             {
                 throw std::invalid_argument("invalid syntax near sign or point");
                 return false;
@@ -72,16 +77,18 @@ bool checker (const string& expression)
         // возле точки должны быть только числа
         if (c == '.')
         {
-            if ((!isdigit(expr[i - 1]) || !isdigit(expr[i + 1])))
+            if ((!isdigit(prev_c) || !isdigit(next_c)))
             {
                 throw std::invalid_argument("invalid syntax of floating point numbers");
                 return false;
             }
         }
+        // считаем скобки
         else if (c == '(')
         {
             count_brackets += 1;
-            if (expr[i + 1] == ')')
+            // и проверяем, что нету пустых
+            if (next_c == ')')
             {
                 throw std::invalid_argument("empty brackets");
                 return false;
@@ -90,7 +97,7 @@ bool checker (const string& expression)
         else if (c == ')')
         {
             count_brackets -= 1;
-            // после очередной закрытой скобки - закрытых скобок оказывается больше
+            // случай, когда после очередной закрытой скобки - закрытых скобок оказывается больше
             if (count_brackets < 0)
             {
                 throw std::invalid_argument("extra bracket");
@@ -109,7 +116,7 @@ bool checker (const string& expression)
             if (i == 0)
             {
                 // у числа справа может быть: число, точка, знак или ')'
-                is_right_ok = is_neighborhood_ok(expr[i + 1], ')');
+                is_right_ok = is_neighborhood_ok(next_c, ')');
                 // cout << expr[i - 1] << expr[i + 1] << " " << is_left_ok <<
                 // is_right_ok << endl;
                 if (!is_right_ok)
@@ -121,7 +128,7 @@ bool checker (const string& expression)
             else if (i == expr.size() - 1)
             {
                 // у числа слева может быть: число, точка, знак или '('
-                is_left_ok = is_neighborhood_ok(expr[i - 1], '(');
+                is_left_ok = is_neighborhood_ok(prev_c, '(');
                 // cout << expr[i - 1] << expr[i + 1] << " " << is_left_ok <<
                 // is_right_ok << endl;
                 if (!is_left_ok)
@@ -133,9 +140,9 @@ bool checker (const string& expression)
             else
             {
                 // у числа справа может быть: число, точка, знак или ')'
-                is_right_ok = is_neighborhood_ok(expr[i + 1], ')');
+                is_right_ok = is_neighborhood_ok(next_c, ')');
                 // у числа слева может быть: число, точка, знак или '('
-                is_left_ok = is_neighborhood_ok(expr[i - 1], '(');
+                is_left_ok = is_neighborhood_ok(prev_c, '(');
                 // cout << expr[i - 1] << expr[i + 1] << " " << is_left_ok <<
                 // is_right_ok << endl;
                 if (!is_left_ok || !is_right_ok)
