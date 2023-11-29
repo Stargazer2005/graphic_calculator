@@ -32,6 +32,18 @@ void modify (std::vector<std::string>& v)
     v.erase(last, v.end());
 }
 
+std::vector<std::string> simple_modify (std::vector<std::string> v)
+{
+    std::vector<std::string> res{};
+    for (size_t i = 0; i < v.size(); i++)
+    {
+        res.push_back(v[i]);
+        if (!str_is_double(v[i]))
+            res[i] = "exc";
+    }
+    return res;
+}
+
 int main ()
 {
     // D:/Programs/2023-2024/C++/build/graphic_calculator/UL_develop/backend.exe <
@@ -65,6 +77,10 @@ int main ()
             }
             // std::cout << std::endl;
         }
+        auto det_res = simple_modify(res);
+        std::cout << "results: "
+                  << " ";
+        vec_print(det_res);
         modify(res);
         std::cout << "results: "
                   << " ";
