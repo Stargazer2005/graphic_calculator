@@ -1,26 +1,21 @@
-#include "back_func.h"
+#include "graphic_window.h"
+#include <Graph_Lib/Graph.h>
+#include <Graph_lib/GUI.h>
+#include <Graph_lib/Window.h>
+#include <iostream>
+
+using namespace Graph_lib;
 
 int main ()
 {
-    // D:/Programs/2023-2024/C++/build/graphic_calculator/backend/backend.exe < test.txt >
-    // test_out.txt 2>&1
-    string s;
-    while (cin)
+  Graphic_window grw(Point(100, 100), 1000, 700, "DESMOS", 50);
+  std::cout << grw.get_func() << '\n';
+  while (grw.window_is_open())
+  {
+    grw.wait_for_button();
+    if (grw.get_func() != "")
     {
-        getline(cin, s);
-        try
-        {
-            // cout << "string: " << s << endl;
-            cout << calc(reverse_polish(lexeme(s)), 1) << endl << endl;
-        }
-        catch (exception& exc)
-        {
-            cerr << exc.what() << endl;
-        }
-        catch (...)
-        {
-            cerr << "exception" << endl;
-        }
+      std::cout << grw.get_func() << '\n';
     }
-    return 0;
+  }
 }

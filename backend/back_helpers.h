@@ -9,100 +9,94 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
 // локальный класс (для взаимодействия с обратной польской записью)
 // главная фишка - возможность обращения только к последнему элементу
 class Stack
 {
-  public:
-    Stack() : st{} {}
+public:
+  Stack() : st{} {}
 
-    void push (double c) { st.push_back(c); }
+  void push (double c) { st.push_back(c); }
 
-    void pop ()
-    {
-        if (st.size() != 0)
-            st.pop_back();
-        else
-            throw range_error("Stack: empty, nothing to pop");
-    }
+  void pop ()
+  {
+    if (st.size() != 0)
+      st.pop_back();
+    else
+      throw std::range_error("Stack: empty, nothing to pop");
+  }
 
-    double last ()
-    {
-        if (st.size() != 0)
-            return st[st.size() - 1];
-        else
-            throw range_error("Stack: empty, no last");
-    }
+  double last ()
+  {
+    if (st.size() != 0)
+      return st[st.size() - 1];
+    else
+      throw std::range_error("Stack: empty, no last");
+  }
 
-    size_t len () { return st.size(); }
+  size_t len () { return st.size(); }
 
-    void print ()
-    {
-        for (auto i : st)
-            cout << i << ", ";
-        cout << endl;
-    }
+  void print ()
+  {
+    for (auto i : st)
+      std::cout << i << ", ";
+    std::cout << std::endl;
+  }
 
-  private:
-    vector<double> st;
+private:
+  std::vector<double> st;
 };
 
 // вспомогательная функция "содержится ли символ в строке?"
-bool c_in_s (char c, const string& s) { return (s.find(c) != string::npos); }
+bool c_in_s (char c, const std::string& s)
+{
+  return (s.find(c) != std::string::npos);
+}
 
 // вспомогательная функция, переводящая строку (лексему) в символ
-char transform_to_char (const string& s)
+char transform_to_char (const std::string& s)
 {
-    if (s[0] >= '0' && s[0] <= '9')  // если число
-        return ('n');                // заменяем на спец. символ
-    else
-        return (s[0]);  // первая буква отражает название функции
+  if (s[0] >= '0' && s[0] <= '9')  // если число
+    return ('n');  // заменяем на спец. символ
+  else
+    return (s[0]);  // первая буква отражает название функции
 }
 
-// вспомогательная функция, переводящая вектор строку (лексем) в вектор символов
-// vector<char> transform_to_char (const vector<string>& strs)
-// {
-//     vector<char> res{};
-//     for (auto s : strs)
-//     {
-//         if (s[0] >= '0' && s[0] <= '9')
-//             res.push_back('n');
-//         else
-//             res.push_back(s[0]);
-//     }
-//     return res;
-// }
-
-bool is_float (string str)
+bool is_float (std::string str)
 {
-    std::istringstream iss(str);
-    float f;
-    iss >> noskipws >> f;
-    return iss.eof() && !iss.fail();
+  std::istringstream iss(str);
+  float f;
+  iss >> std::noskipws >> f;
+  return iss.eof() && !iss.fail();
 }
 
-void print (const vector<string>& v)
+void print (const std::vector<std::string>& v)
 {
-    cout << "{ ";
-    for (size_t i = 0; i < v.size(); i++)
-    {
-        cout << "'" << v[i] << "'"
-             << ", ";
-    }
-    cout << "}" << endl;
+  std::cout << "{ ";
+  for (size_t i = 0; i < v.size(); i++)
+  {
+    std::cout << "'" << v[i] << "'"
+              << ", ";
+  }
+  std::cout << "}" << std::endl;
 }
 
-void print (const vector<char>& v)
+void print (const std::vector<char>& v)
 {
-    cout << "{ ";
-    for (size_t i = 0; i < v.size(); i++)
-    {
-        cout << "'" << v[i] << "'"
-             << ", ";
-    }
-    cout << "}" << endl;
+  std::cout << "{ ";
+  for (size_t i = 0; i < v.size(); i++)
+  {
+    std::cout << "'" << v[i] << "'"
+              << ", ";
+  }
+  std::cout << "}" << std::endl;
 }
 
-string spaces_deleted (const string& s) { return (regex_replace(s, regex("\\s+"), "")); }
+std::string spaces_deleted (const std::string& s)
+{
+  std::string new_s;
+  for (auto ch : s)
+    if (ch != ' ')
+      new_s += ch;
+  return new_s;
+}
