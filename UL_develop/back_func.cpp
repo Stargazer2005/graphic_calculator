@@ -8,6 +8,13 @@ bool checker (const string& expression)
 {
     string expr = spaces_deleted(expression);
 
+    // проверка на пустую строку
+    if (expr.empty())
+    {
+        throw std::invalid_argument("empty expression");
+        return false;
+    }
+
     // строка со всеми разрешенными символами
     const string calc_chars = ".1234567890+-*/^()cosinexptal";
     const string oper = "+-*/^";  // строка с операциями
@@ -23,14 +30,14 @@ bool checker (const string& expression)
     if ((c_in_s(expr[0], oper + '.') && expr[0] != '-') ||
         c_in_s(expr[expr.size() - 1], oper + '.'))
     {
-        throw std::invalid_argument(
-            "expression begin or end with unclosed operation sign or point");
+        throw std::invalid_argument("invalid syntax at the end or beginning of an expression");
         return false;
     }
     int count_brackets = 0;
     for (size_t i = 0; i < expr.size(); i++)
     {
-        char c = expr[i];
+        char c = expr[i];     // текущий символ
+        char prev_c, next_c;  // предыдущий и следующий символы
         // проверка на отсутсвие лишних символов
         if (!c_in_s(c, calc_chars))
         {
@@ -52,7 +59,7 @@ bool checker (const string& expression)
             if ((c_in_s(expr[i - 1], oper + '.') || c_in_s(expr[i + 1], oper + '.')) &&
                 (expr[i - 1] != '-' && expr[i + 1] != '-'))
             {
-                throw std::invalid_argument("multiple use of operation sign or point in one place");
+                throw std::invalid_argument("invalid syntax near sign or point");
                 return false;
             }
         }
@@ -61,7 +68,7 @@ bool checker (const string& expression)
         {
             if ((!isdigit(expr[i - 1]) || !isdigit(expr[i + 1])))
             {
-                throw std::invalid_argument("incorrect use of floating point numbers");
+                throw std::invalid_argument("invalid syntax of floating point numbers");
                 return false;
             }
         }
@@ -77,7 +84,7 @@ bool checker (const string& expression)
         else if (c == ')')
         {
             count_brackets -= 1;
-            // после очередной закрытой скобки их оказывается больше
+            // после очередной закрытой скобки - закрытых скобок оказывается больше
             if (count_brackets < 0)
             {
                 throw std::invalid_argument("extra bracket");
@@ -85,7 +92,7 @@ bool checker (const string& expression)
             }
         }
         // при строке из одной цифры, эта проверка не подходит
-        else if (isdigit(c) && expr.size() > 1)
+        else if ((isdigit(c) || c == 'x') && expr.size() > 1)
         {
             // вспомогательная функция для проверки рядом стоящего с числом
             // символа
@@ -101,7 +108,7 @@ bool checker (const string& expression)
                 // is_right_ok << endl;
                 if (!is_right_ok)
                 {
-                    throw std::invalid_argument("invalid syntax near digit");
+                    throw std::invalid_argument("invalid syntax near digit or variable");
                     return false;
                 }
             }
@@ -113,7 +120,7 @@ bool checker (const string& expression)
                 // is_right_ok << endl;
                 if (!is_left_ok)
                 {
-                    throw std::invalid_argument("invalid syntax near digit");
+                    throw std::invalid_argument("invalid syntax near digit or variable");
                     return false;
                 }
             }
@@ -127,7 +134,7 @@ bool checker (const string& expression)
                 // is_right_ok << endl;
                 if (!is_left_ok || !is_right_ok)
                 {
-                    throw std::invalid_argument("invalid syntax near digit");
+                    throw std::invalid_argument("invalid syntax near digit or variable");
                     return false;
                 }
             }
@@ -145,13 +152,6 @@ bool checker (const vector<string>& lexs)
     {
         // string l = lexs[i];
         char l_c = transform_to_char(lexs[i]);
-        // проверка деления на ноль
-        if (l_c == '/' && lexs[i + 1] == "0")
-        {
-            throw std::invalid_argument("zero division");
-            return false;
-        }
-        // cout << i << " zero division: ok" << endl;
         // проверка использования постороннего имени
         if (isalpha(l_c) && !(is_float(lexs[i])))
         {
@@ -192,7 +192,7 @@ vector<string> lexeme (const string& expr)
 
     vector<string> lexs;
     string s;
-    const string oper = "+-*/^";
+    const string oper = "+-*/^u";
     for (size_t i = 0; i < expr.size(); i++)
     {
         switch (expr[i])
@@ -283,7 +283,7 @@ vector<string> reverse_polish (const vector<string>& lexs)
 
     auto is_func = [&func, last] (string s) { return c_in_s(transform_to_char(s), func); };
 
-    for (auto str : lexs)
+    for (auto& str : lexs)
     {
         if (str == "um")
             oper.push_back(str);
@@ -369,7 +369,7 @@ double calc (const vector<string>& rev_pol, double x)
                                    // (да, унарный минус - тоже функция)
 
     Stack stack;
-    for (auto lex : rev_pol)
+    for (auto& lex : rev_pol)
     {
         // stack.print();
         double l;  // последний символ в стэке
@@ -444,10 +444,8 @@ double calc (const vector<string>& rev_pol, double x)
                 break;
             }
         }
-    }
-    if (!std::isnan(stack.last()) && !std::isinf(stack.last()))
-        return stack.last();  // последнее, что осталось в стэке после всех
-                              // действий - и есть ответ
-    else
-        throw std::invalid_argument("violation of domain of definition of function");
+        if (std::isnan(stack.last()) || std::isinf(stack.last()))
+            throw std::invalid_argument("violation of domain of definition of function");
+    }  // последнее, что осталось в стэке после всех действий - и есть ответ
+    return stack.last();
 }
