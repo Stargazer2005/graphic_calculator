@@ -1,40 +1,50 @@
 #include "back_func.h"
 #include "back_helpers.h"
 
+using std::endl;
+using std::stack;
 using std::string;
 using std::vector;
 
 bool checker (const string& expression)
 {
-  // код, удаляющий пробелы
-  // regex r("\\s+");
-  // string expr = regex_replace(expression, r, "");
   string expr = spaces_deleted(expression);
+
+  // проверка на пустую строку
+  if (expr.empty())
+  {
+    throw std::invalid_argument("empty expression");
+    return false;
+  }
 
   // строка со всеми разрешенными символами
   const string calc_chars = ".1234567890+-*/^()cosinexptal";
   const string oper = "+-*/^";  // строка с операциями
 
   // проверка на скобочки
-  if (count(expr.begin(), expr.end(), '(') !=
-      count(expr.begin(), expr.end(), ')'))
+  if (count(expr.begin(), expr.end(), open_br) != count(expr.begin(), expr.end(), closed_br))
   {
     throw std::invalid_argument("number of brackets mismatch");
     return false;
   }
   // первый и последний символы не должны быть знаками или точками (кроме
   // минуса)
-  if ((c_in_s(expr[0], oper + '.') && expr[0] != '-') ||
-      c_in_s(expr[expr.size() - 1], oper + '.'))
+  if ((c_in_s(expr[0], oper + point) && expr[0] != minus) ||
+      c_in_s(expr[expr.size() - 1], oper + point))
   {
-    throw std::invalid_argument(
-        "expression begin or end with unclosed operation sign or point");
+    throw std::invalid_argument("invalid syntax at the end or beginning of an expression");
     return false;
   }
   int count_brackets = 0;
   for (size_t i = 0; i < expr.size(); i++)
   {
-    char c = expr[i];
+    char c = expr[i];                 // текущий символ
+    char prev_c = ' ', next_c = ' ';  // предыдущий и следующий символы
+    if (i > 0)
+      prev_c = expr[i - 1];
+    if (i < (expr.size() - 1))
+      next_c = expr[i + 1];
+
     // проверка на отсутсвие лишних символов
     if (!c_in_s(c, calc_chars))
     {
@@ -51,40 +61,45 @@ bool checker (const string& expression)
     }
     // возле знака операции не должно быть других операций и точек
     // (если это не минус, так как он может быть унарный)
-    if (c_in_s(c, oper) && c != '-')
+    if (c_in_s(c, oper) && c != minus)
     {
-      if ((c_in_s(expr[i - 1], oper + '.') ||
-           c_in_s(expr[i + 1], oper + '.')) &&
-          (expr[i - 1] != '-' && expr[i + 1] != '-'))
+      if ((c_in_s(prev_c, oper + point) || c_in_s(next_c, oper + point)) &&
+          next_c != minus)  // но после знака минус стоять может
       {
-        throw std::invalid_argument(
-            "multiple use of operation sign or point in one place");
+        throw std::invalid_argument("invalid syntax near sign or point");
+        return false;
+      }
+      // минус не может стоять по обе стороны от знака
+      else if (prev_c == minus && next_c == minus)
+      {
+        throw std::invalid_argument("invalid syntax near sign or point");
         return false;
       }
     }
     // возле точки должны быть только числа
-    if (c == '.')
+    if (c == point)
     {
-      if ((!isdigit(expr[i - 1]) || !isdigit(expr[i + 1])))
+      if ((!isdigit(prev_c) || !isdigit(next_c)))
       {
-        throw std::invalid_argument(
-            "incorrect use of floating point numbers");
+        throw std::invalid_argument("invalid syntax of floating point numbers");
         return false;
       }
     }
-    else if (c == '(')
+    // считаем скобки
+    else if (c == open_br)
     {
       count_brackets += 1;
-      if (expr[i + 1] == ')')
+      // и проверяем, что нету пустых
+      if (next_c == closed_br)
       {
         throw std::invalid_argument("empty brackets");
         return false;
       }
     }
-    else if (c == ')')
+    else if (c == closed_br)
     {
       count_brackets -= 1;
-      // после очередной закрытой скобки их оказывается больше
+      // случай, когда после очередной закрытой скобки - закрытых скобок оказывается больше
       if (count_brackets < 0)
       {
         throw std::invalid_argument("extra bracket");
@@ -92,50 +107,43 @@ bool checker (const string& expression)
       }
     }
     // при строке из одной цифры, эта проверка не подходит
-    else if (isdigit(c) && expr.size() > 1)
+    else if ((isdigit(c) || c == var_x) && expr.size() > 1)
     {
       // вспомогательная функция для проверки рядом стоящего с числом
       // символа
-      auto is_neighborhood_ok = [&expr, &oper] (char s, char bracket) {
-        return (isdigit(s) || s == '.' || c_in_s(s, oper) || s == bracket);
-      };
+      auto is_neighborhood_ok = [&expr, &oper] (char s, char bracket)
+      { return (isdigit(s) || s == point || c_in_s(s, oper) || s == bracket); };
       bool is_left_ok = 1, is_right_ok = 1;
 
       if (i == 0)
       {
-        // у числа справа может быть: число, точка, знак или ')'
-        is_right_ok = is_neighborhood_ok(expr[i + 1], ')');
-        // cout << expr[i - 1] << expr[i + 1] << " " << is_left_ok <<
-        // is_right_ok << endl;
+        // у числа справа может быть: число, точка, знак или closed_br
+        is_right_ok = is_neighborhood_ok(next_c, closed_br);
         if (!is_right_ok)
         {
-          throw std::invalid_argument("invalid syntax near digit");
+          throw std::invalid_argument("invalid syntax near digit or variable");
           return false;
         }
       }
       else if (i == expr.size() - 1)
       {
-        // у числа слева может быть: число, точка, знак или '('
-        is_left_ok = is_neighborhood_ok(expr[i - 1], '(');
-        // cout << expr[i - 1] << expr[i + 1] << " " << is_left_ok <<
-        // is_right_ok << endl;
+        // у числа слева может быть: число, точка, знак или open_br
+        is_left_ok = is_neighborhood_ok(prev_c, open_br);
         if (!is_left_ok)
         {
-          throw std::invalid_argument("invalid syntax near digit");
+          throw std::invalid_argument("invalid syntax near digit or variable");
           return false;
         }
       }
       else
       {
-        // у числа справа может быть: число, точка, знак или ')'
-        is_right_ok = is_neighborhood_ok(expr[i + 1], ')');
-        // у числа слева может быть: число, точка, знак или '('
-        is_left_ok = is_neighborhood_ok(expr[i - 1], '(');
-        // cout << expr[i - 1] << expr[i + 1] << " " << is_left_ok <<
-        // is_right_ok << endl;
+        // у числа справа может быть: число, точка, знак или closed_br
+        is_right_ok = is_neighborhood_ok(next_c, closed_br);
+        // у числа слева может быть: число, точка, знак или open_br
+        is_left_ok = is_neighborhood_ok(prev_c, open_br);
         if (!is_left_ok || !is_right_ok)
         {
-          throw std::invalid_argument("invalid syntax near digit");
+          throw std::invalid_argument("invalid syntax near digit or variable");
           return false;
         }
       }
@@ -153,13 +161,6 @@ bool checker (const vector<string>& lexs)
   {
     // string l = lexs[i];
     char l_c = transform_to_char(lexs[i]);
-    // проверка деления на ноль
-    if (l_c == '/' && lexs[i + 1] == "0")
-    {
-      throw std::invalid_argument("zero division");
-      return false;
-    }
-    // cout << i << " zero division: ok" << endl;
     // проверка использования постороннего имени
     if (isalpha(l_c) && !(is_float(lexs[i])))
     {
@@ -170,6 +171,7 @@ bool checker (const vector<string>& lexs)
         {
           if (lexs.size() > 1)
           {
+            // если есть скобка, то это лишняя функция
             if (lexs[i + 1] == "(")
               throw std::invalid_argument("usage of wrong function name");
             else
@@ -181,14 +183,13 @@ bool checker (const vector<string>& lexs)
           return false;
         }
       }
-      else if (l_c != 'x')  // если имя начинается не с разрешенной буквы и
-                            // не является x, то оно постороннее
+      else if (l_c != var_x)  // если имя начинается не с разрешенной буквы и
+                              // не является x, то оно постороннее
       {
         throw std::invalid_argument("usage of extra variable");
         return false;
       }
     }
-    // cout << i << " name test: ok" << endl;
   }
   return true;
 }
@@ -200,12 +201,12 @@ vector<string> lexeme (const string& expr)
 
   vector<string> lexs;
   string s;
-  const string oper = "+-*/^";
+  const string oper = "+-*/^u";
   for (size_t i = 0; i < expr.size(); i++)
   {
     switch (expr[i])
     {
-    case '-':
+    case minus:
     {
       if (s.size() > 0)
       {
@@ -220,12 +221,12 @@ vector<string> lexeme (const string& expr)
         lexs.push_back("-");
       break;
     }
-    case '(':
-    case ')':
-    case '+':
-    case '*':
-    case '/':
-    case '^':
+    case open_br:
+    case closed_br:
+    case plus:
+    case mul:
+    case divi:
+    case power:
     {
       if (s.size() > 0)
       {
@@ -237,7 +238,7 @@ vector<string> lexeme (const string& expr)
       s = "";
       break;
     }
-    case '.':
+    case point:
     case '0':
     case '1':
     case '2':
@@ -273,101 +274,136 @@ vector<string> lexeme (const string& expr)
   }
   if (s.size() > 0)
     lexs.push_back(s);
-  // cout << "lexeme:";
+
+  // std::cout << "lexeme:";
   // print(lexs);
   return (lexs);
 }
 
-vector<string> reverse_polish (const vector<string>& lexs)
+vector<string> reverse_polish (const vector<string>& lexemes)
 {
-  if (!checker(lexs))
+  if (!checker(lexemes))
     return {};
 
+  // вектор, куда записывается итоговая запись
   vector<string> res;
-  vector<string> oper;
-  const string func = "sctel";
+  // стэк для хранения операций в правильном порядке
+  stack<string> st_oper;
+  st_oper.push("\0");
 
-  auto last = [] (vector<string> v)
-  { return (v.size() > 0) ? v[v.size() - 1] : ""; };
+  // строка с функциями
+  const string func = "sctelu";
+  // строка с операциями
+  const string oper = "+-*/^";
 
-  auto is_func = [&func, last] (string s)
-  { return c_in_s(transform_to_char(s), func); };
-
-  for (auto str : lexs)
+  for (auto& lex : lexemes)
   {
-    if (str == "um")
-      oper.push_back(str);
-
-    else if (is_float(str) || str == "x")
+    // символ, обозначающий текущую лексему
+    char curr = transform_to_char(lex);
+    // символ, обозначающий последний элемент в стеке с операциями
+    char last = transform_to_char(st_oper.top());
+    switch (curr)
     {
-      res.push_back(str);
-      if (oper.size() > 0 && last(oper) == "um")
+    case number:
+    case var_x:
+    {
+      res.push_back(lex);
+      if (st_oper.size() > 0 && last == uminus)
       {
-        res.push_back(last(oper));
-        oper.pop_back();
+        res.push_back(st_oper.top());
+        st_oper.pop();
       }
+      break;
     }
 
-    else if (str == "^")
+    case power:
     {
-      while (last(oper) == "^" || is_func(last(oper)))
+      while (last == power || c_in_s(last, func))
       {
-        res.push_back(last(oper));
-        oper.pop_back();
+        res.push_back(st_oper.top());
+        st_oper.pop();
+        last = transform_to_char(st_oper.top());
       }
-      oper.push_back(str);
+      st_oper.push(lex);
+      break;
     }
 
-    else if (str == "*" || str == "/")
+    case mul:
+    case divi:
     {
-      while (last(oper) == "*" || last(oper) == "/" || last(oper) == "^" ||
-             is_func(last(oper)))
+      while (last == mul || last == divi || last == power || c_in_s(last, func))
       {
-        res.push_back(last(oper));
-        oper.pop_back();
+        res.push_back(st_oper.top());
+        st_oper.pop();
+        last = transform_to_char(st_oper.top());
       }
-      oper.push_back(str);
+      st_oper.push(lex);
+      break;
     }
 
-    else if (str == "+" || str == "-")
+    case plus:
+    case minus:
     {
-      while (last(oper) == "*" || last(oper) == "/" || last(oper) == "^" ||
-             last(oper) == "+" || last(oper) == "-" || is_func(last(oper)))
+      while (c_in_s(last, oper) || c_in_s(last, func))
       {
-        res.push_back(last(oper));
-        oper.pop_back();
+        res.push_back(st_oper.top());
+        st_oper.pop();
+        last = transform_to_char(st_oper.top());
       }
-      oper.push_back(str);
+      st_oper.push(lex);
+      break;
     }
 
-    else if (str == "(")
-      oper.push_back(str);
+    case open_br:
+    {
+      st_oper.push(lex);
+      break;
+    }
 
-    else if (str == ")")
+    case closed_br:
     {
       while (true)
       {
-        if (last(oper) == "(")
+        if (last == open_br)
         {
-          oper.pop_back();
+          st_oper.pop();
           break;
         }
         else
         {
-          res.push_back(last(oper));
-          oper.pop_back();
+          res.push_back(st_oper.top());
+          st_oper.pop();
         }
+        last = transform_to_char(st_oper.top());
       }
+      break;
     }
-    else if (is_func(str))
-      oper.push_back(str);
+    case c_sin:
+    case c_cos:
+    case c_tan:
+    case c_exp:
+    case c_ln:
+    case uminus:
+    {
+      st_oper.push(lex);
+      break;
+    }
+    default:
+    {
+      throw std::runtime_error("Oops");
+      break;
+    }
+    }
   }
-  while (oper.size() > 0)
+
+  // перевод оставшихся в стеке знаков в обратную польскую запись
+  while (st_oper.top() != "\0")
   {
-    res.push_back(last(oper));
-    oper.pop_back();
+    res.push_back(st_oper.top());
+    st_oper.pop();
   }
-  // cout << "rev_pol:";
+
+  // std::cout << "rev_pol:";
   // print(res);
   return res;
 }
@@ -376,67 +412,65 @@ double calc (const vector<string>& rev_pol, double x)
 {
   const string oper = "+-*/^";   // строка с операциями
   const string func = "sctelu";  // строка с функциями
-                                 // (да, унарный минус - тоже функция)
+  // (да, унарный минус - тоже функция)
 
-  Stack stack;
-  for (auto lex : rev_pol)
+  stack<double> Stack;
+  for (auto& lex : rev_pol)
   {
-    // stack.print();
     double l;  // последний символ в стэке
     double p;  // предпоследний символ в стэке (последний после удаления l)
-    char curr =
-        transform_to_char(lex);  // текущий символ,
-                                 // если брать вместо строки (для switch)
+    char curr = transform_to_char(lex);  // текущий символ,
+                                         // если брать вместо строки (для switch)
     if (c_in_s(curr, func))
     {
-      l = stack.last();  // запоминаем только последний (так как функции
-                         // унарны)
-      stack.pop();
+      l = Stack.top();  // запоминаем только последний (так как функции
+                        // унарны)
+      Stack.pop();
       switch (curr)
       {
-      case 's':
-        stack.push(sin(l));
+      case c_sin:
+        Stack.push(sin(l));
         break;
-      case 'c':
-        stack.push(cos(l));
+      case c_cos:
+        Stack.push(cos(l));
         break;
-      case 't':
-        stack.push(tan(l));
+      case c_tan:
+        Stack.push(tan(l));
         break;
-      case 'e':
-        stack.push(exp(l));
+      case c_exp:
+        Stack.push(exp(l));
         break;
-      case 'l':
-        stack.push(log(l));
+      case c_ln:
+        Stack.push(log(l));
         break;
-      case 'u':
-        stack.push(-l);
+      case uminus:
+        Stack.push(-l);
         break;
       }
     }
     else if (c_in_s(curr, oper))
     {
-      l = stack.last();
-      stack.pop();
-      p = stack.last();  // также запоминаем предпоследний (так как операции
-                         // бинарны)
-      stack.pop();
+      l = Stack.top();
+      Stack.pop();
+      p = Stack.top();  // также запоминаем предпоследний (так как операции
+                        // бинарны)
+      Stack.pop();
       switch (curr)
       {
-      case '+':
-        stack.push(p + l);
+      case plus:
+        Stack.push(p + l);
         break;
-      case '-':
-        stack.push(p - l);
+      case minus:
+        Stack.push(p - l);
         break;
-      case '*':
-        stack.push(p * l);
+      case mul:
+        Stack.push(p * l);
         break;
-      case '/':
-        stack.push(p / l);
+      case divi:
+        Stack.push(p / l);
         break;
-      case '^':
-        stack.push(pow(p, l));
+      case power:
+        Stack.push(pow(p, l));
         break;
       }
     }
@@ -444,22 +478,19 @@ double calc (const vector<string>& rev_pol, double x)
     {
       switch (curr)
       {
-      case 'n':
-        stack.push(stod(lex));
+      case number:
+        Stack.push(stod(lex));
         break;
-      case 'x':
-        stack.push(x);
+      case var_x:
+        Stack.push(x);
         break;
       default:
         throw std::runtime_error("Oops");
         break;
       }
     }
-  }
-  if (!std::isnan(stack.last()) && !std::isinf(stack.last()))
-    return stack.last();  // последнее, что осталось в стэке после всех
-                          // действий - и есть ответ
-  else
-    throw std::invalid_argument(
-        "violation of domain of definition of function");
+    if (std::isnan(Stack.top()) || std::isinf(Stack.top()))
+      throw std::invalid_argument("violation of domain of definition of function");
+  }  // последнее, что осталось в стэке после всех действий - и есть ответ
+  return Stack.top();
 }
