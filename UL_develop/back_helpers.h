@@ -9,44 +9,6 @@
 #include <string>
 #include <vector>
 
-// локальный класс (для взаимодействия с обратной польской записью)
-// главная фишка - возможность обращения только к последнему элементу
-class Stack
-{
-  public:
-    Stack() : st{} {}
-
-    void push (double c) { st.push_back(c); }
-
-    void pop ()
-    {
-        if (st.size() != 0)
-            st.pop_back();
-        else
-            throw std::range_error("Stack: empty, nothing to pop");
-    }
-
-    double last ()
-    {
-        if (st.size() != 0)
-            return st[st.size() - 1];
-        else
-            throw std::range_error("Stack: empty, no last");
-    }
-
-    size_t len () { return st.size(); }
-
-    void print ()
-    {
-        for (auto i : st)
-            std::cout << i << ", ";
-        std::cout << std::endl;
-    }
-
-  private:
-    std::vector<double> st;
-};
-
 // вспомогательная функция "содержится ли символ в строке?"
 bool c_in_s (char c, const std::string& s) { return (s.find(c) != std::string::npos); }
 

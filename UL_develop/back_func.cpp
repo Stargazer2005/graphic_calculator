@@ -1,6 +1,8 @@
 #include "back_func.h"
 #include "back_helpers.h"
 
+#include <stack>
+
 using std::string;
 using std::vector;
 
@@ -382,7 +384,7 @@ double calc (const vector<string>& rev_pol, double x)
     const string func = "sctelu";  // строка с функциями
     // (да, унарный минус - тоже функция)
 
-    Stack stack;
+    std::stack<double> Stack;
     for (auto& lex : rev_pol)
     {
         // stack.print();
@@ -392,54 +394,54 @@ double calc (const vector<string>& rev_pol, double x)
                                              // если брать вместо строки (для switch)
         if (c_in_s(curr, func))
         {
-            l = stack.last();  // запоминаем только последний (так как функции
-                               // унарны)
-            stack.pop();
+            l = Stack.top();  // запоминаем только последний (так как функции
+                              // унарны)
+            Stack.pop();
             switch (curr)
             {
             case c_sin:
-                stack.push(sin(l));
+                Stack.push(sin(l));
                 break;
             case c_cos:
-                stack.push(cos(l));
+                Stack.push(cos(l));
                 break;
             case c_tan:
-                stack.push(tan(l));
+                Stack.push(tan(l));
                 break;
             case c_exp:
-                stack.push(exp(l));
+                Stack.push(exp(l));
                 break;
             case c_ln:
-                stack.push(log(l));
+                Stack.push(log(l));
                 break;
             case uminus:
-                stack.push(-l);
+                Stack.push(-l);
                 break;
             }
         }
         else if (c_in_s(curr, oper))
         {
-            l = stack.last();
-            stack.pop();
-            p = stack.last();  // также запоминаем предпоследний (так как операции
-                               // бинарны)
-            stack.pop();
+            l = Stack.top();
+            Stack.pop();
+            p = Stack.top();  // также запоминаем предпоследний (так как операции
+                              // бинарны)
+            Stack.pop();
             switch (curr)
             {
             case plus:
-                stack.push(p + l);
+                Stack.push(p + l);
                 break;
             case minus:
-                stack.push(p - l);
+                Stack.push(p - l);
                 break;
             case mul:
-                stack.push(p * l);
+                Stack.push(p * l);
                 break;
             case divi:
-                stack.push(p / l);
+                Stack.push(p / l);
                 break;
             case power:
-                stack.push(pow(p, l));
+                Stack.push(pow(p, l));
                 break;
             }
         }
@@ -448,18 +450,18 @@ double calc (const vector<string>& rev_pol, double x)
             switch (curr)
             {
             case number:
-                stack.push(stod(lex));
+                Stack.push(stod(lex));
                 break;
             case 'x':
-                stack.push(x);
+                Stack.push(x);
                 break;
             default:
                 throw std::runtime_error("Oops");
                 break;
             }
         }
-        if (std::isnan(stack.last()) || std::isinf(stack.last()))
+        if (std::isnan(Stack.top()) || std::isinf(Stack.top()))
             throw std::invalid_argument("violation of domain of definition of function");
     }  // последнее, что осталось в стэке после всех действий - и есть ответ
-    return stack.last();
+    return Stack.top();
 }
