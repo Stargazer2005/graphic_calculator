@@ -1,4 +1,5 @@
 #include "graphic_window.h"
+#include "analysis.h"
 #include <Graph_lib/GUI.h>
 #include <Graph_lib/Graph.h>
 #include <Graph_lib/Simple_window.h>
@@ -147,6 +148,9 @@ void Graphic_window::draw_some_graph(std::string str)
   TRACE_FUNC;
   std::vector<std::string> rev_pol = reverse_polish(lexeme(str));
   auto func = [&rev_pol] (double x) { return calc(rev_pol, x); };
+  // std::cout << get_info(rev_pol, -ceil(x_max() / (2 * s)) - 1, ceil(x_max() / (2 * s)) + 1,
+  //                       40.0 / 40000.0)
+  //                  .size();
   Graph_lib::Function* f1 =
       new Graph_lib::Function{func,     -ceil(x_max() / (2 * s)) - 1, ceil(x_max() / (2 * s)) + 1,
                               center,   4 * sqrt(s) * x_max() / 5,    double(s),

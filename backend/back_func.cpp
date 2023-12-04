@@ -1,6 +1,6 @@
 #include "back_func.h"
 #include "back_helpers.h"
-
+#include "tracer/tracer.h"
 using std::endl;
 using std::stack;
 using std::string;
@@ -8,6 +8,7 @@ using std::vector;
 
 bool checker (const string& expression)
 {
+  TRACE_FUNC;
   string expr = spaces_deleted(expression);
 
   // проверка на пустую строку
@@ -112,7 +113,55 @@ bool checker (const string& expression)
       // вспомогательная функция для проверки рядом стоящего с числом
       // символа
       auto is_neighborhood_ok = [&expr, &oper] (char s, char bracket)
-      { return (isdigit(s) || s == point || c_in_s(s, oper) || s == bracket); };
+      {
+        return (isdigit(s) || s == point || c_in_s(s, oper) || s == bracket || s == 'e' ||
+                s == 'p');
+        // Костыль жесткий!!!
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+      };
       bool is_left_ok = 1, is_right_ok = 1;
 
       if (i == 0)
@@ -143,6 +192,7 @@ bool checker (const string& expression)
         is_left_ok = is_neighborhood_ok(prev_c, open_br);
         if (!is_left_ok || !is_right_ok)
         {
+          std::cout << prev_c << next_c << std::endl;
           throw std::invalid_argument("invalid syntax near digit or variable");
           return false;
         }
@@ -154,6 +204,7 @@ bool checker (const string& expression)
 
 bool checker (const vector<string>& lexs)
 {
+  TRACE_FUNC;
   const string func = "sctelu";  // строка с функциями
                                  // (да, унарный минус - тоже функция)
   const vector<string> functions{"sin", "cos", "tan", "exp", "ln", "um"};
@@ -196,6 +247,7 @@ bool checker (const vector<string>& lexs)
 
 vector<string> lexeme (const string& expr)
 {
+  TRACE_FUNC;
   if (!checker(expr))
     return {};
 
@@ -282,6 +334,7 @@ vector<string> lexeme (const string& expr)
 
 vector<string> reverse_polish (const vector<string>& lexemes)
 {
+  TRACE_FUNC;
   if (!checker(lexemes))
     return {};
 
@@ -410,6 +463,7 @@ vector<string> reverse_polish (const vector<string>& lexemes)
 
 double calc (const vector<string>& rev_pol, double x)
 {
+  TRACE_FUNC;
   const string oper = "+-*/^";   // строка с операциями
   const string func = "sctelu";  // строка с функциями
   // (да, унарный минус - тоже функция)

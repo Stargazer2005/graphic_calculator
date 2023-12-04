@@ -2,10 +2,15 @@ cmake_minimum_required(VERSION 3.20)
 
 set(TARGET "GRAPHIC_WINDOW")
 
+# add_definitions(
+#     -DENABLE_TRACING
+# )
+
 set(HEADERS
     graphic_window.h
     back_func.h
     back_helpers.h
+    analysis.h
     ${LIB_DIR}/Graph_lib/fltk.h
     ${LIB_DIR}/Graph_lib/Graph.h
     ${LIB_DIR}/Graph_lib/GUI.h
@@ -17,6 +22,8 @@ set(SOURCES
     graphic_window.cpp
     back_func.cpp
     main.cpp
+    analysis.cpp
+    ${LIB_DIR}/tracer/tracer.cpp
     ${LIB_DIR}/Graph_lib/Graph.cpp
     ${LIB_DIR}/Graph_lib/GUI.cpp
     ${LIB_DIR}/Graph_lib/Window.cpp
