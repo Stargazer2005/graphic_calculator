@@ -57,20 +57,32 @@ int main ()
         if (!std::cin)
             break;
         std::cout << "y = " << s << std::endl;
-        for (double x = -10; x < 10; x += 0.1)
+        try
         {
-            try
+            std::vector<std::string> rev_pol = reverse_polish(lexeme(s));
+            for (double x = -10; x < 10; x += 0.1)
             {
-                res.push_back(std::to_string(calc(reverse_polish(lexeme(s)), x)));
+                try
+                {
+                    res.push_back(std::to_string(calc(rev_pol, x)));
+                }
+                catch (std::exception& exc)
+                {
+                    res.push_back(exc.what());
+                }
+                catch (...)
+                {
+                    res.push_back("exception");
+                }
             }
-            catch (std::exception& exc)
-            {
-                res.push_back(exc.what());
-            }
-            catch (...)
-            {
-                res.push_back("exception");
-            }
+        }
+        catch (std::exception& exc)
+        {
+            res.push_back(exc.what());
+        }
+        catch (...)
+        {
+            res.push_back("exception");
         }
         auto det_res = simple_modify(res);
         std::cout << "results: "
