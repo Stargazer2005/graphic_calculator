@@ -5,9 +5,12 @@
 #include <exception>
 #include <iostream>
 #include <sstream>
+#include <stack>
 #include <stdexcept>
 #include <string>
 #include <vector>
+
+using std::endl;
 
 // вспомогательная функция "содержится ли символ в строке?"
 bool c_in_s (char c, const std::string& s) { return (s.find(c) != std::string::npos); }
@@ -29,8 +32,9 @@ bool is_float (std::string str)
     return iss.eof() && !iss.fail();
 }
 
-void print (const std::vector<std::string>& v)
+template <typename T> void print (const std::vector<T>& v)
 {
+    std::cout << " size: " << v.size() << endl;
     std::cout << "{ ";
     for (size_t i = 0; i < v.size(); i++)
     {
@@ -38,19 +42,21 @@ void print (const std::vector<std::string>& v)
         if (i != v.size() - 1)
             std::cout << ", ";
     }
-    std::cout << " }" << std::endl;
+    std::cout << " }" << endl;
 }
 
-void print (const std::vector<char>& v)
+template <typename T> void print (std::stack<T> st)
 {
+    std::cout << " size: " << st.size() << endl;
     std::cout << "{ ";
-    for (size_t i = 0; i < v.size(); i++)
+    while (!st.empty())
     {
-        std::cout << "'" << v[i] << "'";
-        if (i != v.size() - 1)
+        std::cout << "''" << st.top() << "''";
+        st.pop();
+        if (!st.empty())
             std::cout << ", ";
     }
-    std::cout << " }" << std::endl;
+    std::cout << " }" << endl;
 }
 
 std::string spaces_deleted (const std::string& s)
