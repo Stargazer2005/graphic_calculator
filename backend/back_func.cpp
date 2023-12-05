@@ -463,7 +463,7 @@ vector<string> reverse_polish (const vector<string>& lexemes)
 
 double calc (const vector<string>& rev_pol, double x)
 {
-  TRACE_FUNC;
+  // TRACE_FUNC;
   const string oper = "+-*/^";   // строка с операциями
   const string func = "sctelu";  // строка с функциями
   // (да, унарный минус - тоже функция)

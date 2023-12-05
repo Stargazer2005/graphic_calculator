@@ -146,17 +146,24 @@ void Graphic_window::cb_new(Address, Address widget)
 void Graphic_window::draw_some_graph(std::string str)
 {
   TRACE_FUNC;
+  Vector_ref<Function> functions;
   std::vector<std::string> rev_pol = reverse_polish(lexeme(str));
   auto func = [&rev_pol] (double x) { return calc(rev_pol, x); };
-  // std::cout << get_info(rev_pol, -ceil(x_max() / (2 * s)) - 1, ceil(x_max() / (2 * s)) + 1,
-  //                       40.0 / 40000.0)
-  //                  .size();
-  Graph_lib::Function* f1 =
-      new Graph_lib::Function{func,     -ceil(x_max() / (2 * s)) - 1, ceil(x_max() / (2 * s)) + 1,
-                              center,   4 * sqrt(s) * x_max() / 5,    double(s),
-                              double(s)};
-  graphics.push_back(*f1);
-  attach(*f1);
+  double prec_seg = (ceil(x_max() / (2 * s)) + 1) / (sqrt(s) * x_max() / 5);
+
+  std::vector<Segment> seg = get_info(rev_pol, -ceil(x_max() / (2 * s)) - 1,
+                                      ceil(x_max() / (2 * s)) + 1, (2 * y_max() / s) + 1, prec_seg);
+  for (size_t i = 0; i < seg.size(); i++)
+  {
+    // std::cout << seg[i].start << " " << seg[i].stop << std::endl;
+    double prec_func = (((seg[i].stop - seg[i].start + 2) / (2 * ceil(x_max() / (2 * s)) + 2))) *
+                       (sqrt(s) * x_max() / 5);
+    Graph_lib::Function* f1 = new Graph_lib::Function{func,      seg[i].start, seg[i].stop, center,
+                                                      prec_func, double(s),    double(s)};
+    functions.push_back(*f1);
+    attach(*f1);
+  }
+  graphics.push_back(functions);
 }
 
 void Graphic_window::increase_scale()
@@ -204,9 +211,9 @@ void Graphic_window::draw_graph()
 {
   TRACE_FUNC;
   for (int i = 0; i < graphics.size(); ++i)
-  {
-    detach(graphics[i]);
-  }
+    for (int j = 0; j < graphics[i].size(); j++)
+      detach(graphics[i][j]);
+
   if (graphics.size() > 0)
     graphics.clear();  // очищает память тоже
   for (int i = 0; i < enter_menu.size(); ++i)

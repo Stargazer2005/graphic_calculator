@@ -66,7 +66,8 @@ private:
   Button new_button;
 
   Graph_lib::Vector_ref<In_box> enter_menu;
-  Graph_lib::Vector_ref<Function> graphics;
+  // Graph_lib::Vector_ref<Function> graphics;
+  std::vector<Graph_lib::Vector_ref<Function>> graphics;
 
   bool button_pushed{false};
   bool quit_button_pushed{false};
