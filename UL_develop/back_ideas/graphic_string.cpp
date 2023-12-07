@@ -1,17 +1,18 @@
-#include "back_func.h"
-#include "back_helpers.h"
+#include "backend.h"
+#include "helpers.h"
+#include <Tracer_lib/tracer.h>
+#include <cmath>
+#include <stack>
 
-using std::endl;
 using std::stack;
-using std::string;
-using std::vector;
+using namespace Backend;
 
-bool checker (const string& expression)
+bool graphic_string::is_str_valid()
 {
-    string expr = spaces_deleted(expression);
+    string ex = spaces_deleted(expr);
 
     // проверка на пустую строку
-    if (expr.empty())
+    if (ex.empty())
     {
         throw std::invalid_argument("empty expression");
         return false;
@@ -22,28 +23,27 @@ bool checker (const string& expression)
     const string oper = "+-*/^";  // строка с операциями
 
     // проверка на скобочки
-    if (count(expr.begin(), expr.end(), open_br) != count(expr.begin(), expr.end(), closed_br))
+    if (count(ex.begin(), ex.end(), open_br) != count(ex.begin(), ex.end(), closed_br))
     {
         throw std::invalid_argument("number of brackets mismatch");
         return false;
     }
     // первый и последний символы не должны быть знаками или точками (кроме
     // минуса)
-    if ((c_in_s(expr[0], oper + point) && expr[0] != minus) ||
-        c_in_s(expr[expr.size() - 1], oper + point))
+    if ((c_in_s(ex[0], oper + point) && ex[0] != minus) || c_in_s(ex[ex.size() - 1], oper + point))
     {
         throw std::invalid_argument("invalid syntax at the end or beginning of an expression");
         return false;
     }
     int count_brackets = 0;
-    for (size_t i = 0; i < expr.size(); i++)
+    for (size_t i = 0; i < ex.size(); i++)
     {
-        char c = expr[i];                 // текущий символ
+        char c = ex[i];                   // текущий символ
         char prev_c = ' ', next_c = ' ';  // предыдущий и следующий символы
         if (i > 0)
-            prev_c = expr[i - 1];
-        if (i < (expr.size() - 1))
-            next_c = expr[i + 1];
+            prev_c = ex[i - 1];
+        if (i < (ex.size() - 1))
+            next_c = ex[i + 1];
 
         // проверка на отсутсвие лишних символов
         if (!c_in_s(c, calc_chars))
@@ -107,11 +107,11 @@ bool checker (const string& expression)
             }
         }
         // при строке из одной цифры, эта проверка не подходит
-        else if ((isdigit(c) || c == var_x) && expr.size() > 1)
+        else if ((isdigit(c) || c == var_x) && ex.size() > 1)
         {
             // вспомогательная функция для проверки рядом стоящего с числом
             // символа
-            auto is_neighborhood_ok = [&expr, &oper] (char s, char bracket)
+            auto is_neighborhood_ok = [&ex, &oper] (char s, char bracket)
             { return (isdigit(s) || s == point || c_in_s(s, oper) || s == bracket); };
             bool is_left_ok = 1, is_right_ok = 1;
 
@@ -125,7 +125,7 @@ bool checker (const string& expression)
                     return false;
                 }
             }
-            else if (i == expr.size() - 1)
+            else if (i == ex.size() - 1)
             {
                 // у числа слева может быть: число, точка, знак или open_br
                 is_left_ok = is_neighborhood_ok(prev_c, open_br);
@@ -152,7 +152,7 @@ bool checker (const string& expression)
     return true;
 }
 
-bool checker (const vector<string>& lexs)
+bool graphic_string::is_lexs_valid()
 {
     const string func = "sctelu";  // строка с функциями
                                    // (да, унарный минус - тоже функция)
@@ -194,12 +194,12 @@ bool checker (const vector<string>& lexs)
     return true;
 }
 
-vector<string> lexeme (const string& expr)
+vector<string> graphic_string::lexemes()
 {
-    if (!checker(expr))
+    if (!is_str_valid())
         return {};
 
-    vector<string> lexs;
+    vector<string> res;
     string s;
     const string oper = "+-*/^u";
     for (size_t i = 0; i < expr.size(); i++)
@@ -210,15 +210,15 @@ vector<string> lexeme (const string& expr)
         {
             if (s.size() > 0)
             {
-                lexs.push_back(s);
+                res.push_back(s);
                 s = "";
             }
             if (i == 0)
-                lexs.push_back("um");
-            else if (c_in_s(transform_to_char(lexs[lexs.size() - 1]), oper + "("))
-                lexs.push_back("um");
+                res.push_back("um");
+            else if (c_in_s(transform_to_char(res[res.size() - 1]), oper + "("))
+                res.push_back("um");
             else
-                lexs.push_back("-");
+                res.push_back("-");
             break;
         }
         case open_br:
@@ -230,11 +230,11 @@ vector<string> lexeme (const string& expr)
         {
             if (s.size() > 0)
             {
-                lexs.push_back(s);
+                res.push_back(s);
                 s = "";
             }
             s = expr[i];
-            lexs.push_back(s);
+            res.push_back(s);
             s = "";
             break;
         }
@@ -252,7 +252,7 @@ vector<string> lexeme (const string& expr)
         {
             if (s.size() > 0 && !isdigit(s[0]))
             {
-                lexs.push_back(s);
+                res.push_back(s);
                 s = "";
             }
             s += expr[i];
@@ -264,7 +264,7 @@ vector<string> lexeme (const string& expr)
             {
                 if (s.size() > 0 && isdigit(s[0]))
                 {
-                    lexs.push_back(s);
+                    res.push_back(s);
                     s = "";
                 }
                 s += expr[i];
@@ -273,16 +273,16 @@ vector<string> lexeme (const string& expr)
         }
     }
     if (s.size() > 0)
-        lexs.push_back(s);
+        res.push_back(s);
 
     // std::cout << "lexeme:";
-    // print(lexs);
-    return (lexs);
+    // print(res);
+    return (res);
 }
 
-vector<string> reverse_polish (const vector<string>& lexemes)
+vector<string> graphic_string::reverse_polish()
 {
-    if (!checker(lexemes))
+    if (!is_lexs_valid())
         return {};
 
     // вектор, куда записывается итоговая запись
@@ -296,7 +296,7 @@ vector<string> reverse_polish (const vector<string>& lexemes)
     // строка с операциями
     const string oper = "+-*/^";
 
-    for (auto& lex : lexemes)
+    for (auto& lex : lexs)
     {
         // символ, обозначающий текущую лексему
         char curr = transform_to_char(lex);
@@ -408,7 +408,15 @@ vector<string> reverse_polish (const vector<string>& lexemes)
     return res;
 }
 
-double calc (const vector<string>& rev_pol, double x)
+graphic_string::graphic_string(string s)
+{
+    // TRACE_FUNC;
+    expr = s;
+    lexs = lexemes();
+    rev_pol = reverse_polish();
+}
+
+double graphic_string::calc(double x)
 {
     const string oper = "+-*/^";   // строка с операциями
     const string func = "sctelu";  // строка с функциями

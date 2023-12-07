@@ -1,4 +1,6 @@
-#include "back_func.h"
+#include "back_ideas/backend.h"
+#include <iostream>
+#include <sstream>
 
 void vec_print (const std::vector<std::string>& v)
 {
@@ -59,12 +61,12 @@ int main ()
         std::cout << "y = " << s << std::endl;
         try
         {
-            std::vector<std::string> rev_pol = reverse_polish(lexeme(s));
+            Backend::graphic_string gr_s = s;
             for (double x = -10; x < 10; x += 0.1)
             {
                 try
                 {
-                    res.push_back(std::to_string(calc(rev_pol, x)));
+                    res.push_back(std::to_string(gr_s.calc(x)));
                 }
                 catch (std::exception& exc)
                 {
