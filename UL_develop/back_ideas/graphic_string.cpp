@@ -7,7 +7,7 @@
 using std::stack;
 using namespace Backend;
 
-bool graphic_string::is_str_valid()
+bool graphic_string::is_str_valid() const
 {
     string ex = spaces_deleted(expr);
 
@@ -152,7 +152,7 @@ bool graphic_string::is_str_valid()
     return true;
 }
 
-bool graphic_string::is_lexs_valid()
+bool graphic_string::is_lexs_valid() const
 {
     const string func = "sctelu";  // строка с функциями
                                    // (да, унарный минус - тоже функция)
@@ -194,7 +194,7 @@ bool graphic_string::is_lexs_valid()
     return true;
 }
 
-vector<string> graphic_string::lexemes()
+vector<string> graphic_string::lexemes() const
 {
     if (!is_str_valid())
         return {};
@@ -280,7 +280,7 @@ vector<string> graphic_string::lexemes()
     return (res);
 }
 
-vector<string> graphic_string::reverse_polish()
+vector<string> graphic_string::reverse_polish() const
 {
     if (!is_lexs_valid())
         return {};
@@ -416,7 +416,7 @@ graphic_string::graphic_string(string s)
     rev_pol = reverse_polish();
 }
 
-double graphic_string::calc(double x)
+double graphic_string::calc(double x) const
 {
     const string oper = "+-*/^";   // строка с операциями
     const string func = "sctelu";  // строка с функциями

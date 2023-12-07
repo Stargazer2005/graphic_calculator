@@ -14,6 +14,18 @@ void vec_print (const std::vector<std::string>& v)
     std::cout << " }" << std::endl;
 }
 
+void vec_print (const std::vector<Backend::Segment>& v)
+{
+    std::cout << "{ ";
+    for (size_t i = 0; i < v.size(); i++)
+    {
+        std::cout << "[" << v[i].start << "; " << v[i].stop << "]";
+        if (i != v.size() - 1)
+            std::cout << ", ";
+    }
+    std::cout << " }" << std::endl;
+}
+
 bool str_is_double (std::string str)
 {
     std::istringstream iss(str);
@@ -77,6 +89,9 @@ int main ()
                     res.push_back("exception");
                 }
             }
+            std::cout << "segments: "
+                      << " ";
+            vec_print(gr_s.domain_segments(-10.0, 10.0, 600.0, 0.001));
         }
         catch (std::exception& exc)
         {

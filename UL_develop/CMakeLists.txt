@@ -11,6 +11,7 @@ set(SOURCES
     ${LIB_DIR}/Tracer_lib/tracer.cpp
     main.cpp
     back_ideas/graphic_string.cpp
+    back_ideas/segments.cpp
 )
 
 project(${TARGET} CXX)
