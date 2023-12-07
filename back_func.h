@@ -4,7 +4,6 @@
 #include <cmath>
 #include <exception>
 #include <iostream>
-#include <regex>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -16,8 +15,7 @@
 std::vector<std::string> lexeme (const std::string& expr);
 
 // функция, которая переводит список лексем в обратную польскую запись
-std::vector<std::string>
-reverse_polish (const std::vector<std::string>& lexs);
+std::vector<std::string> reverse_polish (const std::vector<std::string>& lexs);
 
 // делает Дмитрий
 
@@ -34,3 +32,21 @@ bool checker (const std::vector<std::string>& lexs);
 // функция, которая по обратной польской записи лексем и значению переменной
 // x вычисляет значение y
 double calc (const std::vector<std::string>& rev_pol, double x);
+
+const char point = '.';
+const char plus = '+';
+const char minus = '-';
+const char mul = '*';
+const char divi = '/';
+const char power = '^';
+const char open_br = '(';
+const char closed_br = ')';
+const char number = 'n';
+const char var_x = 'x';
+
+const char c_sin = 's';
+const char c_cos = 'c';
+const char c_tan = 't';
+const char c_exp = 'e';
+const char c_ln = 'l';
+const char uminus = 'u';
