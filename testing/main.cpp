@@ -1,4 +1,4 @@
-#include "back_ideas/backend.h"
+#include "test_backend/backend.h"
 #include <iostream>
 #include <sstream>
 
@@ -60,9 +60,9 @@ std::vector<std::string> simple_modify (std::vector<std::string> v)
 
 int main ()
 {
-    // D:/Programs/2023-2024/C++/build/graphic_calculator/UL_develop/backend.exe <
-    // D:/Programs/2023-2024/C++/graphic_calculator/UL_develop/test.txt >
-    // D:/Programs/2023-2024/C++/graphic_calculator/UL_develop/test_out.txt 2>&1
+    // ../../../bin/test_grahpic_calculator_backend.exe
+    // < ../../../graphic_calculator/testing/test.txt >
+    // ../../../graphic_calculator/testing/test_out.txt 2>&1
     std::string s;
     while (std::cin)
     {
@@ -73,7 +73,7 @@ int main ()
         std::cout << "y = " << s << std::endl;
         try
         {
-            Backend::graphic_string gr_s = s;
+            Backend::function_string gr_s = s;
             for (double x = -10; x < 10; x += 0.1)
             {
                 try

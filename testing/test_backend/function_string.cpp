@@ -1,13 +1,14 @@
 #include "backend.h"
-#include "helpers.h"
+#include "servant.h"
 #include <Tracer_lib/tracer.h>
 #include <cmath>
 #include <stack>
 
 using std::stack;
+
 using namespace Backend;
 
-bool graphic_string::is_str_valid() const
+bool function_string::is_str_valid() const
 {
     string ex = spaces_deleted(expr);
 
@@ -152,7 +153,7 @@ bool graphic_string::is_str_valid() const
     return true;
 }
 
-bool graphic_string::is_lexs_valid() const
+bool function_string::is_lexs_valid() const
 {
     const string func = "sctelu";  // строка с функциями
                                    // (да, унарный минус - тоже функция)
@@ -194,7 +195,7 @@ bool graphic_string::is_lexs_valid() const
     return true;
 }
 
-vector<string> graphic_string::lexemes() const
+vector<string> function_string::lexemes() const
 {
     if (!is_str_valid())
         return {};
@@ -280,7 +281,7 @@ vector<string> graphic_string::lexemes() const
     return (res);
 }
 
-vector<string> graphic_string::reverse_polish() const
+vector<string> function_string::reverse_polish() const
 {
     if (!is_lexs_valid())
         return {};
@@ -408,15 +409,16 @@ vector<string> graphic_string::reverse_polish() const
     return res;
 }
 
-graphic_string::graphic_string(string s)
+function_string::function_string(string s)
 {
     // TRACE_FUNC;
     expr = s;
     lexs = lexemes();
     rev_pol = reverse_polish();
+    has_var = c_in_s('x', s);
 }
 
-double graphic_string::calc(double x) const
+double function_string::calc(double x) const
 {
     const string oper = "+-*/^";   // строка с операциями
     const string func = "sctelu";  // строка с функциями

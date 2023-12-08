@@ -1,7 +1,6 @@
 #pragma once
 
 #include <functional>
-// #include <iostream>
 
 using std::string;
 using std::vector;
@@ -10,12 +9,11 @@ namespace Backend {
 
 struct Segment
 {
-    // Segment(double s, double v);
     double start;
     double stop;
 };
 
-class graphic_string
+class function_string
 {
   private:
     // variables:
@@ -26,6 +24,8 @@ class graphic_string
     vector<string> rev_pol;
     // список лексем
     vector<string> lexs;
+    // список отрезков, на котором рисуем функцию
+    vector<Segment> segments;
 
     // functions:
 
@@ -43,14 +43,20 @@ class graphic_string
     vector<string> reverse_polish () const;
 
   public:
-    graphic_string(string s);
+    // конструктор по std::string
+    function_string(string s);
     // метод, который по значению переменной x вычисляет значение y
     double calc (double x) const;
-
+    // метод-сеттер, формирующий отрезки, на которых определена функция
+    void set_segments (int max_x, int max_y, int scale);
+    // метод-геттер, возвращающий отрезки, на которых определена функция
+    vector<Segment> get_segments ();
+    // лямбда-функция, считающая по заданному x значение функции
+    std::function<double(double)> calculate = [this] (double x) { return calc(x); };
+    // имеет ли строка в себе переменную
+    bool has_var;
     // метод, считающий отрезки, где функция будет отрисовываться
     vector<Segment> domain_segments (double l_border, double r_border, double height,
                                      double precision) const;
-    // std::function<double(double)> calked = [this] (double x) { return calc(x); }
 };
-
 }  // namespace Backend

@@ -1,9 +1,9 @@
-#include "backend.h"
+#include "function_string.h"
+#include <cmath>
 
-using namespace Backend;
-
-vector<Segment> graphic_string::domain_segments(double l_border, double r_border, double height,
-                                                double precision) const
+vector<Backend::Segment> Backend::function_string::domain_segments(double l_border, double r_border,
+                                                                   double height,
+                                                                   double precision) const
 {
     // std::cout << "IN  ->"
     //           << "Get_info" << std::endl;
@@ -60,3 +60,12 @@ vector<Segment> graphic_string::domain_segments(double l_border, double r_border
     //           << "get_info" << std::endl;
     return res;
 }
+
+void Backend::function_string::set_segments(int max_x, int max_y, int scale)
+{
+    double prec_seg = (ceil(max_x / (2 * scale)) + 1) / 100000;
+    segments = domain_segments(-ceil(max_x / (2 * scale)) - 1, ceil(max_x / (2 * scale)) + 1,
+                               (2 * max_y / scale) + 1, prec_seg);
+}
+
+vector<Backend::Segment> Backend::function_string::get_segments() { return segments; }
