@@ -79,6 +79,7 @@ int main ()
                 try
                 {
                     res.push_back(std::to_string(gr_s.calc(x)));
+                    // res.push_back(" ");
                 }
                 catch (std::exception& exc)
                 {
@@ -89,8 +90,11 @@ int main ()
                     res.push_back("exception");
                 }
             }
-            std::cout << "segments: "
-                      << " ";
+            std::cout << "lexemes: ";
+            vec_print(gr_s.lexs);
+            std::cout << "rev_pol: ";
+            vec_print(gr_s.rev_pol);
+            std::cout << "segments: ";
             vec_print(gr_s.domain_segments(-10.0, 10.0, 600.0, 0.001));
         }
         catch (std::exception& exc)
@@ -102,12 +106,10 @@ int main ()
             res.push_back("exception");
         }
         auto det_res = simple_modify(res);
-        std::cout << "results: "
-                  << " ";
+        std::cout << "results: ";
         vec_print(det_res);
         modify(res);
-        std::cout << "results: "
-                  << " ";
+        std::cout << "results: ";
         vec_print(res);
     }
 

@@ -11,6 +11,8 @@ set(HEADERS
 set(SOURCES
     ${LIB_DIR}/Tracer_lib/tracer.cpp
     main.cpp
+    test_backend/servant.cpp
+    test_backend/checkers.cpp
     test_backend/function_string.cpp
     test_backend/segment_methods.cpp
 )

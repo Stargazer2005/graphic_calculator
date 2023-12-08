@@ -15,7 +15,7 @@ struct Segment
 
 class function_string
 {
-  private:
+  public:
     // variables:
 
     // значение строки
@@ -42,7 +42,6 @@ class function_string
     // метод, который переводит список лексем в обратную польскую запись
     vector<string> reverse_polish () const;
 
-  public:
     // конструктор по std::string
     function_string(string s);
     // метод, который по значению переменной x вычисляет значение y
