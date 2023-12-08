@@ -5,8 +5,6 @@
 #include <Graph_lib/GUI.h>
 #include <Graph_lib/Graph.h>
 #include <Graph_lib/Window.h>
-#include <string>
-#include <vector>
 
 using Graph_lib::Button;
 using Graph_lib::Point;

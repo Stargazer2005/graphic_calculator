@@ -1,4 +1,4 @@
-#include "function_string.h"
+#include "backend.h"
 #include <cmath>
 
 vector<Backend::Segment> Backend::function_string::domain_segments(double l_border, double r_border,

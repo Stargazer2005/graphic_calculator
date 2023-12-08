@@ -2,6 +2,7 @@
 #include "constants.h"
 
 using namespace Graph_lib;
+using namespace Front_consts;
 
 Graphic_lib::Axis::Axis(Orientation d, Point xy, pix_numb length, pix_numb scale,
                         const std::string& lab)

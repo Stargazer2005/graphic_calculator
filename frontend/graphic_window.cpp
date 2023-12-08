@@ -3,6 +3,7 @@
 #include <Graph_lib/Simple_window.h>
 
 using namespace Graph_lib;
+using namespace Front_consts;
 
 Graphic_lib::Graphic_window::Graphic_window(Point xy, pix_numb w, pix_numb h,
                                             const std::string& title, pix_numb scale)
