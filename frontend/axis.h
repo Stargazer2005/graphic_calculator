@@ -1,15 +1,18 @@
 #pragma once
 
-#include "constants.h"
 #include <Graph_lib/GUI.h>
 #include <Graph_lib/Graph.h>
 
 using Graph_lib::Point;
 
-namespace Graphic_lib {
+using pix_numb = int;
 
-struct Axis : Graph_lib::Shape
+namespace Graphix_calc {
+
+// наш собственный класс осей
+class Axis : public Graph_lib::Shape
 {
+  public:
     enum Orientation
     {
         x,
@@ -22,10 +25,12 @@ struct Axis : Graph_lib::Shape
     void draw_lines () const override;
 
     void set_color (Graph_lib::Color c);
+
+  private:
     // расстояние между насечками
     pix_numb dist;
     Graph_lib::Text label;
     Graph_lib::Lines notches;
 };
 
-}  // namespace Graphic_lib
+}  // namespace Graphix_calc

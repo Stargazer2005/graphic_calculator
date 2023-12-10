@@ -1,12 +1,14 @@
-#include "backend.h"
-#include "constants.h"
-#include "servant.h"
 #include <cmath>
+
+#include "function_string.h"
+#include "servant/constants.h"
+#include "servant/servant.h"
 
 using std::stack;
 
-using namespace Backend;
 using namespace Back_consts;
+
+namespace Backend {
 
 vector<string> function_string::lexemes() const
 {
@@ -230,7 +232,6 @@ function_string::function_string(string s)
     expr = s;
     lexs = lexemes();
     rev_pol = reverse_polish();
-    has_var = c_in_s('x', s);
 }
 
 double function_string::calc(double x) const
@@ -318,4 +319,6 @@ double function_string::calc(double x) const
             throw std::invalid_argument("violation of domain of definition of function");
     }  // последнее, что осталось в стэке после всех действий - и есть ответ
     return Stack.top();
+}
+
 }

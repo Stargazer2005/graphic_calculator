@@ -1,8 +1,8 @@
-#include "frontend/frontend.h"
+#include "frontend.h"
 
 int main ()
 {
-    Graphic_lib::Graphic_window grw(Graph_lib::Point(100, 100), 1000, 700, "FIDocalcus", 25);
+    Graphix_calc::Graphix_window grw;
     while (grw.window_is_open())
         grw.wait_for_button();
 }

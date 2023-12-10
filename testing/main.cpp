@@ -95,7 +95,7 @@ int main ()
             std::cout << "rev_pol: ";
             vec_print(gr_s.rev_pol);
             std::cout << "segments: ";
-            vec_print(gr_s.domain_segments(-10.0, 10.0, 600.0, 0.001));
+            vec_print(gr_s.domain_segments(-10.0, 10.0, 600.0 / 25, 0.001));
         }
         catch (std::exception& exc)
         {

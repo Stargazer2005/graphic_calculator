@@ -1,11 +1,12 @@
 #include "axis.h"
-#include "constants.h"
+#include "servant/constants.h"
 
 using namespace Graph_lib;
 using namespace Front_consts;
 
-Graphic_lib::Axis::Axis(Orientation d, Point xy, pix_numb length, pix_numb scale,
-                        const std::string& lab)
+namespace Graphix_calc {
+
+Axis::Axis(Orientation d, Point xy, pix_numb length, pix_numb scale, const std::string& lab)
     : dist{scale}, label{Point{0, 0}, lab}
 {
     if (length < 0)
@@ -59,16 +60,18 @@ Graphic_lib::Axis::Axis(Orientation d, Point xy, pix_numb length, pix_numb scale
     }
 }
 
-void Graphic_lib::Axis::draw_lines() const
+void Axis::draw_lines() const
 {
     Shape::draw_lines();
     notches.draw();
     label.draw();
 }
 
-void Graphic_lib::Axis::set_color(Color c)
+void Axis::set_color(Color c)
 {
     Shape::set_color(c);
     notches.set_color(c);
     label.set_color(c);
 }
+
+}  // namespace Graphix_calc

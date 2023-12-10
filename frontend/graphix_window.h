@@ -1,21 +1,21 @@
 #pragma once
 
-#include "axis.h"
-#include "constants.h"
 #include <Graph_lib/GUI.h>
 #include <Graph_lib/Graph.h>
 #include <Graph_lib/Window.h>
 
+#include "axis.h"
+
 using Graph_lib::Button;
 using Graph_lib::Point;
 
-namespace Graphic_lib {
+namespace Graphix_calc {
 
 // класс окна с осями и возможностью добавлять графики
-class Graphic_window : public Graph_lib::Window
+class Graphix_window : public Graph_lib::Window
 {
   public:
-    Graphic_window(Point xy, pix_numb w, pix_numb h, const std::string& title, pix_numb scale);
+    Graphix_window();
 
     void wait_for_button ()
     {
@@ -73,4 +73,4 @@ class Graphic_window : public Graph_lib::Window
     void draw_some_graph (std::string s);
 };
 
-}  // namespace Graphic_lib
+}  // namespace Graphix_calc

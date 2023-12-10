@@ -3,15 +3,20 @@ cmake_minimum_required(VERSION 3.20)
 set(TARGET "graphic_calculator")
 
 set(HEADERS
-    frontend/graphic_window.h
+#front
+    frontend/graphix_window.h
     frontend/axis.h
-    frontend/constants.h
-    frontend/frontend.h
+    frontend/servant/constants.h
+    frontend/segmented_function.h
 
-    backend/servant.h
+    frontend.h
+
+#back
     backend/function_string.h
-    backend/constants.h
-    backend/backend.h
+    backend/servant/servant.h
+    backend/servant/constants.h
+
+    backend.h
 
     ${LIB_DIR}/Graph_lib/fltk.h
     ${LIB_DIR}/Graph_lib/Graph.h
@@ -21,15 +26,17 @@ set(HEADERS
     ${LIB_DIR}/Graph_lib/Window.h
 )
 set(SOURCES
-
-    backend/function_string.cpp
-    backend/segment_methods.cpp
-    backend/servant.cpp
-    backend/checkers.cpp
-
-    frontend/graphic_window.cpp
+#front
+    frontend/graphix_window.cpp
     frontend/axis.cpp
-
+    frontend/segmented_function.cpp
+    
+#back
+    backend/function_string.cpp
+    backend/servant/servant.cpp
+    backend/function_string_checkers.cpp
+    
+#main
     main.cpp
 
     ${LIB_DIR}/Graph_lib/Graph.cpp

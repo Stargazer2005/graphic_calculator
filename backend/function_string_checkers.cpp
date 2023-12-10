@@ -1,11 +1,12 @@
-#include "backend.h"
-#include "constants.h"
-#include "servant.h"
+#include "function_string.h"
+#include "servant/constants.h"
+#include "servant/servant.h"
 
 using std::stack;
 
-using namespace Backend;
 using namespace Back_consts;
+
+namespace Backend {
 
 bool function_string::is_str_valid() const
 {
@@ -216,14 +217,14 @@ bool function_string::is_lexs_valid() const
                     // ситуация рода: "x(x)"
                     if (lexs[i + 1] == "(")
                     {
-                        throw std::invalid_argument("n_usage of wrong function name");
+                        throw std::invalid_argument("usage of wrong function name");
                         return false;
                     }
                 }
                 // ситуация рода: "xx"
                 if (lexs[i].size() > 1)
                 {
-                    throw std::invalid_argument("n_usage of extra variable");
+                    throw std::invalid_argument("usage of extra variable");
                     return false;
                 }
             }
@@ -231,3 +232,5 @@ bool function_string::is_lexs_valid() const
     }
     return true;
 }
+
+}  // namespace Backend

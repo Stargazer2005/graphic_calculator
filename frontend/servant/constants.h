@@ -1,12 +1,10 @@
 #pragma once
 
-using pix_numb = int;
-
 namespace Front_consts {
 
-const pix_numb margin = 20;
-const pix_numb min_scale = 3;
-const pix_numb max_scale = 100000;
+const int margin = 20;
+const int min_scale = 3;
+const int max_scale = 100000;
 const int graphs_number = 5;
 const double scale_coef = 1.2;
 
