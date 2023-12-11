@@ -1,10 +1,13 @@
 #pragma once
 
+#include "axis.h"
+#include "input_box.h"
+#include "servant/constants.h"
 #include <Graph_lib/GUI.h>
 #include <Graph_lib/Graph.h>
 #include <Graph_lib/Window.h>
-
-#include "axis.h"
+#include <string>
+#include <vector>
 
 using Graph_lib::Button;
 using Graph_lib::Point;
@@ -15,7 +18,7 @@ namespace Graphix_calc {
 class Graphix_window : public Graph_lib::Window
 {
   public:
-    Graphix_window();
+    Graphix_window(Point xy, pix_numb w, pix_numb h, const std::string& title, pix_numb scale);
 
     void wait_for_button ()
     {
@@ -40,11 +43,10 @@ class Graphix_window : public Graph_lib::Window
     Graph_lib::Menu zoom_menu;
     Button incr_button;
     Button decr_button;
-
-    Button draw_button;
     Button new_button;
+    // Button del_button;
 
-    Graph_lib::Vector_ref<Graph_lib::In_box> enter_menu;
+    std::vector<Graphix_calc::Input_box> enter_menu;
     std::vector<Graph_lib::Vector_ref<Graph_lib::Function>> graphics;
 
     bool button_pushed{false};
@@ -54,7 +56,10 @@ class Graphix_window : public Graph_lib::Window
     static void cb_incr (void*, void* widget);
     static void cb_decr (void*, void* widget);
     static void cb_draw (void*, void* widget);
+    static void cb_hide (void*, void* widget);
     static void cb_new (void*, void* widget);
+
+    // static void cb_del (void*, void* widget);
 
     void quit ()
     {
@@ -66,11 +71,15 @@ class Graphix_window : public Graph_lib::Window
 
     void decrease_scale ();
 
-    void draw_graphs ();
+    void draw_graph (size_t i);
+
+    void hide_graph (size_t i);
 
     void new_graph ();
 
-    void draw_some_graph (std::string s);
+    // void del_graph ();
+
+    void draw_some_graph (std::string s, size_t number);
 };
 
 }  // namespace Graphix_calc
