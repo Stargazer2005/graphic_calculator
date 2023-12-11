@@ -5,9 +5,18 @@
 using Graph_lib::Button;
 
 namespace Graphix_calc {
-struct Numbered_button : Button
+
+class Numbered_button : public Button
 {
+  public:
     using Button::Button;
+
+    void set_number (int value) { number = value; }
+
+    int get_number () { return number; }
+
+  private:
     int number;
 };
+
 }  // namespace Graphix_calc

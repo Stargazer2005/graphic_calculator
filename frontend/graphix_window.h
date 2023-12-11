@@ -30,8 +30,6 @@ class Graphix_window : public Graph_lib::Window
 
     bool window_is_open () { return !quit_button_pushed; }
 
-    std::vector<std::string> get_func () { return func_strings; }
-
   private:
     // общее значение масштаба: количество пикселей в единичном отрезке
     pix_numb scale;

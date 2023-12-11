@@ -9,6 +9,10 @@ set(HEADERS
     frontend/servant/constants.h
     frontend/segmented_function.h
 
+    #need refactor
+    frontend/input_box.h
+    frontend/num_button.h
+    
     frontend.h
 
 #back
