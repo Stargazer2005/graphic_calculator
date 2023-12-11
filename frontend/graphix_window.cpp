@@ -9,7 +9,7 @@ using pix_numb = int;
 
 using namespace Graph_lib;
 using namespace Front_consts;
-using Graphix_calc::Button_num;
+using Graphix_calc::Numbered_button;
 
 namespace Graphix_calc {
 
@@ -21,11 +21,12 @@ Graphix_window::Graphix_window(Point xy, pix_numb w, pix_numb h, const std::stri
       y_axis{new Graphix_calc::Axis{Graphix_calc::Axis::Orientation::y,
                                     Point(x_max() / 2, y_max() / 2), y_max(), scale, "Y"}},
       center{w / 2, h / 2}, quit_button{Point{x_max() - 70, 0}, 70, 20, "Quit", cb_quit},
-      zoom_menu{Point{w - 30, 20}, 30, 30, Graph_lib::Menu::Kind::vertical, ""},
-      incr_button{Point{0, 0}, 30, 30, "+", cb_incr},
-      decr_button{Point{0, 0}, 30, 30, "-", cb_decr},
+      incr_button{Point{w - 30, 20}, 30, 30, "+", cb_incr},
+      decr_button{Point{w - 30, 50}, 30, 30, "-", cb_decr},
       new_button{Point{230, 0}, 70, 20, "New graph", cb_new}
 {
+    size_range(w, h, w, h);  // Фиксируем масштаб
+
     x_axis->set_color(Graph_lib::Color::Color_type::dark_cyan);
     attach(*x_axis);
 
@@ -33,9 +34,8 @@ Graphix_window::Graphix_window(Point xy, pix_numb w, pix_numb h, const std::stri
     attach(*y_axis);
 
     attach(quit_button);
-    zoom_menu.attach(incr_button);
-    zoom_menu.attach(decr_button);
-    attach(zoom_menu);
+    attach(incr_button);
+    attach(decr_button);
     attach(new_button);
 
     for (short i = 0; i < graphs_number; ++i)
@@ -44,15 +44,19 @@ Graphix_window::Graphix_window(Point xy, pix_numb w, pix_numb h, const std::stri
     Input_box new_input;
     In_box* new_ib = new In_box{Point{30, 0}, 200, 30, "y = "};
     attach(*new_ib);
-    Button_num* new_draw_button = new Button_num{Point{0, 30}, 70, 20, "Draw", cb_draw};
+    Numbered_button* new_draw_button = new Numbered_button{Point{0, 30}, 70, 20, "Draw", cb_draw};
     new_draw_button->number = 0;
     attach(*new_draw_button);
-    Button_num* new_hide_button = new Button_num{Point{80, 30}, 70, 20, "Hide", cb_hide};
+    Numbered_button* new_hide_button = new Numbered_button{Point{80, 30}, 70, 20, "Hide", cb_hide};
     new_hide_button->number = 0;
     attach(*new_hide_button);
+    Numbered_button* new_rem_button = new Numbered_button{Point{160, 30}, 70, 20, "Remove", cb_rem};
+    new_rem_button->number = 0;
+    attach(*new_rem_button);
     new_input.in_box = new_ib;
     new_input.draw_button = new_draw_button;
     new_input.hide_button = new_hide_button;
+    new_input.rem_button = new_rem_button;
     enter_menu.push_back(new_input);
 }
 
@@ -76,14 +80,20 @@ void Graphix_window::cb_decr(void*, void* widget)
 
 void Graphix_window::cb_draw(void*, void* widget)
 {
-    auto& btn = Graph_lib::reference_to<Button_num>(widget);
+    auto& btn = Graph_lib::reference_to<Numbered_button>(widget);
     dynamic_cast<Graphix_window&>(btn.window()).draw_graph(btn.number);
 }
 
 void Graphix_window::cb_hide(void*, void* widget)
 {
-    auto& btn = Graph_lib::reference_to<Button_num>(widget);
+    auto& btn = Graph_lib::reference_to<Numbered_button>(widget);
     dynamic_cast<Graphix_window&>(btn.window()).hide_graph(btn.number);
+}
+
+void Graphix_window::cb_rem(void*, void* widget)
+{
+    auto& btn = Graph_lib::reference_to<Numbered_button>(widget);
+    dynamic_cast<Graphix_window&>(btn.window()).rem_graph(btn.number);
 }
 
 void Graphix_window::cb_new(void*, void* widget)
@@ -91,12 +101,6 @@ void Graphix_window::cb_new(void*, void* widget)
     auto& btn = Graph_lib::reference_to<Button>(widget);
     dynamic_cast<Graphix_window&>(btn.window()).new_graph();
 }
-
-// void Graphix_window::cb_del(void*, void* widget)
-// {
-//   auto& btn = Graph_lib::reference_to<Button>(widget);
-//   dynamic_cast<Graphix_window&>(btn.window()).del_graph();
-// }
 
 void Graphix_window::draw_some_graph(std::string str, size_t number)
 {
@@ -191,45 +195,60 @@ void Graphix_window::hide_graph(size_t i)
     button_pushed = true;
 }
 
+void Graphix_calc::Graphix_window::rem_graph(size_t i)
+{
+    detach(*(enter_menu[i].in_box));
+    detach(*(enter_menu[i].draw_button));
+    detach(*(enter_menu[i].hide_button));
+    detach(*(enter_menu[i].rem_button));
+    if (enter_menu.size() == graphs_number)
+        attach(new_button);
+    for (size_t j = i + 1; j < enter_menu.size(); ++j)
+    {
+        enter_menu[j].in_box->move(0, -60);
+        enter_menu[j].draw_button->move(0, -60);
+        enter_menu[j].hide_button->move(0, -60);
+        enter_menu[j].rem_button->move(0, -60);
+        enter_menu[j].draw_button->number--;
+        enter_menu[j].hide_button->number--;
+        enter_menu[j].rem_button->number--;
+    }
+    enter_menu.erase(enter_menu.begin() + i);
+    if (graphics.size() > i)
+    {
+        for (int j = 0; j < graphics[i].size(); ++j)
+            detach(graphics[i][j]);
+        graphics.erase(graphics.begin() + i);
+    }
+    button_pushed = true;
+}
+
 void Graphix_window::new_graph()
 {
     Input_box new_input;
     In_box* new_ib = new In_box{Point{30, 60 * int(enter_menu.size())}, 200, 30, "y = "};
     attach(*new_ib);
-    Button_num* new_draw_button =
-        new Button_num{Point{0, 60 * int(enter_menu.size()) + 30}, 70, 20, "Draw", cb_draw};
+    Numbered_button* new_draw_button =
+        new Numbered_button{Point{0, 60 * int(enter_menu.size()) + 30}, 70, 20, "Draw", cb_draw};
     new_draw_button->number = int(enter_menu.size());
     attach(*new_draw_button);
-    Button_num* new_hide_button =
-        new Button_num{Point{80, 60 * int(enter_menu.size()) + 30}, 70, 20, "Hide", cb_hide};
+    Numbered_button* new_hide_button =
+        new Numbered_button{Point{80, 60 * int(enter_menu.size()) + 30}, 70, 20, "Hide", cb_hide};
     new_hide_button->number = int(enter_menu.size());
     attach(*new_hide_button);
+    Numbered_button* new_rem_button =
+        new Numbered_button{Point{160, 60 * int(enter_menu.size()) + 30}, 70, 20, "Remove", cb_rem};
+    new_rem_button->number = int(enter_menu.size());
+    attach(*new_rem_button);
     new_input.in_box = new_ib;
     new_input.draw_button = new_draw_button;
     new_input.hide_button = new_hide_button;
+    new_input.rem_button = new_rem_button;
     enter_menu.push_back(new_input);
     Vector_ref<Function> v;
     graphics.push_back(v);
-    // if (enter_menu.size() == 2)
-    //   attach(del_button);
     if (enter_menu.size() == graphs_number)
         detach(new_button);
     button_pushed = true;
 }
-
-// void Graphix_calc::Graphix_window::del_graph()
-// {
-//   detach(*(enter_menu[-1].in_box));
-//   detach(*(enter_menu[-1].draw_button));
-//   detach(*(enter_menu[-1].hide_button));
-//   delete enter_menu[-1].in_box;
-//   delete enter_menu[-1].draw_button;
-//   delete enter_menu[-1].hide_button;
-//   enter_menu.pop_back();
-//   if (graphics.size() > 0)
-//     graphics.pop_back();
-//   if (enter_menu.size() == 1)
-//     detach(del_button);
-//   button_pushed = true;
-// }
 }  // namespace Graphix_calc

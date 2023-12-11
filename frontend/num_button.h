@@ -5,7 +5,7 @@
 using Graph_lib::Button;
 
 namespace Graphix_calc {
-struct Button_num : Button
+struct Numbered_button : Button
 {
     using Button::Button;
     int number;

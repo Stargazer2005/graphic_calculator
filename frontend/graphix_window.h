@@ -40,11 +40,9 @@ class Graphix_window : public Graph_lib::Window
     std::vector<std::string> func_strings;
     Button quit_button;
 
-    Graph_lib::Menu zoom_menu;
     Button incr_button;
     Button decr_button;
     Button new_button;
-    // Button del_button;
 
     std::vector<Graphix_calc::Input_box> enter_menu;
     std::vector<Graph_lib::Vector_ref<Graph_lib::Function>> graphics;
@@ -57,9 +55,8 @@ class Graphix_window : public Graph_lib::Window
     static void cb_decr (void*, void* widget);
     static void cb_draw (void*, void* widget);
     static void cb_hide (void*, void* widget);
+    static void cb_rem (void*, void* widget);
     static void cb_new (void*, void* widget);
-
-    // static void cb_del (void*, void* widget);
 
     void quit ()
     {
@@ -75,9 +72,9 @@ class Graphix_window : public Graph_lib::Window
 
     void hide_graph (size_t i);
 
-    void new_graph ();
+    void rem_graph (size_t i);
 
-    // void del_graph ();
+    void new_graph ();
 
     void draw_some_graph (std::string s, size_t number);
 };
