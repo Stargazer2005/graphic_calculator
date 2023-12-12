@@ -2,22 +2,22 @@
 
 namespace Back_consts {
 
-const char point = '.';
-const char plus = '+';
-const char minus = '-';
-const char mul = '*';
-const char divi = '/';
-const char power = '^';
-const char open_br = '(';
-const char closed_br = ')';
-const char number = 'n';
-const char var_x = 'x';
+constexpr char point = '.';
+constexpr char plus = '+';
+constexpr char minus = '-';
+constexpr char mul = '*';
+constexpr char divi = '/';
+constexpr char power = '^';
+constexpr char open_br = '(';
+constexpr char closed_br = ')';
+constexpr char number = 'n';
+constexpr char var_x = 'x';
 
-const char c_sin = 's';
-const char c_cos = 'c';
-const char c_tan = 't';
-const char c_exp = 'e';
-const char c_ln = 'l';
-const char uminus = 'u';
+constexpr char c_sin = 's';
+constexpr char c_cos = 'c';
+constexpr char c_tan = 't';
+constexpr char c_exp = 'e';
+constexpr char c_ln = 'l';
+constexpr char uminus = 'u';
 
 }  // namespace Back_consts

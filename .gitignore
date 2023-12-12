@@ -1,2 +1,5 @@
 # Files
 *.ini
+
+# Folders
+testing/

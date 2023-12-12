@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Graph_lib/GUI.h>
+// Graph_lib
 #include <Graph_lib/Graph.h>
 
 using Graph_lib::Point;
@@ -15,19 +15,23 @@ class Axis : public Graph_lib::Shape
   public:
     enum Orientation
     {
-        x,
-        y
+        horisontal,
+        vertical
     };
 
-    Axis(Orientation d, Point xy, pix_numb length, pix_numb scale = 0,
+    Axis(Orientation d, Point center, pix_numb length, pix_numb scale = 0,
          const std::string& label = "");
+
+    // methods
 
     void draw_lines () const override;
 
     void set_color (Graph_lib::Color c);
 
   private:
-    // расстояние между насечками
+    // variables
+
+    //  расстояние между насечками
     pix_numb dist;
     Graph_lib::Text label;
     Graph_lib::Lines notches;

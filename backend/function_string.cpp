@@ -1,12 +1,17 @@
+// header
+#include "function_string.h"
+
+// std libs
 #include <cmath>
 
-#include "function_string.h"
+// servant
 #include "servant/constants.h"
 #include "servant/servant.h"
 
 using std::stack;
 
 using namespace Back_consts;
+using namespace Back_serv;
 
 namespace Backend {
 
@@ -321,4 +326,4 @@ double function_string::calc(double x) const
     return Stack.top();
 }
 
-}
+}  // namespace Backend

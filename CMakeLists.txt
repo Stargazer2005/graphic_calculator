@@ -5,13 +5,13 @@ set(TARGET "graphic_calculator")
 set(HEADERS
 #front
     frontend/graphix_window.h
-    frontend/axis.h
-    frontend/servant/constants.h
-    frontend/segmented_function.h
 
-    #need refactor
-    frontend/input_box.h
-    frontend/num_button.h
+    frontend/Graphix_calc/Axis.h
+    frontend/Graphix_calc/Segmented_function.h
+    frontend/Graphix_calc/Input_box.h
+    frontend/Graphix_calc/Numbered_button.h
+
+    frontend/servant/constants.h
     
     frontend.h
 
@@ -32,8 +32,10 @@ set(HEADERS
 set(SOURCES
 #front
     frontend/graphix_window.cpp
-    frontend/axis.cpp
-    frontend/segmented_function.cpp
+
+    frontend/Graphix_calc/Axis.cpp
+    frontend/Graphix_calc/Input_box.cpp
+    frontend/Graphix_calc/Segmented_function.cpp
     
 #back
     backend/function_string.cpp

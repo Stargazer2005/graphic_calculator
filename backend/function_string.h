@@ -1,9 +1,11 @@
 #pragma once
 
+// std libs
 #include <functional>
 #include <string>
 #include <vector>
 
+// Graph_lib
 #include <Graph_lib/Graph.h>
 
 using std::string;
@@ -37,12 +39,14 @@ class function_string
     vector<string> lexemes () const;
     // метод, который переводит список лексем в обратную польскую запись
     vector<string> reverse_polish () const;
-
-  public:
-    // конструктор по std::string
-    function_string(string s);
     // метод, который по значению переменной x вычисляет значение y
     double calc (double x) const;
+
+  public:
+    function_string(string s);
+
+    // methods:
+
     // лямбда-функция, считающая по заданному x значение функции
     std::function<double(double)> calculate = [this] (double x) { return calc(x); };
 };

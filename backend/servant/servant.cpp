@@ -1,6 +1,7 @@
+// header
 #include "servant.h"
 
-using std::endl;
+namespace Back_serv {
 
 // вспомогательная функция "содержится ли символ в строке?"
 bool c_in_s (char c, const std::string& s) { return (s.find(c) != std::string::npos); }
@@ -59,3 +60,5 @@ std::string spaces_deleted (const std::string& s)
 }
 
 template <typename T> size_t last_i (const std::vector<T>& v) { return v.size() - 1; }
+
+}  // namespace Back_serv

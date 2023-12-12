@@ -1,8 +1,13 @@
 #pragma once
 
-#include "../backend/function_string.h"
-#include <Graph_lib/Graph.h>
+// std libs
 #include <string>
+
+// backend
+#include "../../backend.h"
+
+// Graph_lib
+#include <Graph_lib/Graph.h>
 
 using Graph_lib::Point;
 using std::string;
@@ -28,7 +33,7 @@ class Segmented_function
     Graph_lib::Vector_ref<Graph_lib::Function> seg_func;
     bool has_var;
 
-    // metods
+    // methods
 
     // вспомогательная функция, которая дробит на отрезки (в рациональных числах)
     vector<Segment> domain_segments (double l_border, double r_border, double height,

@@ -1,63 +1,63 @@
-#include <Graph_lib/Window.h>
-
+// header
 #include "graphix_window.h"
-#include "segmented_function.h"
 
+// Graphix_calc
+#include "Graphix_calc/segmented_function.h"
+
+// servant
 #include "servant/constants.h"
+
+using namespace Front_consts;
+
+using Graph_lib::Color;
+using Graph_lib::Function;
+using Graphix_calc::Segmented_function;
 
 using pix_numb = int;
 
-using namespace Graph_lib;
-using namespace Front_consts;
-using Graphix_calc::Numbered_button;
+namespace Frontend {
 
-namespace Graphix_calc {
-
-Graphix_window::Graphix_window(Point xy, pix_numb w, pix_numb h, const std::string& title,
-                               pix_numb scale)
-    : Window(xy, w, h, title), scale{scale},
-      x_axis{new Graphix_calc::Axis{Graphix_calc::Axis::Orientation::x,
-                                    Point(x_max() / 2, y_max() / 2), x_max(), scale, "X"}},
-      y_axis{new Graphix_calc::Axis{Graphix_calc::Axis::Orientation::y,
-                                    Point(x_max() / 2, y_max() / 2), y_max(), scale, "Y"}},
-      center{w / 2, h / 2}, quit_button{Point{x_max() - 70, 0}, 70, 20, "Quit", cb_quit},
-      incr_button{Point{w - 30, 20}, 30, 30, "+", cb_incr},
-      decr_button{Point{w - 30, 50}, 30, 30, "-", cb_decr},
-      new_button{Point{230, 0}, 70, 20, "New graph", cb_new}
+Graphix_window::Graphix_window(Point left_corner, pix_numb width, pix_numb height,
+                               const std::string& title, pix_numb scale)
+    : Window(left_corner, width, height, title), scale{scale},
+      x_axis{
+          new Axis{Axis::Orientation::horisontal, Point(width / 2, height / 2), width, scale, "X"}},
+      y_axis{
+          new Axis{Axis::Orientation::vertical, Point(width / 2, height / 2), height, scale, "Y"}},
+      center{width / 2, height / 2},
+      // инициализируем вектор введенных строк (пустыми)
+      inputed_strings{"", "", "", "", ""},
+      // кнопка quit находится в левом верхнем углу
+      quit_button{Point{width - btn_w, 0}, btn_w, btn_h, "Quit", cb_quit},
+      // кнопки изменения масштаба находятся справа и являются квадратами
+      incr_button{Point{width - scl_btn_side, btn_h}, scl_btn_side, scl_btn_side, "+", cb_incr},
+      decr_button{Point{width - scl_btn_side, btn_h + scl_btn_side}, scl_btn_side, scl_btn_side,
+                  "-", cb_decr},
+      // а кнопка new_graph находится правее меню
+      new_graph_button{Point{inp_box_w + scl_btn_side, 0}, btn_w, btn_h, "New graph", cb_new}
 {
-    // size_range(w, h, w, h);  // Фиксируем масштаб
+    // не даём пользователю менять размеры окна
+    size_range(width, height, width, height);
 
-    x_axis->set_color(Graph_lib::Color::Color_type::dark_cyan);
+    // задаём цвет осям
+    x_axis->set_color(Color::Color_type::dark_cyan);
+    y_axis->set_color(Color::Color_type::dark_cyan);
+
+    // поскольку enter_menu не была инициализирована, её size() = 0, а значит, мы создаем нулевой по
+    // счету input_box
+    Input_box* new_graph = new Input_box{short(enter_menu.size()), cb_draw, cb_hide, cb_rem};
+    new_graph->set_number(enter_menu.size());
+    // и добавляем его в общий список всех input_box'ов
+    enter_menu.push_back(new_graph);
+
+    // аттачим всё
     attach(*x_axis);
-
-    y_axis->set_color(Graph_lib::Color::Color_type::dark_cyan);
     attach(*y_axis);
-
     attach(quit_button);
     attach(incr_button);
     attach(decr_button);
-    attach(new_button);
-
-    for (short i = 0; i < graphs_number; ++i)
-        func_strings.push_back("");
-
-    Input_box new_input;
-    In_box* new_ib = new In_box{Point{30, 0}, 200, 30, "y = "};
-    attach(*new_ib);
-    Numbered_button* new_draw_button = new Numbered_button{Point{0, 30}, 70, 20, "Draw", cb_draw};
-    new_draw_button->set_number(0);
-    attach(*new_draw_button);
-    Numbered_button* new_hide_button = new Numbered_button{Point{80, 30}, 70, 20, "Hide", cb_hide};
-    new_hide_button->set_number(0);
-    attach(*new_hide_button);
-    Numbered_button* new_rem_button = new Numbered_button{Point{160, 30}, 70, 20, "Remove", cb_rem};
-    new_rem_button->set_number(0);
-    attach(*new_rem_button);
-    new_input.in_box = new_ib;
-    new_input.draw_button = new_draw_button;
-    new_input.hide_button = new_hide_button;
-    new_input.rem_button = new_rem_button;
-    enter_menu.push_back(new_input);
+    attach(new_graph_button);
+    new_graph->attach(*this);
 }
 
 void Graphix_window::cb_quit(void*, void* widget)
@@ -102,153 +102,141 @@ void Graphix_window::cb_new(void*, void* widget)
     dynamic_cast<Graphix_window&>(btn.window()).new_graph();
 }
 
-void Graphix_window::draw_some_graph(std::string str, size_t number)
+void Graphix_window::change_scale(pix_numb new_scale)
 {
-    Segmented_function seg_func(str, scale, center, x_max(), y_max());
-    Vector_ref<Function> functions = seg_func.get_segmented_function();
-    for (int i = 0; i < functions.size(); i++)
+    if (new_scale < max_scale && new_scale > min_scale)
     {
-        functions[i].set_color(Graph_lib::Color::black);
-        attach(functions[i]);
+        scale = new_scale;
+
+        // детачим оси и высвобождаем память
+        detach(*x_axis);
+        detach(*y_axis);
+        delete x_axis;
+        delete y_axis;
+
+        // создаём новые оси и задаём цвет
+        x_axis = new Axis{Axis::Orientation::horisontal, center, x_max(), scale, "X"};
+        x_axis->set_color(Graph_lib::Color::Color_type::dark_cyan);
+
+        y_axis = new Axis{Axis::Orientation::vertical, center, y_max(), scale, "Y"};
+        y_axis->set_color(Graph_lib::Color::Color_type::dark_cyan);
+
+        // аттачим новые оси
+        attach(*x_axis);
+        attach(*y_axis);
+
+        // перересовываем все графики
+        for (size_t i = 0; i < enter_menu.size(); ++i)
+            if (!enter_menu[i]->is_hidden())
+                draw_graph(i);
+
+        button_pushed = true;
     }
-    if (graphics.size() > number)
-        graphics[number] = functions;
+}
+
+void Graphix_window::increase_scale() { change_scale(scale * scale_coef); }
+
+void Graphix_window::decrease_scale() { change_scale(scale / scale_coef); }
+
+void Graphix_window::draw_graph(size_t graph_number)
+{
+    // прячем старый график
+    hide_graph(graph_number);
+
+    // высвобождаем память
+    if (graphics.size() > graph_number)
+        graphics[graph_number].clear();
+
+    // записываем в вектор введенных строк то, что ввёл
+    inputed_strings[graph_number] = enter_menu[graph_number]->get_string();
+
+    // создаём сегментированную функцию
+    Segmented_function seg_func(inputed_strings[graph_number], scale, center, x_max(), y_max());
+    Vector_ref<Function> graphic = seg_func.get_segmented_function();
+
+    // аттачим сегментированную функцию
+    for (int i = 0; i < graphic.size(); i++)
+    {
+        graphic[i].set_color(Color::black);
+        attach(graphic[i]);
+    }
+
+    // записываем новую функцию в общий массив всех графиков
+    if (graphics.size() > graph_number)
+        graphics[graph_number] = graphic;
     else
-        graphics.push_back(functions);
-}
+        graphics.push_back(graphic);
 
-void Graphix_window::increase_scale()
-{
-    if (scale < max_scale)
-    {
-        detach(*x_axis);
-        detach(*y_axis);
-        scale = ceil(scale * scale_coef);
-        Axis* new_x_axis =
-            new Axis{Axis::Orientation::x, Point(x_max() / 2, y_max() / 2), x_max(), scale, "X"};
-        new_x_axis->set_color(Graph_lib::Color::Color_type::dark_cyan);
-        x_axis = new_x_axis;
-        attach(*x_axis);
-        Axis* new_y_axis =
-            new Axis{Axis::Orientation::y, Point(x_max() / 2, y_max() / 2), y_max(), scale, "Y"};
-        new_y_axis->set_color(Graph_lib::Color::Color_type::dark_cyan);
-        y_axis = new_y_axis;
-        attach(*y_axis);
+    // выводим наше окно
+    enter_menu[graph_number]->show();
 
-        for (size_t i = 0; i < enter_menu.size(); ++i)
-            if (!enter_menu[i].is_hidden)
-                draw_graph(i);
-
-        button_pushed = true;
-    }
-}
-
-void Graphix_window::decrease_scale()
-{
-    if (scale > min_scale)
-    {
-        detach(*x_axis);
-        detach(*y_axis);
-        scale = floor(scale / scale_coef);
-        Axis* new_x_axis =
-            new Axis{Axis::Orientation::x, Point(x_max() / 2, y_max() / 2), x_max(), scale, "X"};
-        new_x_axis->set_color(Graph_lib::Color::Color_type::dark_cyan);
-        x_axis = new_x_axis;
-        attach(*x_axis);
-        Axis* new_y_axis =
-            new Axis{Axis::Orientation::y, Point(x_max() / 2, y_max() / 2), y_max(), scale, "Y"};
-        new_y_axis->set_color(Graph_lib::Color::Color_type::dark_cyan);
-        y_axis = new_y_axis;
-        attach(*y_axis);
-
-        for (size_t i = 0; i < enter_menu.size(); ++i)
-            if (!enter_menu[i].is_hidden)
-                draw_graph(i);
-
-        button_pushed = true;
-    }
-}
-
-void Graphix_window::draw_graph(size_t i)
-{
-    hide_graph(i);
-    if (graphics.size() > i)
-        graphics[i].clear();
-
-    In_box* pin_box = enter_menu[i].in_box;
-    func_strings[i] = (*pin_box).get_string();
-
-    if (func_strings[i] != "")
-        draw_some_graph(func_strings[i], i);
-
-    enter_menu[i].is_hidden = false;
     button_pushed = true;
 }
 
-void Graphix_window::hide_graph(size_t i)
+void Graphix_window::hide_graph(size_t graph_number)
 {
+    // убираем все спрятанные фрагменты графика с экрана
+    if (graphics.size() > graph_number)
+        for (int j = 0; j < graphics[graph_number].size(); ++j)
+            detach(graphics[graph_number][j]);
 
-    if (graphics.size() > i)
-        for (int j = 0; j < graphics[i].size(); ++j)
-            detach(graphics[i][j]);
-    enter_menu[i].is_hidden = true;
+    // прячем окно
+    enter_menu[graph_number]->hide();
+
     button_pushed = true;
 }
 
-void Graphix_calc::Graphix_window::rem_graph(size_t i)
+void Graphix_window::rem_graph(size_t graph_number)
 {
-    detach(*(enter_menu[i].in_box));
-    detach(*(enter_menu[i].draw_button));
-    detach(*(enter_menu[i].hide_button));
-    detach(*(enter_menu[i].rem_button));
-    if (enter_menu.size() == graphs_number)
-        attach(new_button);
-    for (size_t j = i + 1; j < enter_menu.size(); ++j)
+    // детачим кнопку под переданным номером
+    enter_menu[graph_number]->detach(*this);
+
+    // возвращаем кнопку "new_graph", если был удален последний
+    if (enter_menu.size() == graphs_max_amount)
+        attach(new_graph_button);
+
+    // проходимся по всем инпут_боксам начиная со следующего
+    for (size_t j = graph_number + 1; j < enter_menu.size(); ++j)
     {
-        enter_menu[j].in_box->move(0, -60);
-        enter_menu[j].draw_button->move(0, -60);
-        enter_menu[j].hide_button->move(0, -60);
-        enter_menu[j].rem_button->move(0, -60);
-        enter_menu[j].draw_button->set_number(enter_menu[j].draw_button->get_number() - 1);
-        enter_menu[j].hide_button->set_number(enter_menu[j].hide_button->get_number() - 1);
-        enter_menu[j].rem_button->set_number(enter_menu[j].rem_button->get_number() - 1);
+        // двигаем их вверх и меняем номер на пердыдущий
+        enter_menu[j]->move(0, -inp_box_indent);
+        enter_menu[j]->set_number(enter_menu[j]->get_number() - 1);
     }
-    enter_menu.erase(enter_menu.begin() + i);
-    if (graphics.size() > i)
+    // также изменяем размеры самого вектора
+    enter_menu.erase(enter_menu.begin() + graph_number);
+
+    if (graphics.size() > graph_number)
     {
-        for (int j = 0; j < graphics[i].size(); ++j)
-            detach(graphics[i][j]);
-        graphics.erase(graphics.begin() + i);
+        // теперь проходимся по всем фрагментам графика и детачим их
+        for (int j = 0; j < graphics[graph_number].size(); ++j)
+            detach(graphics[graph_number][j]);
+        // также изменяем размеры самого вектора
+        graphics.erase(graphics.begin() + graph_number);
     }
+
     button_pushed = true;
 }
 
 void Graphix_window::new_graph()
 {
-    Input_box new_input;
-    In_box* new_ib = new In_box{Point{30, 60 * int(enter_menu.size())}, 200, 30, "y = "};
-    attach(*new_ib);
-    Numbered_button* new_draw_button =
-        new Numbered_button{Point{0, 60 * int(enter_menu.size()) + 30}, 70, 20, "Draw", cb_draw};
-    new_draw_button->set_number(int(enter_menu.size()));
-    attach(*new_draw_button);
-    Numbered_button* new_hide_button =
-        new Numbered_button{Point{80, 60 * int(enter_menu.size()) + 30}, 70, 20, "Hide", cb_hide};
-    new_hide_button->set_number(int(enter_menu.size()));
-    attach(*new_hide_button);
-    Numbered_button* new_rem_button =
-        new Numbered_button{Point{160, 60 * int(enter_menu.size()) + 30}, 70, 20, "Remove", cb_rem};
-    new_rem_button->set_number(int(enter_menu.size()));
-    attach(*new_rem_button);
-    new_input.in_box = new_ib;
-    new_input.draw_button = new_draw_button;
-    new_input.hide_button = new_hide_button;
-    new_input.rem_button = new_rem_button;
-    enter_menu.push_back(new_input);
-    Vector_ref<Function> v;
-    graphics.push_back(v);
-    if (enter_menu.size() == graphs_number)
-        detach(new_button);
+    // создаем новый инпут_бокс
+    Input_box* new_graph = new Input_box{short(enter_menu.size()), cb_draw, cb_hide, cb_rem};
+
+    // задаём ему последний номер и аттачим его
+    new_graph->set_number(enter_menu.size());
+    new_graph->attach(*this);
+
+    // добавляем новый инпут_бокс в соотв. вектор
+    enter_menu.push_back(new_graph);
+
+    // увеличиваем размер вектора с графиками (резервируем под новую сегментированную функцию)
+    graphics.push_back(Vector_ref<Function>{});
+
+    // если количество графиков стало максимально, скрываем кнопку "new_graph"
+    if (enter_menu.size() == graphs_max_amount)
+        detach(new_graph_button);
+
     button_pushed = true;
 }
-}  // namespace Graphix_calc
+
+}  // namespace Frontend

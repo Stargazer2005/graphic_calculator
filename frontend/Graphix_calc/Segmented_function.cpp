@@ -1,5 +1,8 @@
-#include "segmented_function.h"
-#include "servant/constants.h"
+// header
+#include "Segmented_function.h"
+
+// servant
+#include "../servant/constants.h"
 
 namespace Graphix_calc {
 
@@ -22,7 +25,7 @@ vector<Segment> Segmented_function::domain_segments(double l_border, double r_bo
         {
             try
             {
-                double y = expr.calc(x);
+                double y = expr.calculate(x);
                 if (((-height / 2) < y) && (y < height / 2))
                 {
                     seg.start = x;
@@ -37,7 +40,7 @@ vector<Segment> Segmented_function::domain_segments(double l_border, double r_bo
         {
             try
             {
-                double y = expr.calc(x);
+                double y = expr.calculate(x);
                 if ((y > height / 2) or (y < -height / 2))
                 {
                     seg.stop = x - precision;
@@ -87,11 +90,12 @@ Graph_lib::Vector_ref<Graph_lib::Function>
 Segmented_function::segmented_function(int scale, Point center, int max_x)
 {
     Graph_lib::Vector_ref<Graph_lib::Function> res;
-    int point_numb = has_var ? 4 * max_x * sqrt(scale) / 3 : 500;
+    int point_amount = has_var ? 4 * max_x * sqrt(scale) / 3 : 500;
     for (auto seg : segs)
     {
-        Graph_lib::Function* f1 = new Graph_lib::Function{
-            expr.calculate, seg.start, seg.stop, center, point_numb, double(scale), double(scale)};
+        Graph_lib::Function* f1 =
+            new Graph_lib::Function{expr.calculate, seg.start,     seg.stop,     center,
+                                    point_amount,   double(scale), double(scale)};
         res.push_back(*f1);
     }
     return res;

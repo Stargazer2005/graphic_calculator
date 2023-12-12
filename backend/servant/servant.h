@@ -1,5 +1,6 @@
 #pragma once
 
+// std libs
 #include <iostream>
 #include <sstream>
 #include <stack>
@@ -7,6 +8,8 @@
 #include <vector>
 
 using std::endl;
+
+namespace Back_serv {
 
 // вспомогательная функция "содержится ли символ в строке?"
 bool c_in_s (char c, const std::string& s);
@@ -23,3 +26,5 @@ template <typename T> void print (std::stack<T> st);
 std::string spaces_deleted (const std::string& s);
 
 template <typename T> size_t last_i (const std::vector<T>& v);
+
+}
