@@ -67,27 +67,17 @@ vector<Segment> Segmented_function::domain_segments(double l_border, double r_bo
     return res;
 }
 
-vector<Segment> Segmented_function::segments(int max_x, int max_y, int scale)
+vector<Segment> Segmented_function::segments(int max_x, int max_y, int scale) const
 {
-    double prec_seg = (ceil(max_x / (2 * scale)) + 1) / (abs(Front_consts::max_scale - scale));
+    double prec_seg = (((double)max_x / sqrt(scale))) / (abs(Front_consts::max_scale - scale));
     vector<Segment> res =
-        domain_segments(-ceil(max_x / (2 * scale)) - 1, ceil(max_x / (2 * scale)) + 1,
-                        (2 * max_y / scale) + 1, prec_seg);
-    // double l_border = -(double(max_x) / 2) / double(scale) - 1;
-    // double r_border = -l_border;
-    // double height = (2 * double(max_y) / scale) + 1;
-    // vector<Segment> res = domain_segments(l_border, r_border, height, prec_seg);
-    // std::cout << "max_x: " << max_x << std::endl;
-    // std::cout << "l_border: " << l_border << " or " << -ceil(max_x / (2 * scale)) - 1 <<
-    // std::endl; std::cout << "max_y: " << max_y << std::endl; std::cout << "r_border: " <<
-    // r_border << " or " << ceil(max_x / (2 * scale)) + 1 << std::endl; std::cout << "height: " <<
-    // height << " or " << (2 * max_y / scale) + 1 << std::endl; std::cout << "prec: " << prec_seg
-    // << std::endl; vec_print(res);
+        domain_segments(-((double)max_x / (2 * scale)), ((double)max_x / (2 * scale)),
+                        (3 * (double)max_y / (2 * scale)), prec_seg);
     return res;
 }
 
 Graph_lib::Vector_ref<Graph_lib::Function>
-Segmented_function::segmented_function(int scale, Point center, int max_x)
+Segmented_function::segmented_function(int scale, Point center, int max_x) const
 {
     Graph_lib::Vector_ref<Graph_lib::Function> res;
     int point_amount = has_var ? 4 * max_x * sqrt(scale) / 3 : 500;
@@ -101,7 +91,7 @@ Segmented_function::segmented_function(int scale, Point center, int max_x)
     return res;
 }
 
-Graph_lib::Vector_ref<Graph_lib::Function> Segmented_function::get_segmented_function()
+Graph_lib::Vector_ref<Graph_lib::Function> Segmented_function::get_segmented_function() const
 {
     return seg_func;
 }

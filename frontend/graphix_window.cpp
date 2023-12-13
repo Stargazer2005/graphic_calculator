@@ -4,8 +4,13 @@
 // Graphix_calc
 #include "Graphix_calc/segmented_function.h"
 
+// Math_calc
+#include "../backend/Math_calc/function_roots.h"
+
 // servant
 #include "servant/constants.h"
+
+#include <iostream>
 
 using namespace Front_consts;
 
@@ -34,7 +39,10 @@ Graphix_window::Graphix_window(Point left_corner, pix_numb width, pix_numb heigh
       decr_button{Point{width - scl_btn_side, btn_h + scl_btn_side}, scl_btn_side, scl_btn_side,
                   "-", cb_decr},
       // а кнопка new_graph находится правее меню
-      new_graph_button{Point{inp_box_w + scl_btn_side, 0}, btn_w, btn_h, "New graph", cb_new}
+      new_graph_button{Point{inp_box_w + scl_btn_side, 0}, btn_w, btn_h, "New graph", cb_new},
+      // кнопки для точек
+      sh_points{Point{width - btn_w, height - 2 * btn_h}, btn_w, btn_h, "Points", cb_show_points},
+      hd_points{Point{width - btn_w, height - btn_h}, btn_w, btn_h, "Hide", cb_hide_points}
 {
     // не даём пользователю менять размеры окна
     size_range(width, height, width, height);
@@ -57,6 +65,8 @@ Graphix_window::Graphix_window(Point left_corner, pix_numb width, pix_numb heigh
     attach(incr_button);
     attach(decr_button);
     attach(new_graph_button);
+    attach(sh_points);
+    attach(hd_points);
     new_graph->attach(*this);
 }
 
@@ -102,6 +112,18 @@ void Graphix_window::cb_new(void*, void* widget)
     dynamic_cast<Graphix_window&>(btn.window()).new_graph();
 }
 
+void Graphix_window::cb_show_points(void*, void* widget)
+{
+    auto& btn = Graph_lib::reference_to<Button>(widget);
+    dynamic_cast<Graphix_window&>(btn.window()).show_points();
+}
+
+void Graphix_window::cb_hide_points(void*, void* widget)
+{
+    auto& btn = Graph_lib::reference_to<Button>(widget);
+    dynamic_cast<Graphix_window&>(btn.window()).hide_points();
+}
+
 void Graphix_window::change_scale(pix_numb new_scale)
 {
     if (new_scale < max_scale && new_scale > min_scale)
@@ -130,6 +152,10 @@ void Graphix_window::change_scale(pix_numb new_scale)
             if (!enter_menu[i]->is_hidden())
                 draw_graph(i);
 
+        // перерисовываем все точки, если они видны
+        if (is_points_visible)
+            show_points();
+
         button_pushed = true;
     }
 }
@@ -140,12 +166,8 @@ void Graphix_window::decrease_scale() { change_scale(scale / scale_coef); }
 
 void Graphix_window::draw_graph(size_t graph_number)
 {
-    // прячем старый график
-    hide_graph(graph_number);
-
-    // высвобождаем память
-    if (graphics.size() > graph_number)
-        graphics[graph_number].clear();
+    // чистим старый график и точки
+    graph_clear(graph_number);
 
     // записываем в вектор введенных строк то, что ввёл
     inputed_strings[graph_number] = enter_menu[graph_number]->get_string();
@@ -175,13 +197,8 @@ void Graphix_window::draw_graph(size_t graph_number)
 
 void Graphix_window::hide_graph(size_t graph_number)
 {
-    // убираем все спрятанные фрагменты графика с экрана
-    if (graphics.size() > graph_number)
-        for (int j = 0; j < graphics[graph_number].size(); ++j)
-            detach(graphics[graph_number][j]);
-
-    // прячем окно
-    enter_menu[graph_number]->hide();
+    // прячем старый график и чистим память
+    graph_clear(graph_number);
 
     button_pushed = true;
 }
@@ -207,14 +224,33 @@ void Graphix_window::rem_graph(size_t graph_number)
 
     if (graphics.size() > graph_number)
     {
-        // теперь проходимся по всем фрагментам графика и детачим их
-        for (int j = 0; j < graphics[graph_number].size(); ++j)
-            detach(graphics[graph_number][j]);
+        // детачим этот график и чистим память
+        graph_clear(graph_number);
         // также изменяем размеры самого вектора
         graphics.erase(graphics.begin() + graph_number);
     }
 
+    // в случае удаления одного из графиков прячем все точки
+    hide_points();
+
     button_pushed = true;
+}
+
+void Graphix_window::graph_clear(size_t graph_number)
+{
+    // убираем все спрятанные фрагменты графика с экрана
+    if (graphics.size() > graph_number)
+    {
+        for (int j = 0; j < graphics[graph_number].size(); ++j)
+            detach(graphics[graph_number][j]);
+    }
+
+    // прячем окно
+    enter_menu[graph_number]->hide();
+
+    // высвобождаем память
+    if (graphics.size() > graph_number)
+        graphics[graph_number].clear();
 }
 
 void Graphix_window::new_graph()
@@ -237,6 +273,48 @@ void Graphix_window::new_graph()
         detach(new_graph_button);
 
     button_pushed = true;
+}
+
+void Graphix_window::show_points()
+{
+    clear_points();
+    is_points_visible = true;
+
+    auto convert_to_pix = [&] (Math_calc::Point p) -> Graph_lib::Point {
+        return Graph_lib::Point{center.x + int(p.x * scale), center.y - int(p.y * scale)};
+    };
+    for (auto& input_box : enter_menu)
+    {
+        string str = input_box->get_string();
+        if (!str.empty())
+        {
+            Math_calc::function_roots fz{
+                str, -((double)x_max() / (2 * scale)), ((double)x_max() / (2 * scale)),
+                (double)y_max() / (2 * scale), (((double)x_max() / (scale * 100 * 2.5)))};
+            Graph_lib::Marks* dots = new Graph_lib::Marks{"x"};
+            for (auto& p : fz.get_function_roots())
+                dots->add(convert_to_pix(p));
+            attach(*dots);
+            all_points.push_back(*dots);
+        }
+    }
+
+    button_pushed = true;
+}
+
+void Graphix_window::hide_points()
+{
+    clear_points();
+    is_points_visible = false;
+    button_pushed = true;
+}
+
+void Graphix_window::clear_points()
+{
+    for (int i = 0; i < all_points.size(); i++)
+        detach(all_points[i]);
+
+    all_points.clear();
 }
 
 }  // namespace Frontend

@@ -5,9 +5,6 @@
 #include <string>
 #include <vector>
 
-// Graph_lib
-#include <Graph_lib/Graph.h>
-
 using std::string;
 using std::vector;
 

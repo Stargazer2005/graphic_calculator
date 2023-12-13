@@ -59,6 +59,6 @@ std::string spaces_deleted (const std::string& s)
     return new_s;
 }
 
-template <typename T> size_t last_i (const std::vector<T>& v) { return v.size() - 1; }
+double absolute (double x) { return x >= 0 ? x : -x; };
 
 }  // namespace Back_serv

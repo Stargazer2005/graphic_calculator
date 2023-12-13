@@ -9,6 +9,7 @@ using namespace Front_consts;
 using Graph_lib::Point;
 
 namespace Graphix_calc {
+
 Input_box::Input_box(short graphics_amount, void cb_draw(void*, void* widget),
                      void cb_hide(void*, void* widget), void cb_rem(void*, void* widget))
     : Graph_lib::Widget{Point{inp_box_h, inp_box_indent * graphics_amount}, inp_box_w, inp_box_h,
@@ -26,11 +27,11 @@ Input_box::Input_box(short graphics_amount, void cb_draw(void*, void* widget),
 {
 }
 
-bool Input_box::is_hidden() { return !visibility; }
+bool Input_box::is_hidden() const { return !is_graph_visible; }
 
-void Input_box::show() { visibility = true; }
+void Input_box::show() { is_graph_visible = true; }
 
-void Input_box::hide() { visibility = false; }
+void Input_box::hide() { is_graph_visible = false; }
 
 void Input_box::move(int dx, int dy)
 {
@@ -40,9 +41,9 @@ void Input_box::move(int dx, int dy)
     rem_button->move(dx, dy);
 }
 
-std::string Input_box::get_string() { return in_box->get_string(); }
+std::string Input_box::get_string() const { return in_box->get_string(); }
 
-int Input_box::get_number() { return draw_button->get_number(); }
+int Input_box::get_number() const { return draw_button->get_number(); }
 
 void Input_box::set_number(int value)
 {

@@ -39,16 +39,16 @@ class Segmented_function
     vector<Segment> domain_segments (double l_border, double r_border, double height,
                                      double precision) const;
     // функция, дробящая на сегменты в пикселях
-    vector<Segment> segments (int max_x, int max_y, int scale);
+    vector<Segment> segments (int max_x, int max_y, int scale) const;
 
     // функция, создающая ветктор Function - раздробленная функция на отрезки
     Graph_lib::Vector_ref<Graph_lib::Function>
-    segmented_function (int scale, Graph_lib::Point center, int max_x);
+    segmented_function (int scale, Graph_lib::Point center, int max_x) const;
 
   public:
     Segmented_function(string str, int scale, Point center, int max_x, int max_y);
 
-    Graph_lib::Vector_ref<Graph_lib::Function> get_segmented_function ();
+    Graph_lib::Vector_ref<Graph_lib::Function> get_segmented_function () const;
 };
 
 }  // namespace Graphix_calc

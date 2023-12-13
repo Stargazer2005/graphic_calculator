@@ -17,6 +17,10 @@ set(HEADERS
 
 #back
     backend/function_string.h
+
+    backend/Math_calc/math_base.h
+    backend/Math_calc/function_roots.h
+
     backend/servant/servant.h
     backend/servant/constants.h
 
@@ -41,6 +45,8 @@ set(SOURCES
     backend/function_string.cpp
     backend/servant/servant.cpp
     backend/function_string_checkers.cpp
+
+    backend/Math_calc/function_roots.cpp
     
 #main
     main.cpp

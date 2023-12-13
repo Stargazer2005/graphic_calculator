@@ -18,7 +18,7 @@ struct Input_box : Graph_lib::Widget
     Input_box(short graphics_amount, void cb_draw(void*, void* widget),
               void cb_hide(void*, void* widget), void cb_rem(void*, void* widget));
 
-    bool is_hidden ();
+    bool is_hidden () const;
 
     void show () override;
 
@@ -26,9 +26,9 @@ struct Input_box : Graph_lib::Widget
 
     void move (int dx, int dy) override;
 
-    std::string get_string ();
+    std::string get_string () const;
 
-    int get_number ();
+    int get_number () const;
 
     void set_number (int value);
 
@@ -43,7 +43,7 @@ struct Input_box : Graph_lib::Widget
     Numbered_button* draw_button;
     Numbered_button* hide_button;
     Numbered_button* rem_button;
-    bool visibility;
+    bool is_graph_visible;
 };
 
 }  // namespace Graphix_calc

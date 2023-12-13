@@ -14,6 +14,7 @@
 #include <Graph_lib/Window.h>
 
 using Graph_lib::Button;
+using Graph_lib::Marks;
 using Graph_lib::Point;
 using Graph_lib::Vector_ref;
 using Graphix_calc::Axis;
@@ -41,7 +42,7 @@ class Graphix_window : public Graph_lib::Window
         Fl::redraw();
     }
 
-    bool window_is_open () { return !quit_button_pushed; }
+    bool window_is_open () const { return !quit_button_pushed; }
 
   private:
     // variables
@@ -62,11 +63,17 @@ class Graphix_window : public Graph_lib::Window
     Button decr_button;
     Button new_graph_button;
 
+    Button sh_points;
+    Button hd_points;
+
     // вектор полей ввода
     vector<Input_box*> enter_menu;
     // общий массив со всеми сегментированными функциями (графиками)
     vector<Vector_ref<Graph_lib::Function>> graphics;
 
+    Vector_ref<Marks> all_points;
+
+    bool is_points_visible{false};
     bool button_pushed{false};
     bool quit_button_pushed{false};
 
@@ -81,6 +88,8 @@ class Graphix_window : public Graph_lib::Window
     static void cb_hide (void*, void* widget);
     static void cb_rem (void*, void* widget);
     static void cb_new (void*, void* widget);
+    static void cb_show_points (void*, void* widget);
+    static void cb_hide_points (void*, void* widget);
 
     // функции, которые вызывают callbacks
 
@@ -102,7 +111,15 @@ class Graphix_window : public Graph_lib::Window
 
     void rem_graph (size_t graph_number);
 
+    void graph_clear (size_t graph_number);
+
     void new_graph ();
+
+    void show_points ();
+
+    void hide_points ();
+
+    void clear_points ();
 };
 
 }  // namespace Frontend

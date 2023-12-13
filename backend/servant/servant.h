@@ -25,6 +25,6 @@ template <typename T> void print (std::stack<T> st);
 
 std::string spaces_deleted (const std::string& s);
 
-template <typename T> size_t last_i (const std::vector<T>& v);
+double absolute (double x);
 
 }

@@ -14,7 +14,6 @@ namespace Backend {
 
 bool function_string::is_str_valid() const
 {
-    // TRACE_FUNC;
     string ex = spaces_deleted(expr);
 
     // проверка на пустую строку
@@ -34,6 +33,7 @@ bool function_string::is_str_valid() const
         throw std::invalid_argument("number of brackets mismatch");
         return false;
     }
+
     // первый и последний символы не должны быть знаками или точками (кроме
     // минуса)
     if ((c_in_s(ex[0], oper + point) && ex[0] != minus) || c_in_s(ex[ex.size() - 1], oper + point))
@@ -195,7 +195,7 @@ bool function_string::is_lexs_valid() const
                     }
                 }
                 // ситуации рода: tan | x + tan
-                else if (lexs.size() < 4 || i == lexs.size() - 1)
+                else if (l_c != uminus && (lexs.size() < 4 || i == lexs.size() - 1))
                 {
                     throw std::invalid_argument("wrong function usage");
                     return false;

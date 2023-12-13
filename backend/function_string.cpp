@@ -3,6 +3,7 @@
 
 // std libs
 #include <cmath>
+#include <stack>
 
 // servant
 #include "servant/constants.h"

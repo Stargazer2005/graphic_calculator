@@ -1,5 +1,8 @@
 #pragma once
 
+// str libs
+#include <cmath>
+
 namespace Back_consts {
 
 constexpr char point = '.';
@@ -19,5 +22,7 @@ constexpr char c_tan = 't';
 constexpr char c_exp = 'e';
 constexpr char c_ln = 'l';
 constexpr char uminus = 'u';
+
+const double phi = (1 + sqrt(5)) / 2;
 
 }  // namespace Back_consts

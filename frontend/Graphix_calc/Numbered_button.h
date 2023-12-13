@@ -13,7 +13,7 @@ struct Numbered_button : Button
 {
     using Button::Button;
 
-    int get_number () { return number; }
+    int get_number () const { return number; }
 
     void set_number (int value) { number = value; }
 
