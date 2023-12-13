@@ -20,6 +20,7 @@ set(HEADERS
 
     backend/Math_calc/math_base.h
     backend/Math_calc/function_roots.h
+    backend/Math_calc/function_crosses.h
 
     backend/servant/servant.h
     backend/servant/constants.h
@@ -33,6 +34,7 @@ set(HEADERS
     ${LIB_DIR}/Graph_lib/Simple_window.h
     ${LIB_DIR}/Graph_lib/Window.h
 )
+
 set(SOURCES
 #front
     frontend/graphix_window.cpp
@@ -47,6 +49,7 @@ set(SOURCES
     backend/function_string_checkers.cpp
 
     backend/Math_calc/function_roots.cpp
+    backend/Math_calc/function_crosses.cpp
     
 #main
     main.cpp

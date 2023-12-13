@@ -12,10 +12,16 @@ using Back_serv::absolute;
 
 namespace Math_calc {
 
+function_roots::function_roots()
+    : precision{0}, func{Backend::function_string("0")}, points{vector<Point>{}}
+{
+}
+
 function_roots::function_roots(string str, double l_border, double r_border, double h_border,
                                double precision)
-    : func{Backend::function_string(str)}, precision{precision < 0.01 ? precision : 0.01},
+    : precision{precision < 0.01 ? precision : 0.01}, func{Backend::function_string(str)},
       points{solutions(l_border, r_border, h_border)}
+
 {
 }
 
@@ -129,7 +135,7 @@ vector<Point> function_roots::solutions(double l_border, double r_border, double
             double y = func.calculate(x);
             if (absolute(y) < precision * 20)
             {
-                std::cout << x << " " << y << std::endl;
+                // std::cout << x << " " << y << std::endl;
                 res.push_back(Point{x, 0});
             }
         }

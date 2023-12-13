@@ -1,16 +1,18 @@
 // header
 #include "graphix_window.h"
 
+// std libs
+#include <iostream>
+
 // Graphix_calc
 #include "Graphix_calc/segmented_function.h"
 
 // Math_calc
+#include "../backend/Math_calc/function_crosses.h"
 #include "../backend/Math_calc/function_roots.h"
 
 // servant
 #include "servant/constants.h"
-
-#include <iostream>
 
 using namespace Front_consts;
 
@@ -283,19 +285,42 @@ void Graphix_window::show_points()
     auto convert_to_pix = [&] (Math_calc::Point p) -> Graph_lib::Point {
         return Graph_lib::Point{center.x + int(p.x * scale), center.y - int(p.y * scale)};
     };
+
     for (auto& input_box : enter_menu)
     {
         string str = input_box->get_string();
         if (!str.empty())
         {
-            Math_calc::function_roots fz{
+            Math_calc::function_roots fr{
                 str, -((double)x_max() / (2 * scale)), ((double)x_max() / (2 * scale)),
                 (double)y_max() / (2 * scale), (((double)x_max() / (scale * 100 * 2.5)))};
             Graph_lib::Marks* dots = new Graph_lib::Marks{"x"};
-            for (auto& p : fz.get_function_roots())
+            for (auto& p : fr.get_function_roots())
                 dots->add(convert_to_pix(p));
             attach(*dots);
             all_points.push_back(*dots);
+        }
+    }
+
+    for (size_t i = 0; i < enter_menu.size(); i++)
+    {
+        for (size_t j = i + 1; j < enter_menu.size(); j++)
+        {
+
+            if (!enter_menu[i]->get_string().empty() && !enter_menu[j]->get_string().empty())
+            {
+                Math_calc::function_crosses fc{
+                    {enter_menu[i]->get_string(), enter_menu[j]->get_string()},
+                    -((double)x_max() / (2 * scale)),
+                    ((double)x_max() / (2 * scale)),
+                    (double)y_max() / (2 * scale),
+                    (((double)x_max() / (scale * 100 * 2.5)))};
+                Graph_lib::Marks* dots = new Graph_lib::Marks{"o"};
+                for (auto& p : fc.get_functions_crosses())
+                    dots->add(convert_to_pix(p));
+                attach(*dots);
+                all_points.push_back(*dots);
+            }
         }
     }
 

@@ -27,12 +27,12 @@ class function_roots
     vector<Segment> estimated_segment (Segment seg) const;
     // нахождение корня на интервале
     double solution_on_interval (Segment seg) const;
-    // нахождение всех корней
-    vector<Point> solutions (double l_border, double r_border, double h_border) const;
 
   private:
-    Backend::function_string func;
+    // нахождение всех корней
+    vector<Point> solutions (double l_border, double r_border, double h_border) const;
     double precision;
+    Backend::function_string func;
     vector<Point> points;
 };
 
