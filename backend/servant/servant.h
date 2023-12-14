@@ -2,16 +2,15 @@
 
 // std libs
 #include <iostream>
+using std::endl;
 #include <sstream>
 #include <stack>
 #include <string>
 #include <vector>
 
-using std::endl;
-
 namespace Back_serv {
 
-// вспомогательная функция "содержится ли символ в строке?"
+// вспомогательная функция: "содержится ли символ в строке?"
 bool c_in_s (char c, const std::string& s);
 
 // вспомогательная функция, переводящая строку (лексему) в символ
@@ -25,6 +24,7 @@ template <typename T> void print (std::stack<T> st);
 
 std::string spaces_deleted (const std::string& s);
 
+// переписанный модуль для double, чтобы избежать неявного преобразования
 double absolute (double x);
 
 }

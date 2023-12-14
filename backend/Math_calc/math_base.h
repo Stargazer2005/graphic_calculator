@@ -2,6 +2,7 @@
 
 namespace Math_calc {
 
+// вещественная точка
 struct Point
 {
     Point(double x, double y) : x{x}, y{y} {}
@@ -11,6 +12,7 @@ struct Point
     double x, y;
 };
 
+// вещественный отрезок
 struct Segment
 {
     Segment(double start, double stop) : start{start}, end{stop} {}

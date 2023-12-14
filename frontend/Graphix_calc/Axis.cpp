@@ -1,10 +1,12 @@
 // header
 #include "Axis.h"
 
+// std libs
+#include <stdexcept>
+using std::invalid_argument;
+
 // servant
 #include "../servant/constants.h"
-
-using namespace Graph_lib;
 using namespace Front_consts;
 
 namespace Graphix_calc {
@@ -13,7 +15,7 @@ Axis::Axis(Orientation d, Point center, pix_numb length, pix_numb scale, const s
     : dist{scale}, label{Point{0, 0}, lab}
 {
     if (length < 0 || dist < 0)
-        error("bad axis length");
+        throw invalid_argument("bad axis length");
     switch (d)
     {
     case Axis::horisontal:

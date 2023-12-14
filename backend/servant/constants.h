@@ -5,6 +5,8 @@
 
 namespace Back_consts {
 
+// for function_string
+
 constexpr char point = '.';
 constexpr char plus = '+';
 constexpr char minus = '-';
@@ -23,6 +25,10 @@ constexpr char c_exp = 'e';
 constexpr char c_ln = 'l';
 constexpr char uminus = 'u';
 
+// for Math_calc
+
+// золотое сечение
 const double phi = (1 + sqrt(5)) / 2;
+constexpr int max_count = 10000;
 
 }  // namespace Back_consts

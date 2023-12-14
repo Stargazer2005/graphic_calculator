@@ -3,10 +3,8 @@
 
 namespace Back_serv {
 
-// вспомогательная функция "содержится ли символ в строке?"
 bool c_in_s (char c, const std::string& s) { return (s.find(c) != std::string::npos); }
 
-// вспомогательная функция, переводящая строку (лексему) в символ
 char transform_to_char (const std::string& s)
 {
     if (s[0] >= '0' && s[0] <= '9')  // если число
@@ -59,6 +57,6 @@ std::string spaces_deleted (const std::string& s)
     return new_s;
 }
 
-double absolute (double x) { return x >= 0 ? x : -x; };
+double absolute (double x) { return x >= 0 ? x : -x; }
 
 }  // namespace Back_serv

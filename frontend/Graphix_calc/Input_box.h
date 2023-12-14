@@ -1,22 +1,30 @@
 #pragma once
 
+// std libs
+#include <string>
+using std::string;
+
 // Graphix_calc
-#include "Numbered_button.h"
+#include "Numbed_button.h"
+using Graphix_calc::Numbed_button;
 
 // Graph_lib
 #include <Graph_lib/GUI.h>
+using Graph_lib::In_box;
+using Graph_lib::Point;
 #include <Graph_lib/Graph.h>
 #include <Graph_lib/Window.h>
 
-using Graph_lib::In_box;
-using Graphix_calc::Numbered_button;
-
 namespace Graphix_calc {
 
-struct Input_box : Graph_lib::Widget
+class Input_box : public Graph_lib::Widget
 {
+  public:
+    // упрощенный конструктор
     Input_box(short graphics_amount, void cb_draw(void*, void* widget),
               void cb_hide(void*, void* widget), void cb_rem(void*, void* widget));
+
+    // methods
 
     bool is_hidden () const;
 
@@ -26,9 +34,9 @@ struct Input_box : Graph_lib::Widget
 
     void move (int dx, int dy) override;
 
-    std::string get_string () const;
+    string get_string () const { return in_box->get_string(); }
 
-    int get_number () const;
+    int get_number () const { return draw_button->get_number(); }
 
     void set_number (int value);
 
@@ -39,10 +47,13 @@ struct Input_box : Graph_lib::Widget
     void detach (Graph_lib::Window& win);
 
   private:
+    // variables
+
+    // поле, куда пользователь вводит функцию
     In_box* in_box;
-    Numbered_button* draw_button;
-    Numbered_button* hide_button;
-    Numbered_button* rem_button;
+    Numbed_button* draw_button;
+    Numbed_button* hide_button;
+    Numbed_button* rem_button;
     bool is_graph_visible;
 };
 

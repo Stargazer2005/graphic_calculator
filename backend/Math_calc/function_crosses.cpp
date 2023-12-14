@@ -1,14 +1,9 @@
 // header
 #include "function_crosses.h"
 
-// std libs
-#include <cmath>
-#include <iostream>
-
 // servant
 #include "../servant/constants.h"
 #include "../servant/servant.h"
-
 using Back_serv::absolute;
 
 namespace Math_calc {
@@ -23,12 +18,10 @@ function_crosses::function_crosses(pair<string, string> strs, double l_border, d
 {
 }
 
-vector<Point> function_crosses::get_functions_crosses() const { return points; }
-
 vector<Point> function_crosses::crosses(double l_border, double r_border, double h_border) const
 {
     vector<Point> res;
-    for (auto seg : domain_segments(l_border, r_border, h_border))
+    for (auto seg : domain_segments(func, l_border, r_border, h_border, precision))
     {
         for (auto& local_seg : estimated_segment(seg))
         {

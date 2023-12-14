@@ -2,22 +2,25 @@
 
 // Graph_lib
 #include <Graph_lib/GUI.h>
-#include <Graph_lib/Graph.h>
-
 using Graph_lib::Button;
 
 namespace Graphix_calc {
 
 // класс кнопки, которая имеет номер
-struct Numbered_button : Button
+class Numbed_button : public Button
 {
+  public:
     using Button::Button;
+
+    // methods
 
     int get_number () const { return number; }
 
     void set_number (int value) { number = value; }
 
   private:
+    // variables
+
     int number;
 };
 

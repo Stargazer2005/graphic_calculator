@@ -19,4 +19,6 @@ constexpr int inp_box_w = 200;
 constexpr int inp_box_h = 30;
 constexpr int inp_box_indent = inp_box_h + btn_h + padding;
 
+constexpr int height_buff = 3;
+
 }  // namespace Front_consts

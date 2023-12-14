@@ -3,25 +3,23 @@
 
 // servant
 #include "../servant/constants.h"
-
 using namespace Front_consts;
-
-using Graph_lib::Point;
 
 namespace Graphix_calc {
 
+// да, конструктор перегружен, но лучше пусть это будет здесь, чем по несколько раз в Graphix_window
 Input_box::Input_box(short graphics_amount, void cb_draw(void*, void* widget),
                      void cb_hide(void*, void* widget), void cb_rem(void*, void* widget))
     : Graph_lib::Widget{Point{inp_box_h, inp_box_indent * graphics_amount}, inp_box_w, inp_box_h,
                         "y = ", nullptr},
       in_box{new In_box{Point{inp_box_h, inp_box_indent * graphics_amount}, inp_box_w, inp_box_h,
                         "y = "}},
-      draw_button{new Numbered_button{Point{0, inp_box_indent * graphics_amount + inp_box_h}, btn_w,
-                                      btn_h, "Draw", cb_draw}},
+      draw_button{new Numbed_button{Point{0, inp_box_indent * graphics_amount + inp_box_h}, btn_w,
+                                    btn_h, "Draw", cb_draw}},
       hide_button{
-          new Numbered_button{Point{btn_w + padding, inp_box_indent * graphics_amount + inp_box_h},
-                              btn_w, btn_h, "Hide", cb_hide}},
-      rem_button{new Numbered_button{
+          new Numbed_button{Point{btn_w + padding, inp_box_indent * graphics_amount + inp_box_h},
+                            btn_w, btn_h, "Hide", cb_hide}},
+      rem_button{new Numbed_button{
           Point{(btn_w + padding) * 2, inp_box_indent * graphics_amount + inp_box_h}, btn_w, btn_h,
           "Remove", cb_rem}}
 {
@@ -40,10 +38,6 @@ void Input_box::move(int dx, int dy)
     hide_button->move(dx, dy);
     rem_button->move(dx, dy);
 }
-
-std::string Input_box::get_string() const { return in_box->get_string(); }
-
-int Input_box::get_number() const { return draw_button->get_number(); }
 
 void Input_box::set_number(int value)
 {

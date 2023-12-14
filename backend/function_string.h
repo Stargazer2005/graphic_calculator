@@ -2,16 +2,26 @@
 
 // std libs
 #include <functional>
+using std::function;
 #include <string>
-#include <vector>
-
 using std::string;
+#include <vector>
 using std::vector;
+#include <stack>
+using std::stack;
 
 namespace Backend {
 
 class function_string
 {
+  public:
+    function_string(string s);
+
+    // methods:
+
+    // лямбда-функция, считающая по заданному x значение функции
+    function<double(double)> calculate = [this] (double x) { return calc(x); };
+
   private:
     // variables:
 
@@ -38,14 +48,6 @@ class function_string
     vector<string> reverse_polish () const;
     // метод, который по значению переменной x вычисляет значение y
     double calc (double x) const;
-
-  public:
-    function_string(string s);
-
-    // methods:
-
-    // лямбда-функция, считающая по заданному x значение функции
-    std::function<double(double)> calculate = [this] (double x) { return calc(x); };
 };
 
 }  // namespace Backend

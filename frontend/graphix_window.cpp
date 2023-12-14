@@ -1,53 +1,46 @@
 // header
 #include "graphix_window.h"
 
-// std libs
-#include <iostream>
-
-// Graphix_calc
-#include "Graphix_calc/segmented_function.h"
-
-// Math_calc
-#include "../backend/Math_calc/function_crosses.h"
-#include "../backend/Math_calc/function_roots.h"
-
 // servant
 #include "servant/constants.h"
-
 using namespace Front_consts;
-
-using Graph_lib::Color;
-using Graph_lib::Function;
-using Graphix_calc::Segmented_function;
 
 using pix_numb = int;
 
 namespace Frontend {
 
-Graphix_window::Graphix_window(Point left_corner, pix_numb width, pix_numb height,
-                               const std::string& title, pix_numb scale)
-    : Window(left_corner, width, height, title), scale{scale},
-      x_axis{
-          new Axis{Axis::Orientation::horisontal, Point(width / 2, height / 2), width, scale, "X"}},
-      y_axis{
-          new Axis{Axis::Orientation::vertical, Point(width / 2, height / 2), height, scale, "Y"}},
+// из-за количества кнопок на экране конструктор сильно перегружен, но что поделать :)
+Graphix_window::Graphix_window(Graph_lib::Point left_corner, pix_numb width, pix_numb height,
+                               const string& title, pix_numb scale)
+    : Graph_lib::Window(left_corner, width, height, title), scale{scale},
+      x_axis{new Axis{Axis::Orientation::horisontal, Graph_lib::Point(width / 2, height / 2), width,
+                      scale, "X"}},
+      y_axis{new Axis{Axis::Orientation::vertical, Graph_lib::Point(width / 2, height / 2), height,
+                      scale, "Y"}},
       center{width / 2, height / 2},
       // инициализируем вектор введенных строк (пустыми)
       inputed_strings{"", "", "", "", ""},
       // кнопка quit находится в левом верхнем углу
-      quit_button{Point{width - btn_w, 0}, btn_w, btn_h, "Quit", cb_quit},
+      quit_button{Graph_lib::Point{width - btn_w, 0}, btn_w, btn_h, "Quit", cb_quit},
       // кнопки изменения масштаба находятся справа и являются квадратами
-      incr_button{Point{width - scl_btn_side, btn_h}, scl_btn_side, scl_btn_side, "+", cb_incr},
-      decr_button{Point{width - scl_btn_side, btn_h + scl_btn_side}, scl_btn_side, scl_btn_side,
-                  "-", cb_decr},
+      incr_button{Graph_lib::Point{width - scl_btn_side, btn_h}, scl_btn_side, scl_btn_side, "+",
+                  cb_incr},
+      decr_button{Graph_lib::Point{width - scl_btn_side, btn_h + scl_btn_side}, scl_btn_side,
+                  scl_btn_side, "-", cb_decr},
       // а кнопка new_graph находится правее меню
-      new_graph_button{Point{inp_box_w + scl_btn_side, 0}, btn_w, btn_h, "New graph", cb_new},
+      new_graph_button{Graph_lib::Point{inp_box_w + scl_btn_side, 0}, btn_w, btn_h, "New graph",
+                       cb_new},
       // кнопки для точек
-      sh_points{Point{width - btn_w, height - 2 * btn_h}, btn_w, btn_h, "Points", cb_show_points},
-      hd_points{Point{width - btn_w, height - btn_h}, btn_w, btn_h, "Hide", cb_hide_points}
+      sh_points{Graph_lib::Point{width - btn_w, height - 2 * btn_h}, btn_w, btn_h, "Points",
+                cb_show_points},
+      hd_points{Graph_lib::Point{width - btn_w, height - btn_h}, btn_w, btn_h, "Hide",
+                cb_hide_points}
 {
     // не даём пользователю менять размеры окна
     size_range(width, height, width, height);
+
+    // задаём цвет окну
+    // this->color(Color::white);
 
     // задаём цвет осям
     x_axis->set_color(Color::Color_type::dark_cyan);
@@ -92,19 +85,19 @@ void Graphix_window::cb_decr(void*, void* widget)
 
 void Graphix_window::cb_draw(void*, void* widget)
 {
-    auto& btn = Graph_lib::reference_to<Numbered_button>(widget);
+    auto& btn = Graph_lib::reference_to<Numbed_button>(widget);
     dynamic_cast<Graphix_window&>(btn.window()).draw_graph(btn.get_number());
 }
 
 void Graphix_window::cb_hide(void*, void* widget)
 {
-    auto& btn = Graph_lib::reference_to<Numbered_button>(widget);
+    auto& btn = Graph_lib::reference_to<Numbed_button>(widget);
     dynamic_cast<Graphix_window&>(btn.window()).hide_graph(btn.get_number());
 }
 
 void Graphix_window::cb_rem(void*, void* widget)
 {
-    auto& btn = Graph_lib::reference_to<Numbered_button>(widget);
+    auto& btn = Graph_lib::reference_to<Numbed_button>(widget);
     dynamic_cast<Graphix_window&>(btn.window()).rem_graph(btn.get_number());
 }
 
@@ -140,10 +133,10 @@ void Graphix_window::change_scale(pix_numb new_scale)
 
         // создаём новые оси и задаём цвет
         x_axis = new Axis{Axis::Orientation::horisontal, center, x_max(), scale, "X"};
-        x_axis->set_color(Graph_lib::Color::Color_type::dark_cyan);
+        x_axis->set_color(Color::Color_type::dark_cyan);
 
         y_axis = new Axis{Axis::Orientation::vertical, center, y_max(), scale, "Y"};
-        y_axis->set_color(Graph_lib::Color::Color_type::dark_cyan);
+        y_axis->set_color(Color::Color_type::dark_cyan);
 
         // аттачим новые оси
         attach(*x_axis);
@@ -210,7 +203,7 @@ void Graphix_window::rem_graph(size_t graph_number)
     // детачим кнопку под переданным номером
     enter_menu[graph_number]->detach(*this);
 
-    // возвращаем кнопку "new_graph", если был удален последний
+    // возвращаем кнопку "new_graph" на экран, если был удален последний
     if (enter_menu.size() == graphs_max_amount)
         attach(new_graph_button);
 
@@ -279,46 +272,62 @@ void Graphix_window::new_graph()
 
 void Graphix_window::show_points()
 {
+    // чистим память от всех предыдущих точек
     clear_points();
+
     is_points_visible = true;
 
+    // воспомогательная функция, которая переводит бэкендовы вещественные точки в пиксельные
     auto convert_to_pix = [&] (Math_calc::Point p) -> Graph_lib::Point {
         return Graph_lib::Point{center.x + int(p.x * scale), center.y - int(p.y * scale)};
     };
 
+    // переводим границы экрана в вещественные, чтобы использовать для бэкендовских функций
+    double l_border = -((double)x_max() / (2 * scale));
+    double r_border = -l_border;
+    double h_border = (double)y_max() / (2 * scale);
+    double point_prec = (((double)x_max() / (scale * 2500)));
+
+    // проходимся по всем строкам, куда пользователь вводит функции и рисуем их корни,
+    // (если они не скрыты)
     for (auto& input_box : enter_menu)
     {
         string str = input_box->get_string();
-        if (!str.empty())
+        if (!str.empty() && !input_box->is_hidden())
         {
-            Math_calc::function_roots fr{
-                str, -((double)x_max() / (2 * scale)), ((double)x_max() / (2 * scale)),
-                (double)y_max() / (2 * scale), (((double)x_max() / (scale * 100 * 2.5)))};
-            Graph_lib::Marks* dots = new Graph_lib::Marks{"x"};
+            Math_calc::function_roots fr{str, l_border, r_border, h_border, point_prec};
+            // создаём марки, добавляем их на окно
+            Marks* dots = new Marks{"x"};
             for (auto& p : fr.get_function_roots())
                 dots->add(convert_to_pix(p));
             attach(*dots);
+            // и добавляем в общий массив всех точек на экране
             all_points.push_back(*dots);
         }
     }
 
+    // проходимся по всем строкам, куда пользователь вводит функции и их всевозможные пересечения
     for (size_t i = 0; i < enter_menu.size(); i++)
     {
         for (size_t j = i + 1; j < enter_menu.size(); j++)
         {
 
-            if (!enter_menu[i]->get_string().empty() && !enter_menu[j]->get_string().empty())
+            auto& input_box = enter_menu[i];
+            string str = input_box->get_string();
+            // "другой input_box"
+            auto& oth_input_box = enter_menu[j];
+            string oth_str = oth_input_box->get_string();
+
+            if (!str.empty() && !oth_str.empty())
             {
                 Math_calc::function_crosses fc{
-                    {enter_menu[i]->get_string(), enter_menu[j]->get_string()},
-                    -((double)x_max() / (2 * scale)),
-                    ((double)x_max() / (2 * scale)),
-                    (double)y_max() / (2 * scale),
-                    (((double)x_max() / (scale * 100 * 2.5)))};
-                Graph_lib::Marks* dots = new Graph_lib::Marks{"o"};
+                    {str, oth_str}, l_border, r_border, h_border, point_prec};
+                // создаём марки, добавляем их на окно
+                Marks* dots = new Marks{"o"};
                 for (auto& p : fc.get_functions_crosses())
                     dots->add(convert_to_pix(p));
                 attach(*dots);
+                // и добавляем в общий массив всех точек на экране
                 all_points.push_back(*dots);
             }
         }
@@ -331,6 +340,7 @@ void Graphix_window::hide_points()
 {
     clear_points();
     is_points_visible = false;
+
     button_pushed = true;
 }
 

@@ -2,25 +2,30 @@
 
 // std libs
 #include <string>
+using std::string;
 #include <vector>
+using std::vector;
 
 // Graphix_calc
 #include "Graphix_calc/axis.h"
+using Graphix_calc::Axis;
 #include "Graphix_calc/input_box.h"
+using Graphix_calc::Input_box;
+#include "Graphix_calc/segmented_function.h"
+using Graphix_calc::Segmented_function;
+
+// Backend
+#include "../backend.h"
 
 // Graph_lib
 #include <Graph_lib/GUI.h>
 #include <Graph_lib/Graph.h>
+using Graph_lib::Color;
+using Graph_lib::Function;
 #include <Graph_lib/Window.h>
-
 using Graph_lib::Button;
 using Graph_lib::Marks;
-using Graph_lib::Point;
 using Graph_lib::Vector_ref;
-using Graphix_calc::Axis;
-using Graphix_calc::Input_box;
-
-using std::vector;
 
 namespace Frontend {
 
@@ -28,8 +33,8 @@ namespace Frontend {
 class Graphix_window : public Graph_lib::Window
 {
   public:
-    Graphix_window(Point left_corner, pix_numb width, pix_numb height, const std::string& title,
-                   pix_numb scale);
+    Graphix_window(Graph_lib::Point left_corner, pix_numb width, pix_numb height,
+                   const string& title, pix_numb scale);
 
     // methods
 
@@ -52,9 +57,9 @@ class Graphix_window : public Graph_lib::Window
     // вертикальная и горизонтальная оси
     Axis *x_axis, *y_axis;
     // центр окна (используется только в Graph_lib::Function и методах на отображение точки)
-    Point center;
+    Graph_lib::Point center;
     // вектор введенных пользователем строк
-    vector<std::string> inputed_strings;
+    vector<string> inputed_strings;
     // кнопка выхода из программы
     Button quit_button;
     // кнопка масштаб "+"
@@ -66,11 +71,13 @@ class Graphix_window : public Graph_lib::Window
     Button sh_points;
     Button hd_points;
 
-    // вектор полей ввода
+    // вектор полей ввода(группы поля ввода и трёх кнопок: draw, hide, remove)
     vector<Input_box*> enter_menu;
-    // общий массив со всеми сегментированными функциями (графиками)
-    vector<Vector_ref<Graph_lib::Function>> graphics;
 
+    // общий массив со всеми сегментированными функциями (графиками)
+    vector<Vector_ref<Function>> graphics;
+
+    // общий массив всех точек на экране
     Vector_ref<Marks> all_points;
 
     bool is_points_visible{false};
@@ -96,6 +103,7 @@ class Graphix_window : public Graph_lib::Window
     void quit ()
     {
         hide();
+
         quit_button_pushed = true;
     }
 
@@ -119,6 +127,7 @@ class Graphix_window : public Graph_lib::Window
 
     void hide_points ();
 
+    // вспомогательная фунция, удаляющая все точки с экрана и чистящая память
     void clear_points ();
 };
 
