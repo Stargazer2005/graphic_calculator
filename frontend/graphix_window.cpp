@@ -203,7 +203,7 @@ void Graphix_window::rem_graph(size_t graph_number)
     // детачим кнопку под переданным номером
     enter_menu[graph_number]->detach(*this);
 
-    // возвращаем кнопку "new_graph" на экран, если был удален последний
+    // возвращаем кнопку "new_graph" на экран, если был удален хоть один
     if (enter_menu.size() == graphs_max_amount)
         attach(new_graph_button);
 
