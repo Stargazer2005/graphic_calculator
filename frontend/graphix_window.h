@@ -113,13 +113,18 @@ class Graphix_window : public Graph_lib::Window
 
     void decrease_scale ();
 
-    void draw_graph (size_t graph_number);
+    void draw_graph (size_t graph_index);
 
-    void hide_graph (size_t graph_number);
+    void hide_graph (size_t graph_index);
 
-    void rem_graph (size_t graph_number);
+    void rem_graph (size_t graph_index);
 
-    void graph_clear (size_t graph_number);
+    // вспомогательная фунция, добавляющая в вектор введенных пользователем строк всё из enter_menu
+    void fill_graphs ();
+
+    // вспомогательная фунция, отчищающая память и удаляющая все строки из вектора введенных
+    // пользователем строк
+    void clear_graph (size_t graph_index);
 
     void new_graph ();
 

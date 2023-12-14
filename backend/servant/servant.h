@@ -27,4 +27,6 @@ std::string spaces_deleted (const std::string& s);
 // переписанный модуль для double, чтобы избежать неявного преобразования
 double absolute (double x);
 
-}
+bool replace (std::string& str, const std::string& from, const std::string& to);
+
+}  // namespace Back_serv

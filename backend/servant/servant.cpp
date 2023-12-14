@@ -59,4 +59,13 @@ std::string spaces_deleted (const std::string& s)
 
 double absolute (double x) { return x >= 0 ? x : -x; }
 
+bool replace (std::string& str, const std::string& from, const std::string& to)
+{
+    size_t start_pos = str.find(from);
+    if (start_pos == std::string::npos)
+        return false;
+    str.replace(start_pos, from.length(), to);
+    return true;
+}
+
 }  // namespace Back_serv

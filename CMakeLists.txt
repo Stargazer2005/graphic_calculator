@@ -3,31 +3,33 @@ cmake_minimum_required(VERSION 3.20)
 set(TARGET "graphic_calculator")
 
 set(HEADERS
-#front
-    frontend/graphix_window.h
-
+# front
     frontend/Graphix_calc/Axis.h
-    frontend/Graphix_calc/Segmented_function.h
     frontend/Graphix_calc/Input_box.h
     frontend/Graphix_calc/Numbed_button.h
+    frontend/Graphix_calc/Segmented_function.h
 
     frontend/servant/constants.h
+
+    frontend/graphix_window.h
     
     frontend.h
 
-#back
-    backend/function_string.h
-
-    backend/Math_calc/math_base.h
-    backend/Math_calc/function_roots.h
-    backend/Math_calc/function_crosses.h
+# back
     backend/Math_calc/domain_segments.h
+    backend/Math_calc/function_crosses.h
+    backend/Math_calc/function_roots.h
+    backend/Math_calc/math_base.h
 
     backend/servant/servant.h
     backend/servant/constants.h
 
+    backend/exposed_dep_function.h
+    backend/function_string.h
+
     backend.h
 
+# Graph_lib
     ${LIB_DIR}/Graph_lib/Graph.h
     ${LIB_DIR}/Graph_lib/GUI.h
     ${LIB_DIR}/Graph_lib/Point.h
@@ -35,24 +37,28 @@ set(HEADERS
 )
 
 set(SOURCES
-#front
-    frontend/graphix_window.cpp
-
+# front
     frontend/Graphix_calc/Axis.cpp
     frontend/Graphix_calc/Input_box.cpp
     frontend/Graphix_calc/Segmented_function.cpp
+
+    frontend/graphix_window.cpp
     
-#back
-    backend/function_string.cpp
-    backend/servant/servant.cpp
-    backend/function_string_checkers.cpp
+# back
     backend/Math_calc/domain_segments.cpp
-    backend/Math_calc/function_roots.cpp
     backend/Math_calc/function_crosses.cpp
-    
-#main
+    backend/Math_calc/function_roots.cpp
+
+    backend/servant/servant.cpp
+
+    backend/exposed_dep_function.cpp
+    backend/function_string.cpp
+    backend/function_string_checkers.cpp
+
+# main
     main.cpp
 
+# Graph_lib
     ${LIB_DIR}/Graph_lib/Graph.cpp
     ${LIB_DIR}/Graph_lib/GUI.cpp
     ${LIB_DIR}/Graph_lib/Window.cpp

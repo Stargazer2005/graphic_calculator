@@ -12,6 +12,13 @@ using namespace Back_serv;
 
 namespace Backend {
 
+function_string::function_string(string s)
+{
+    expr = s;
+    lexs = lexemes();
+    rev_pol = reverse_polish();
+}
+
 vector<string> function_string::lexemes() const
 {
     // TRACE_FUNC;
@@ -226,14 +233,6 @@ vector<string> function_string::reverse_polish() const
     // std::cout << "rev_pol:";
     // print(res);
     return res;
-}
-
-function_string::function_string(string s)
-{
-    // TRACE_FUNC;
-    expr = s;
-    lexs = lexemes();
-    rev_pol = reverse_polish();
 }
 
 double function_string::calc(double x) const

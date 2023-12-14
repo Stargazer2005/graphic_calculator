@@ -165,16 +165,19 @@ void Graphix_window::decrease_scale()
     button_pushed = true;
 }
 
-void Graphix_window::draw_graph(size_t graph_number)
+void Graphix_window::draw_graph(size_t graph_index)
 {
     // чистим старый график и точки
-    graph_clear(graph_number);
+    clear_graph(graph_index);
 
-    // записываем в вектор введенных строк то, что ввёл
-    inputed_strings[graph_number] = enter_menu[graph_number]->get_string();
+    // записываем в вектор введенных строк то, что ввёл пользователь
+    fill_graphs();
+
+    string exposed_func =
+        Backend::exposed_dep_function(inputed_strings, inputed_strings[graph_index], graph_index);
 
     // создаём сегментированную функцию
-    Segmented_function seg_func(inputed_strings[graph_number], scale, center, x_max(), y_max());
+    Segmented_function seg_func(exposed_func, scale, center, x_max(), y_max());
     Vector_ref<Function> graphic = seg_func.get_segmented_function();
 
     // аттачим сегментированную функцию
@@ -185,46 +188,46 @@ void Graphix_window::draw_graph(size_t graph_number)
     }
 
     // записываем новую функцию в общий массив всех графиков
-    if (graphics.size() > graph_number)
-        graphics[graph_number] = graphic;
+    if (graphics.size() > graph_index)
+        graphics[graph_index] = graphic;
     else
         graphics.push_back(graphic);
 
     // выводим наше окно
-    enter_menu[graph_number]->show();
+    enter_menu[graph_index]->show();
 
     button_pushed = true;
 }
 
-void Graphix_window::hide_graph(size_t graph_number)
+void Graphix_window::hide_graph(size_t graph_index)
 {
     // прячем старый график и чистим память
-    graph_clear(graph_number);
+    clear_graph(graph_index);
 
     button_pushed = true;
 }
 
-void Graphix_window::rem_graph(size_t graph_number)
+void Graphix_window::rem_graph(size_t graph_index)
 {
     // детачим кнопку под переданным номером
-    enter_menu[graph_number]->detach(*this);
+    enter_menu[graph_index]->detach(*this);
 
     // проходимся по всем инпут_боксам начиная со следующего
-    for (size_t j = graph_number + 1; j < enter_menu.size(); ++j)
+    for (size_t j = graph_index + 1; j < enter_menu.size(); ++j)
     {
         // двигаем их вверх и меняем номер на пердыдущий
         enter_menu[j]->move(0, -inp_box_indent_h);
         enter_menu[j]->set_number(enter_menu[j]->get_number() - 1);
     }
     // также изменяем размеры самого вектора
-    enter_menu.erase(enter_menu.begin() + graph_number);
+    enter_menu.erase(enter_menu.begin() + graph_index);
 
-    if (graphics.size() > graph_number)
+    if (graphics.size() > graph_index)
     {
         // детачим этот график и чистим память
-        graph_clear(graph_number);
+        clear_graph(graph_index);
         // также изменяем размеры самого вектора
-        graphics.erase(graphics.begin() + graph_number);
+        graphics.erase(graphics.begin() + graph_index);
     }
 
     // возвращаем кнопку "new_graph" на экран, если был удален хоть один
@@ -235,27 +238,27 @@ void Graphix_window::rem_graph(size_t graph_number)
     if (enter_menu.empty())
         new_graph_button.move(-inp_box_all_w, 0);
 
-    // в случае удаления одного из графиков прячем все точки
-    hide_points();
+    // в случае удаления одного из графиков удаляем все точки
+    clear_points();
 
     button_pushed = true;
 }
 
-void Graphix_window::graph_clear(size_t graph_number)
+void Graphix_window::clear_graph(size_t graph_index)
 {
     // убираем все спрятанные фрагменты графика с экрана
-    if (graphics.size() > graph_number)
+    if (graphics.size() > graph_index)
     {
-        for (int j = 0; j < graphics[graph_number].size(); ++j)
-            detach(graphics[graph_number][j]);
+        for (int j = 0; j < graphics[graph_index].size(); ++j)
+            detach(graphics[graph_index][j]);
     }
 
     // прячем окно
-    enter_menu[graph_number]->hide();
+    enter_menu[graph_index]->hide();
 
     // высвобождаем память
-    if (graphics.size() > graph_number)
-        graphics[graph_number].clear();
+    if (graphics.size() > graph_index)
+        graphics[graph_index].clear();
 }
 
 void Graphix_window::new_graph()
@@ -297,6 +300,7 @@ void Graphix_window::show_points()
     };
 
     // переводим границы экрана в вещественные, чтобы использовать для бэкендовских функций
+
     double l_border = -((double)x_max() / (2 * scale));
     double r_border = -l_border;
     double h_border = (double)y_max() / (2 * scale);
@@ -307,9 +311,11 @@ void Graphix_window::show_points()
     for (auto& input_box : enter_menu)
     {
         string str = input_box->get_string();
+        size_t graph_index = input_box->get_number();
         if (!str.empty() && !input_box->is_hidden())
         {
-            Math_calc::function_roots fr{str, l_border, r_border, h_border, point_prec};
+            string exposed_func = Backend::exposed_dep_function(inputed_strings, str, graph_index);
+            Math_calc::function_roots fr{exposed_func, l_border, r_border, h_border, point_prec};
             // создаём марки, добавляем их на окно
             Marks* dots = new Marks{"x"};
             for (auto& p : fr.get_function_roots())
@@ -321,6 +327,7 @@ void Graphix_window::show_points()
     }
 
     // проходимся по всем строкам, куда пользователь вводит функции и их всевозможные пересечения
+    // (если они не скрыты)
     for (size_t i = 0; i < enter_menu.size(); i++)
     {
         for (size_t j = i + 1; j < enter_menu.size(); j++)
@@ -331,18 +338,26 @@ void Graphix_window::show_points()
             // "другой input_box"
             auto& oth_input_box = enter_menu[j];
             string oth_str = oth_input_box->get_string();
-
-            if (!str.empty() && !oth_str.empty())
+            if (!str.empty() && !oth_str.empty() && !input_box->is_hidden() &&
+                !oth_input_box->is_hidden())
             {
-                Math_calc::function_crosses fc{
-                    {str, oth_str}, l_border, r_border, h_border, point_prec};
-                // создаём марки, добавляем их на окно
-                Marks* dots = new Marks{"o"};
-                for (auto& p : fc.get_functions_crosses())
-                    dots->add(convert_to_pix(p));
-                attach(*dots);
-                // и добавляем в общий массив всех точек на экране
-                all_points.push_back(*dots);
+                string exposed_func = Backend::exposed_dep_function(inputed_strings, str, i);
+
+                string oth_exposed_func =
+                    Backend::exposed_dep_function(inputed_strings, oth_str, j);
+
+                if (!str.empty() && !oth_str.empty())
+                {
+                    Math_calc::function_crosses fc{
+                        {exposed_func, oth_exposed_func}, l_border, r_border, h_border, point_prec};
+                    // создаём марки, добавляем их на окно
+                    Marks* dots = new Marks{"o"};
+                    for (auto& p : fc.get_functions_crosses())
+                        dots->add(convert_to_pix(p));
+                    attach(*dots);
+                    // и добавляем в общий массив всех точек на экране
+                    all_points.push_back(*dots);
+                }
             }
         }
     }
@@ -364,6 +379,12 @@ void Graphix_window::clear_points()
         detach(all_points[i]);
 
     all_points.clear();
+}
+
+void Graphix_window::fill_graphs()
+{
+    for (size_t graph_index = 0; graph_index < enter_menu.size(); graph_index++)
+        inputed_strings[graph_index] = enter_menu[graph_index]->get_string();
 }
 
 }  // namespace Frontend
