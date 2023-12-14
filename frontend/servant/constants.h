@@ -17,7 +17,9 @@ constexpr int scl_btn_side = 30;
 
 constexpr int inp_box_w = 200;
 constexpr int inp_box_h = 30;
-constexpr int inp_box_indent = inp_box_h + btn_h + padding;
+constexpr int inp_box_cap_w = 30;
+constexpr int inp_box_all_w = inp_box_w + inp_box_cap_w;
+constexpr int inp_box_indent_h = inp_box_h + btn_h + padding;
 
 constexpr int height_buff = 3;
 

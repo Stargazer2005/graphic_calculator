@@ -150,14 +150,20 @@ void Graphix_window::change_scale(pix_numb new_scale)
         // перерисовываем все точки, если они видны
         if (is_points_visible)
             show_points();
-
-        button_pushed = true;
     }
 }
 
-void Graphix_window::increase_scale() { change_scale(scale * scale_coef); }
+void Graphix_window::increase_scale()
+{
+    change_scale(scale * scale_coef);
+    button_pushed = true;
+}
 
-void Graphix_window::decrease_scale() { change_scale(scale / scale_coef); }
+void Graphix_window::decrease_scale()
+{
+    change_scale(scale / scale_coef);
+    button_pushed = true;
+}
 
 void Graphix_window::draw_graph(size_t graph_number)
 {
@@ -203,15 +209,11 @@ void Graphix_window::rem_graph(size_t graph_number)
     // детачим кнопку под переданным номером
     enter_menu[graph_number]->detach(*this);
 
-    // возвращаем кнопку "new_graph" на экран, если был удален хоть один
-    if (enter_menu.size() == graphs_max_amount)
-        attach(new_graph_button);
-
     // проходимся по всем инпут_боксам начиная со следующего
     for (size_t j = graph_number + 1; j < enter_menu.size(); ++j)
     {
         // двигаем их вверх и меняем номер на пердыдущий
-        enter_menu[j]->move(0, -inp_box_indent);
+        enter_menu[j]->move(0, -inp_box_indent_h);
         enter_menu[j]->set_number(enter_menu[j]->get_number() - 1);
     }
     // также изменяем размеры самого вектора
@@ -224,6 +226,14 @@ void Graphix_window::rem_graph(size_t graph_number)
         // также изменяем размеры самого вектора
         graphics.erase(graphics.begin() + graph_number);
     }
+
+    // возвращаем кнопку "new_graph" на экран, если был удален хоть один
+    if (enter_menu.size() == graphs_max_amount - 1)
+        attach(new_graph_button);
+
+    // если не осталось полей для ввода, двигаем "new_graph_button"
+    if (enter_menu.empty())
+        new_graph_button.move(-inp_box_all_w, 0);
 
     // в случае удаления одного из графиков прячем все точки
     hide_points();
@@ -256,6 +266,10 @@ void Graphix_window::new_graph()
     // задаём ему последний номер и аттачим его
     new_graph->set_number(enter_menu.size());
     new_graph->attach(*this);
+
+    // если до увеличения массив инпут_боксов был пуст, то мы обратно двигаем new_graph_button
+    if (enter_menu.empty())
+        new_graph_button.move(inp_box_all_w, 0);
 
     // добавляем новый инпут_бокс в соотв. вектор
     enter_menu.push_back(new_graph);

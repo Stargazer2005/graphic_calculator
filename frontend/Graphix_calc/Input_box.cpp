@@ -10,18 +10,18 @@ namespace Graphix_calc {
 // да, конструктор перегружен, но лучше пусть это будет здесь, чем по несколько раз в Graphix_window
 Input_box::Input_box(short graphics_amount, void cb_draw(void*, void* widget),
                      void cb_hide(void*, void* widget), void cb_rem(void*, void* widget))
-    : Graph_lib::Widget{Point{inp_box_h, inp_box_indent * graphics_amount}, inp_box_w, inp_box_h,
+    : Graph_lib::Widget{Point{inp_box_h, inp_box_indent_h * graphics_amount}, inp_box_w, inp_box_h,
                         "y = ", nullptr},
-      in_box{new In_box{Point{inp_box_h, inp_box_indent * graphics_amount}, inp_box_w, inp_box_h,
+      in_box{new In_box{Point{inp_box_h, inp_box_indent_h * graphics_amount}, inp_box_w, inp_box_h,
                         "y = "}},
-      draw_button{new Numbed_button{Point{0, inp_box_indent * graphics_amount + inp_box_h}, btn_w,
+      draw_button{new Numbed_button{Point{0, inp_box_indent_h * graphics_amount + inp_box_h}, btn_w,
                                     btn_h, "Draw", cb_draw}},
       hide_button{
-          new Numbed_button{Point{btn_w + padding, inp_box_indent * graphics_amount + inp_box_h},
+          new Numbed_button{Point{btn_w + padding, inp_box_indent_h * graphics_amount + inp_box_h},
                             btn_w, btn_h, "Hide", cb_hide}},
       rem_button{new Numbed_button{
-          Point{(btn_w + padding) * 2, inp_box_indent * graphics_amount + inp_box_h}, btn_w, btn_h,
-          "Remove", cb_rem}}
+          Point{(btn_w + padding) * 2, inp_box_indent_h * graphics_amount + inp_box_h}, btn_w,
+          btn_h, "Remove", cb_rem}}
 {
 }
 
