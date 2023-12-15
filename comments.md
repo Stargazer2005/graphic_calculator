@@ -9,6 +9,8 @@ graphic_calculator/
 |       |       |---Axis.h
 |       |       |---Input_box.cpp
 |       |       |---Input_box.h
+|       |       |---Point_box.cpp
+|       |       |---Point_box.h
 |       |       |---Numbed_button.h
 |       |       |---Segmented_function.cpp
 |       |       `---Segmented_function.h
@@ -16,8 +18,8 @@ graphic_calculator/
 |       |───servant/
 |       |       `---constants.h
 |       |
-|       |---graphix_window.cpp
-|       `---graphix_window.h
+|       |---Graphix_window.cpp
+|       `---Graphix_window.h
 |
 |───backend/
 |       |───Math_calc/ 

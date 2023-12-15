@@ -7,11 +7,13 @@ using std::string;
 using std::vector;
 
 // Graphix_calc
-#include "Graphix_calc/axis.h"
+#include "Graphix_calc/Axis.h"
 using Graphix_calc::Axis;
-#include "Graphix_calc/input_box.h"
+#include "Graphix_calc/Input_box.h"
 using Graphix_calc::Input_box;
-#include "Graphix_calc/segmented_function.h"
+#include "Graphix_calc/Point_box.h"
+using Graphix_calc::Point_box;
+#include "Graphix_calc/Segmented_function.h"
 using Graphix_calc::Segmented_function;
 
 // Backend
@@ -68,15 +70,14 @@ class Graphix_window : public Graph_lib::Window
     Button decr_button;
     Button new_graph_button;
 
-    Button sh_points;
-    Button hd_points;
-
     // вектор полей ввода(группы поля ввода и трёх кнопок: draw, hide, remove)
     vector<Input_box*> enter_menu;
 
     // общий массив со всеми сегментированными функциями (графиками)
     vector<Vector_ref<Function>> graphics;
 
+    // меню с общим полем для точек
+    Point_box point_box;
     // общий массив всех точек на экране
     Vector_ref<Marks> all_points;
 

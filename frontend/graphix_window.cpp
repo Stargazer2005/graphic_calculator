@@ -19,7 +19,7 @@ Graphix_window::Graphix_window(Graph_lib::Point left_corner, pix_numb width, pix
                       scale, "Y"}},
       center{width / 2, height / 2},
       // инициализируем вектор введенных строк (пустыми)
-      inputed_funcs{"", "", "", "", ""},
+      inputed_funcs{empty_str, empty_str, empty_str, empty_str, empty_str},
       // кнопка quit находится в левом верхнем углу
       quit_button{Graph_lib::Point{width - btn_w, 0}, btn_w, btn_h, "Quit", cb_quit},
       // кнопки изменения масштаба находятся справа и являются квадратами
@@ -30,11 +30,8 @@ Graphix_window::Graphix_window(Graph_lib::Point left_corner, pix_numb width, pix
       // а кнопка new_graph находится правее меню
       new_graph_button{Graph_lib::Point{inp_box_w + scl_btn_side, 0}, btn_w, btn_h, "New graph",
                        cb_new},
-      // кнопки для точек
-      sh_points{Graph_lib::Point{width - btn_w, height - 2 * btn_h}, btn_w, btn_h, "Points",
-                cb_show_points},
-      hd_points{Graph_lib::Point{width - btn_w, height - btn_h}, btn_w, btn_h, "Hide",
-                cb_hide_points}
+      // меню с точками
+      point_box{width, height, cb_show_points, cb_hide_points}
 {
     // не даём пользователю менять размеры окна
     size_range(width, height, width, height);
@@ -60,9 +57,9 @@ Graphix_window::Graphix_window(Graph_lib::Point left_corner, pix_numb width, pix
     attach(incr_button);
     attach(decr_button);
     attach(new_graph_button);
-    attach(sh_points);
-    attach(hd_points);
+
     new_graph->attach(*this);
+    point_box.attach(*this);
 }
 
 void Graphix_window::cb_quit(void*, void* widget)
@@ -173,28 +170,39 @@ void Graphix_window::draw_graph(size_t graph_index)
     // записываем в вектор введенных строк то, что ввёл пользователь
     fill_graphs();
 
-    string exposed_func =
-        Backend::exposed_dep_function(inputed_funcs, inputed_funcs[graph_index], graph_index);
-
-    // создаём сегментированную функцию
-    Segmented_function seg_func(exposed_func, scale, center, x_max(), y_max());
-    Vector_ref<Function> graphic = seg_func.get_segmented_function();
-
-    // аттачим сегментированную функцию
-    for (int i = 0; i < graphic.size(); i++)
+    // добавили обработку ошибок
+    try
     {
-        graphic[i].set_color(Color::black);
-        attach(graphic[i]);
+        string exposed_func =
+            Backend::exposed_dep_function(inputed_funcs, inputed_funcs[graph_index], graph_index);
+
+        // создаём сегментированную функцию
+        Segmented_function seg_func(exposed_func, scale, center, x_max(), y_max());
+        Vector_ref<Function> graphic = seg_func.get_segmented_function();
+
+        // аттачим сегментированную функцию
+        for (int i = 0; i < graphic.size(); i++)
+        {
+            graphic[i].set_color(Color::black);
+            attach(graphic[i]);
+        }
+
+        // записываем новую функцию в общий массив всех графиков
+        if (graphics.size() > graph_index)
+            graphics[graph_index] = graphic;
+        else
+            graphics.push_back(graphic);
+
+        // чистим поле с ошибкой и выводим график
+        enter_menu[graph_index]->set_message(empty_str);
+        enter_menu[graph_index]->graph_show();
     }
-
-    // записываем новую функцию в общий массив всех графиков
-    if (graphics.size() > graph_index)
-        graphics[graph_index] = graphic;
-    else
-        graphics.push_back(graphic);
-
-    // выводим наше окно
-    enter_menu[graph_index]->show();
+    catch (const std::exception& e)
+    {
+        // выводим ошибку и прячем график
+        enter_menu[graph_index]->set_message(e.what());
+        enter_menu[graph_index]->graph_hide();
+    }
 
     button_pushed = true;
 }
@@ -253,8 +261,8 @@ void Graphix_window::clear_graph(size_t graph_index)
             detach(graphics[graph_index][j]);
     }
 
-    // прячем окно
-    enter_menu[graph_index]->hide();
+    // прячем график
+    enter_menu[graph_index]->graph_hide();
 
     // высвобождаем память
     if (graphics.size() > graph_index)
@@ -312,17 +320,22 @@ void Graphix_window::show_points()
     {
         string func = input_box->get_string();
         size_t graph_index = input_box->get_number();
-        if (!func.empty() && !input_box->is_hidden())
+        if (!input_box->is_hidden())
         {
-            string exposed_func = Backend::exposed_dep_function(inputed_funcs, func, graph_index);
-            Math_calc::function_roots fr{exposed_func, l_border, r_border, h_border, point_prec};
-            // создаём марки, добавляем их на окно
-            Marks* dots = new Marks{"x"};
-            for (auto& p : fr.get_function_roots())
-                dots->add(convert_to_pix(p));
-            attach(*dots);
-            // и добавляем в общий массив всех точек на экране
-            all_points.push_back(*dots);
+            if (!func.empty())
+            {
+                string exposed_func =
+                    Backend::exposed_dep_function(inputed_funcs, func, graph_index);
+                Math_calc::function_roots fr{exposed_func, l_border, r_border, h_border,
+                                             point_prec};
+                // создаём марки, добавляем их на окно
+                Marks* dots = new Marks{"x"};
+                for (auto& p : fr.get_function_roots())
+                    dots->add(convert_to_pix(p));
+                attach(*dots);
+                // и добавляем в общий массив всех точек на экране
+                all_points.push_back(*dots);
+            }
         }
     }
 
@@ -338,10 +351,13 @@ void Graphix_window::show_points()
             // "другой input_box"
             auto& oth_input_box = enter_menu[j];
             string oth_func = oth_input_box->get_string();
-            if (!func.empty() && !oth_func.empty() && !input_box->is_hidden() &&
-                !oth_input_box->is_hidden())
+
+            bool hidden = input_box->is_hidden() || oth_input_box->is_hidden();
+            bool empty = func.empty() || oth_func.empty();
+
+            if (!hidden)
             {
-                if (!func.empty() && !oth_func.empty())
+                if (!empty)
                 {
                     string exposed_func = Backend::exposed_dep_function(inputed_funcs, func, i);
                     string oth_exposed_func =

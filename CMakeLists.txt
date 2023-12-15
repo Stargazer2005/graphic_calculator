@@ -6,12 +6,13 @@ set(HEADERS
 # front
     frontend/Graphix_calc/Axis.h
     frontend/Graphix_calc/Input_box.h
+    frontend/Graphix_calc/Point_box.h
     frontend/Graphix_calc/Numbed_button.h
     frontend/Graphix_calc/Segmented_function.h
 
     frontend/servant/constants.h
 
-    frontend/graphix_window.h
+    frontend/Graphix_window.h
     
     frontend.h
 
@@ -40,9 +41,10 @@ set(SOURCES
 # front
     frontend/Graphix_calc/Axis.cpp
     frontend/Graphix_calc/Input_box.cpp
+    frontend/Graphix_calc/Point_box.cpp
     frontend/Graphix_calc/Segmented_function.cpp
 
-    frontend/graphix_window.cpp
+    frontend/Graphix_window.cpp
     
 # back
     backend/Math_calc/domain_segments.cpp
