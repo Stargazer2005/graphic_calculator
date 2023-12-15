@@ -19,7 +19,7 @@ class function_roots
 {
   public:
     function_roots();
-    function_roots(string str, double l_border, double r_border, double h_border, double precision);
+    function_roots(string func, double l_border, double r_border, double h_border, double precision);
 
     // methods
 
@@ -39,7 +39,7 @@ class function_roots
     // точность (используем везде, поэтому сохраняем в качестве поля)
     double precision;
     // введенная функция
-    function_string func;
+    function_string func_str;
     // вектор точек, который и будем возвращать
     vector<Point> points;
 

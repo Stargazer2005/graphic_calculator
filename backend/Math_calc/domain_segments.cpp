@@ -3,7 +3,7 @@
 
 namespace Math_calc {
 
-vector<Segment> domain_segments (function_string func, double l_border, double r_border,
+vector<Segment> domain_segments (function_string func_str, double l_border, double r_border,
                                  double height, double precision)
 {
     std::vector<Segment> res;
@@ -15,7 +15,7 @@ vector<Segment> domain_segments (function_string func, double l_border, double r
         {
             try
             {
-                double y = func.calculate(x);
+                double y = func_str.calculate(x);
                 if (((-height / 2) < y) && (y < height / 2))
                 {
                     seg.start = x;
@@ -30,7 +30,7 @@ vector<Segment> domain_segments (function_string func, double l_border, double r
         {
             try
             {
-                double y = func.calculate(x);
+                double y = func_str.calculate(x);
                 if ((y > height / 2) or (y < -height / 2))
                 {
                     seg.end = x - precision;

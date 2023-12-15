@@ -7,7 +7,7 @@ using Back_serv::c_in_s;
 
 namespace Backend {
 
-string exposed_dep_function (vector<string> all_funcs, string func, size_t func_index)
+string exposed_dep_function (const vector<string>& all_funcs, string func, const size_t& func_index)
 {
     size_t func_number = func_index + 1;
     // если 'y' нету, то и делать ничего не надо

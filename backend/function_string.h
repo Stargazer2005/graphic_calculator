@@ -15,7 +15,7 @@ namespace Backend {
 class function_string
 {
   public:
-    function_string(string s);
+    function_string(string func);
 
     // methods:
 
@@ -26,7 +26,7 @@ class function_string
     // variables:
 
     // значение строки
-    string expr;
+    string func;
     // обратная польская нотация
     vector<string> rev_pol;
     // список лексем

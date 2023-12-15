@@ -14,7 +14,7 @@ namespace Math_calc {
 class function_crosses : public function_roots
 {
   public:
-    function_crosses(pair<string, string> strs, double l_border, double r_border, double h_border,
+    function_crosses(pair<string, string> funcs, double l_border, double r_border, double h_border,
                      double precision);
 
     // methods
@@ -27,7 +27,7 @@ class function_crosses : public function_roots
     // точность (используем везде, поэтому сохраняем в качестве поля)
     double precision;
     // одна из введенных функций (одна, так как нужно просто найти y)
-    Backend::function_string func;
+    Backend::function_string func_str;
     // вектор точек, который и будем возвращать
     vector<Point> points;
 

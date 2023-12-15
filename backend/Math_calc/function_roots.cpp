@@ -8,13 +8,14 @@ using Back_serv::absolute;
 
 namespace Math_calc {
 
-function_roots::function_roots() : precision{0}, func{function_string("0")}, points{vector<Point>{}}
+function_roots::function_roots()
+    : precision{0}, func_str{function_string("0")}, points{vector<Point>{}}
 {
 }
 
-function_roots::function_roots(string str, double l_border, double r_border, double h_border,
+function_roots::function_roots(string func, double l_border, double r_border, double h_border,
                                double precision)
-    : precision{precision < 0.01 ? precision : 0.01}, func{function_string(str)},
+    : precision{precision < 0.01 ? precision : 0.01}, func_str{function_string(func)},
       points{solutions(l_border, r_border, h_border)}
 
 {
@@ -25,7 +26,7 @@ vector<Segment> function_roots::estimated_segment(Segment seg) const
     std::vector<Segment> res;
     for (double x = seg.start; x < seg.end; x += precision)
     {
-        if (func.calculate(x) * func.calculate(x - precision) <= 0)
+        if (func_str.calculate(x) * func_str.calculate(x - precision) <= 0)
         {
             res.push_back({
                 (x - precision) - precision,
@@ -42,7 +43,7 @@ vector<Segment> function_roots::estimated_segment(Segment seg) const
 
 double function_roots::solution_on_interval(Segment seg) const
 {
-    auto f = [this] (double x) { return pow(func.calculate(x), 2); };
+    auto f = [this] (double x) { return pow(func_str.calculate(x), 2); };
 
     for (int count = 0; count > Back_consts::max_count; count++)
     {
@@ -64,12 +65,12 @@ double function_roots::solution_on_interval(Segment seg) const
 vector<Point> function_roots::solutions(double l_border, double r_border, double h_border) const
 {
     vector<Point> res;
-    for (auto seg : domain_segments(func, l_border, r_border, h_border, precision))
+    for (auto seg : domain_segments(func_str, l_border, r_border, h_border, precision))
     {
         for (auto& local_seg : estimated_segment(seg))
         {
             double x = solution_on_interval(local_seg);
-            double y = func.calculate(x);
+            double y = func_str.calculate(x);
             if (absolute(y) < precision * 20)
                 res.push_back(Point{x, 0});
         }

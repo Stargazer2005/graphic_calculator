@@ -59,7 +59,7 @@ class Graphix_window : public Graph_lib::Window
     // центр окна (используется только в Graph_lib::Function и методах на отображение точки)
     Graph_lib::Point center;
     // вектор введенных пользователем строк
-    vector<string> inputed_strings;
+    vector<string> inputed_funcs;
     // кнопка выхода из программы
     Button quit_button;
     // кнопка масштаб "+"

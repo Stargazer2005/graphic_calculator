@@ -22,7 +22,7 @@ namespace Graphix_calc {
 class Segmented_function
 {
   public:
-    Segmented_function(string str, int scale, Point center, int max_x, int max_y);
+    Segmented_function(const string& str, int scale, Point center, int max_x, int max_y);
 
     // methods
 
@@ -32,7 +32,7 @@ class Segmented_function
     // variables
 
     // значение строки
-    function_string expr;
+    function_string func_str;
     // список отрезков, на котором рисуем функцию
     vector<Segment> segs;
     // отсегментированная функция

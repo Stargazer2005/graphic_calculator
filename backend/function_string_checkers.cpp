@@ -11,34 +11,35 @@ namespace Backend {
 
 bool function_string::is_str_valid() const
 {
-    string ex = spaces_deleted(expr);
+    string f = spaces_deleted(func);
 
     // проверка на пустую строку
-    if (ex.empty())
+    if (f.empty())
         throw std::invalid_argument("empty expression");
 
     // строка со всеми разрешенными символами
     const string calc_chars = ".1234567890+-*/^()cosinexptal";
-    const string oper = "+-*/^";  // строка с операциями
+    const string oper_chars = "+-*/^";  // строка с операциями
 
     // проверка на скобочки
-    if (count(ex.begin(), ex.end(), open_br) != count(ex.begin(), ex.end(), closed_br))
+    if (count(f.begin(), f.end(), open_br) != count(f.begin(), f.end(), closed_br))
         throw std::invalid_argument("brackets number mismatch");
 
     // первый и последний символы не должны быть знаками или точками (кроме
     // минуса)
-    if ((c_in_s(ex[0], oper + point) && ex[0] != minus) || c_in_s(ex[ex.size() - 1], oper + point))
+    if ((c_in_s(f[0], oper_chars + point) && f[0] != minus) ||
+        c_in_s(f[f.size() - 1], oper_chars + point))
         throw std::invalid_argument("invalid syntax at edges");
 
     int count_brackets = 0;
-    for (size_t i = 0; i < ex.size(); i++)
+    for (size_t i = 0; i < f.size(); i++)
     {
-        char c = ex[i];                   // текущий символ
+        char c = f[i];                    // текущий символ
         char prev_c = ' ', next_c = ' ';  // предыдущий и следующий символы
         if (i > 0)
-            prev_c = ex[i - 1];
-        if (i < (ex.size() - 1))
-            next_c = ex[i + 1];
+            prev_c = f[i - 1];
+        if (i < (f.size() - 1))
+            next_c = f[i + 1];
 
         // проверка на отсутсвие лишних символов
         if (!c_in_s(c, calc_chars))
@@ -50,9 +51,9 @@ bool function_string::is_str_valid() const
         }
         // возле знака операции не должно быть других операций и точек
         // (если это не минус, так как он может быть унарный)
-        if (c_in_s(c, oper) && c != minus)
+        if (c_in_s(c, oper_chars) && c != minus)
         {
-            if ((c_in_s(prev_c, oper + point) || c_in_s(next_c, oper + point)) &&
+            if ((c_in_s(prev_c, oper_chars + point) || c_in_s(next_c, oper_chars + point)) &&
                 next_c != minus)  // но после знака минус стоять может
                 throw std::invalid_argument("invalid syntax near sign");
 
@@ -82,14 +83,14 @@ bool function_string::is_str_valid() const
                 throw std::invalid_argument("extra bracket");
         }
         // (при строке из одной цифры, эта проверка не подходит)
-        else if (isdigit(c) && ex.size() > 1)
+        else if (isdigit(c) && f.size() > 1)
         {
             // возле числа должен стоять либо знак, либо точка, либо скобка
 
             // вспомогательная функция для проверки рядом стоящего с числом
             // символа
-            auto is_neighborhood_ok = [&ex, &oper] (char s, char bracket)
-            { return (isdigit(s) || s == point || c_in_s(s, oper) || s == bracket); };
+            auto is_neighborhood_ok = [&f, &oper_chars] (char s, char bracket)
+            { return (isdigit(s) || s == point || c_in_s(s, oper_chars) || s == bracket); };
             bool is_left_ok = 1, is_right_ok = 1;
 
             if (i == 0)
@@ -99,7 +100,7 @@ bool function_string::is_str_valid() const
                 if (!is_right_ok)
                     throw std::invalid_argument("invalid syntax near digit");
             }
-            else if (i == ex.size() - 1)
+            else if (i == f.size() - 1)
             {
                 // у числа слева может быть: число, точка, знак или open_br
                 is_left_ok = is_neighborhood_ok(prev_c, open_br);
@@ -122,8 +123,8 @@ bool function_string::is_str_valid() const
 
 bool function_string::is_lexs_valid() const
 {
-    const string oper = "+-*/^";   // строка с операциями
-    const string func = "sctelu";  // строка с функциями
+    const string oper_chars = "+-*/^";   // строка с операциями
+    const string func_chars = "sctelu";  // строка с функциями
     const vector<string> functions{"sin", "cos", "tan", "exp", "ln", "um"};
     for (size_t i = 0; i < lexs.size(); i++)
     {
@@ -135,9 +136,9 @@ bool function_string::is_lexs_valid() const
         // проверка использования постороннего имени
         if (isalpha(l_c) && !(is_float(lexs[i])))
         {
-            if (c_in_s(l_c, func))
+            if (c_in_s(l_c, func_chars))
             {
-                size_t j = func.find(l_c);
+                size_t j = func_chars.find(l_c);
                 if (lexs[i] != functions[j])
                 {
                     if (lexs.size() > 1)

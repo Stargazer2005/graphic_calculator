@@ -12,25 +12,23 @@ using namespace Back_serv;
 
 namespace Backend {
 
-function_string::function_string(string s)
+function_string::function_string(string func) : func{func}
 {
-    expr = s;
     lexs = lexemes();
     rev_pol = reverse_polish();
 }
 
 vector<string> function_string::lexemes() const
 {
-    // TRACE_FUNC;
     if (!is_str_valid())
         return {};
 
     vector<string> res;
     string s;
-    const string oper = "+-*/^u";
-    for (size_t i = 0; i < expr.size(); i++)
+    const string oper_chars = "+-*/^u";
+    for (size_t i = 0; i < func.size(); i++)
     {
-        switch (expr[i])
+        switch (func[i])
         {
         case minus:
         {
@@ -41,7 +39,7 @@ vector<string> function_string::lexemes() const
             }
             if (i == 0)
                 res.push_back("um");
-            else if (c_in_s(transform_to_char(res[res.size() - 1]), oper + "("))
+            else if (c_in_s(transform_to_char(res[res.size() - 1]), oper_chars + "("))
                 res.push_back("um");
             else
                 res.push_back("-");
@@ -59,7 +57,7 @@ vector<string> function_string::lexemes() const
                 res.push_back(s);
                 s = "";
             }
-            s = expr[i];
+            s = func[i];
             res.push_back(s);
             s = "";
             break;
@@ -81,34 +79,30 @@ vector<string> function_string::lexemes() const
                 res.push_back(s);
                 s = "";
             }
-            s += expr[i];
+            s += func[i];
             break;
         }
         default:
         {
-            if (!isblank(expr[i]))
+            if (!isblank(func[i]))
             {
                 if (s.size() > 0 && isdigit(s[0]))
                 {
                     res.push_back(s);
                     s = "";
                 }
-                s += expr[i];
+                s += func[i];
             }
         }
         }
     }
     if (s.size() > 0)
         res.push_back(s);
-
-    // std::cout << "lexeme:";
-    // print(res);
     return (res);
 }
 
 vector<string> function_string::reverse_polish() const
 {
-    // TRACE_FUNC;
     if (!is_lexs_valid())
         return {};
 
@@ -119,9 +113,9 @@ vector<string> function_string::reverse_polish() const
     st_oper.push("\0");
 
     // строка с функциями
-    const string func = "sctelu";
+    const string func_chars = "sctelu";
     // строка с операциями
-    const string oper = "+-*/^";
+    const string oper_chars = "+-*/^";
 
     for (auto& lex : lexs)
     {
@@ -145,7 +139,7 @@ vector<string> function_string::reverse_polish() const
 
         case power:
         {
-            while (last == power || c_in_s(last, func))
+            while (last == power || c_in_s(last, func_chars))
             {
                 res.push_back(st_oper.top());
                 st_oper.pop();
@@ -158,7 +152,7 @@ vector<string> function_string::reverse_polish() const
         case mul:
         case divi:
         {
-            while (last == mul || last == divi || last == power || c_in_s(last, func))
+            while (last == mul || last == divi || last == power || c_in_s(last, func_chars))
             {
                 res.push_back(st_oper.top());
                 st_oper.pop();
@@ -171,7 +165,7 @@ vector<string> function_string::reverse_polish() const
         case plus:
         case minus:
         {
-            while (c_in_s(last, oper) || c_in_s(last, func))
+            while (c_in_s(last, oper_chars) || c_in_s(last, func_chars))
             {
                 res.push_back(st_oper.top());
                 st_oper.pop();
@@ -229,16 +223,13 @@ vector<string> function_string::reverse_polish() const
         res.push_back(st_oper.top());
         st_oper.pop();
     }
-
-    // std::cout << "rev_pol:";
-    // print(res);
     return res;
 }
 
 double function_string::calc(double x) const
 {
-    const string oper = "+-*/^";   // строка с операциями
-    const string func = "sctelu";  // строка с функциями
+    const string oper_chars = "+-*/^";   // строка с операциями
+    const string func_chars = "sctelu";  // строка с функциями
     // (да, унарный минус - тоже функция)
 
     stack<double> Stack;
@@ -248,7 +239,7 @@ double function_string::calc(double x) const
         double p;  // предпоследний символ в стэке (последний после удаления l)
         char curr = transform_to_char(lex);  // текущий символ,
                                              // если брать вместо строки (для switch)
-        if (c_in_s(curr, func))
+        if (c_in_s(curr, func_chars))
         {
             l = Stack.top();  // запоминаем только последний (так как функции
                               // унарны)
@@ -275,7 +266,7 @@ double function_string::calc(double x) const
                 break;
             }
         }
-        else if (c_in_s(curr, oper))
+        else if (c_in_s(curr, oper_chars))
         {
             l = Stack.top();
             Stack.pop();

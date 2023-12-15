@@ -19,7 +19,7 @@ Graphix_window::Graphix_window(Graph_lib::Point left_corner, pix_numb width, pix
                       scale, "Y"}},
       center{width / 2, height / 2},
       // инициализируем вектор введенных строк (пустыми)
-      inputed_strings{"", "", "", "", ""},
+      inputed_funcs{"", "", "", "", ""},
       // кнопка quit находится в левом верхнем углу
       quit_button{Graph_lib::Point{width - btn_w, 0}, btn_w, btn_h, "Quit", cb_quit},
       // кнопки изменения масштаба находятся справа и являются квадратами
@@ -174,7 +174,7 @@ void Graphix_window::draw_graph(size_t graph_index)
     fill_graphs();
 
     string exposed_func =
-        Backend::exposed_dep_function(inputed_strings, inputed_strings[graph_index], graph_index);
+        Backend::exposed_dep_function(inputed_funcs, inputed_funcs[graph_index], graph_index);
 
     // создаём сегментированную функцию
     Segmented_function seg_func(exposed_func, scale, center, x_max(), y_max());
@@ -310,11 +310,11 @@ void Graphix_window::show_points()
     // (если они не скрыты)
     for (auto& input_box : enter_menu)
     {
-        string str = input_box->get_string();
+        string func = input_box->get_string();
         size_t graph_index = input_box->get_number();
-        if (!str.empty() && !input_box->is_hidden())
+        if (!func.empty() && !input_box->is_hidden())
         {
-            string exposed_func = Backend::exposed_dep_function(inputed_strings, str, graph_index);
+            string exposed_func = Backend::exposed_dep_function(inputed_funcs, func, graph_index);
             Math_calc::function_roots fr{exposed_func, l_border, r_border, h_border, point_prec};
             // создаём марки, добавляем их на окно
             Marks* dots = new Marks{"x"};
@@ -334,20 +334,19 @@ void Graphix_window::show_points()
         {
 
             auto& input_box = enter_menu[i];
-            string str = input_box->get_string();
+            string func = input_box->get_string();
             // "другой input_box"
             auto& oth_input_box = enter_menu[j];
-            string oth_str = oth_input_box->get_string();
-            if (!str.empty() && !oth_str.empty() && !input_box->is_hidden() &&
+            string oth_func = oth_input_box->get_string();
+            if (!func.empty() && !oth_func.empty() && !input_box->is_hidden() &&
                 !oth_input_box->is_hidden())
             {
-                string exposed_func = Backend::exposed_dep_function(inputed_strings, str, i);
-
-                string oth_exposed_func =
-                    Backend::exposed_dep_function(inputed_strings, oth_str, j);
-
-                if (!str.empty() && !oth_str.empty())
+                if (!func.empty() && !oth_func.empty())
                 {
+                    string exposed_func = Backend::exposed_dep_function(inputed_funcs, func, i);
+                    string oth_exposed_func =
+                        Backend::exposed_dep_function(inputed_funcs, oth_func, j);
+
                     Math_calc::function_crosses fc{
                         {exposed_func, oth_exposed_func}, l_border, r_border, h_border, point_prec};
                     // создаём марки, добавляем их на окно
@@ -383,8 +382,8 @@ void Graphix_window::clear_points()
 
 void Graphix_window::fill_graphs()
 {
-    for (size_t graph_index = 0; graph_index < enter_menu.size(); graph_index++)
-        inputed_strings[graph_index] = enter_menu[graph_index]->get_string();
+    for (size_t i = 0; i < enter_menu.size(); i++)
+        inputed_funcs[i] = enter_menu[i]->get_string();
 }
 
 }  // namespace Frontend
