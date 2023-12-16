@@ -33,11 +33,11 @@ class Segmented_function
 
     // значение строки
     function_string func_str;
+    bool has_var;
     // список отрезков, на котором рисуем функцию
     vector<Segment> segs;
     // отсегментированная функция
     Vector_ref<Function> seg_func;
-    bool has_var;
 
     // methods
 

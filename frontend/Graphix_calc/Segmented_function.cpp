@@ -13,9 +13,8 @@ namespace Graphix_calc {
 
 Segmented_function::Segmented_function(const string& func, int scale, Point center, int max_x,
                                        int max_y)
-    : func_str{function_string(func)}, segs{segments(max_x, max_y, scale)},
-      seg_func{segmented_function(scale, center, max_x)},
-      has_var{func.find('x') != std::string::npos}
+    : func_str{function_string(func)}, has_var{func.find('x') != std::string::npos},
+      segs{segments(max_x, max_y, scale)}, seg_func{segmented_function(scale, center, max_x)}
 {
 }
 
