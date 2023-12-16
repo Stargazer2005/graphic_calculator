@@ -1,6 +1,10 @@
 // header
 #include "exposed_dep_function.h"
 
+#include "function_string.h"
+using Backend::function_string;
+#include <iostream>
+
 // servant
 #include "servant/servant.h"
 using Back_serv::c_in_s;
@@ -9,6 +13,11 @@ namespace Backend {
 
 string exposed_dep_function (const vector<string>& all_funcs, string func, const size_t& func_index)
 {
+    std::cout << "exposed_dep_function_used" << std::endl;
+    for (size_t i = 0; i < all_funcs.size(); i++)
+    {
+        std::cout << i << " " << all_funcs[i] << std::endl;
+    }
     size_t func_number = func_index + 1;
     // если 'y' нету, то и делать ничего не надо
     if (!c_in_s('y', func))
@@ -58,8 +67,11 @@ string exposed_dep_function (const vector<string>& all_funcs, string func, const
                 if (est_number.empty())
                     throw invalid_argument("invalid expression number");
 
+                // индекс предполагаемой функции
+                size_t est_index = stoull(est_number) - 1;
+
                 // считанный номер совпадает с текущей функцией
-                // (скорее всего, можно хитро проверить через укахатели)
+                // (скорее всего, можно хитро проверить через указатели)
                 if (stoull(est_number) == func_number)
                     throw invalid_argument("expression self-usage");
 
@@ -71,9 +83,21 @@ string exposed_dep_function (const vector<string>& all_funcs, string func, const
                 Back_serv::replace(func, "y_" + est_number,
                                    '(' + all_funcs[stoull(est_number) - 1] + ')');
 
-                // функция под этим номером либо пустая, либо ещё не была вообще добавлена
+                // функция под этим индексом либо пустая, либо ещё не была вообще добавлена
                 if (all_funcs[stoull(est_number) - 1].empty())
                     throw invalid_argument("expression y_" + est_number + " is empty or not exist");
+
+                try
+                {
+                    std::cout << all_funcs[stoull(est_number) - 1] << " " << stoull(est_number) - 1
+                              << std::endl;
+                    function_string{exposed_dep_function(
+                        all_funcs, all_funcs[stoull(est_number) - 1], stoull(est_number) - 1)};
+                }
+                catch (const std::exception& e)
+                {
+                    throw invalid_argument("invalid syntax in exposed");
+                }
             }
         }
     }

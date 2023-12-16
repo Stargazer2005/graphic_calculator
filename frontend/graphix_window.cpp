@@ -1,6 +1,6 @@
 // header
 #include "graphix_window.h"
-
+#include <iostream>
 // servant
 #include "servant/constants.h"
 using namespace Front_consts;
@@ -18,8 +18,6 @@ Graphix_window::Graphix_window(Graph_lib::Point left_corner, pix_numb width, pix
       y_axis{new Axis{Axis::Orientation::vertical, Graph_lib::Point(width / 2, height / 2), height,
                       scale, "Y"}},
       center{width / 2, height / 2},
-      // инициализируем вектор введенных строк (пустыми)
-      inputed_funcs{empty_str, empty_str, empty_str, empty_str, empty_str},
       // кнопка quit находится в левом верхнем углу
       quit_button{Graph_lib::Point{width - btn_w, 0}, btn_w, btn_h, "Quit", cb_quit},
       // кнопки изменения масштаба находятся справа и являются квадратами
@@ -33,6 +31,11 @@ Graphix_window::Graphix_window(Graph_lib::Point left_corner, pix_numb width, pix
       // меню с точками
       point_box{width, height, cb_show_points, cb_hide_points}
 {
+
+    // инициализируем вектор введенных строк (пустыми)
+    for (size_t i = 0; i < graphs_max_amount; i++)
+        inputed_funcs.push_back(empty_str);
+
     // не даём пользователю менять размеры окна
     size_range(width, height, width, height);
 
@@ -169,6 +172,12 @@ void Graphix_window::draw_graph(size_t graph_index)
 
     // записываем в вектор введенных строк то, что ввёл пользователь
     fill_graphs();
+    std::cout << "fill_used" << std::endl;
+    for (size_t i = 0; i < inputed_funcs.size(); i++)
+    {
+        std::cout << i << " " << inputed_funcs[i] << std::endl;
+    }
+    //   return;
 
     // добавили обработку ошибок
     try
@@ -221,11 +230,11 @@ void Graphix_window::rem_graph(size_t graph_index)
     enter_menu[graph_index]->detach(*this);
 
     // проходимся по всем инпут_боксам начиная со следующего
-    for (size_t j = graph_index + 1; j < enter_menu.size(); ++j)
+    for (size_t i = graph_index + 1; i < enter_menu.size(); i++)
     {
         // двигаем их вверх и меняем номер на пердыдущий
-        enter_menu[j]->move(0, -inp_box_indent_h);
-        enter_menu[j]->set_number(enter_menu[j]->get_number() - 1);
+        enter_menu[i]->move(0, -inp_box_indent_h);
+        enter_menu[i]->set_number(enter_menu[i]->get_number() - 1);
     }
     // также изменяем размеры самого вектора
     enter_menu.erase(enter_menu.begin() + graph_index);
@@ -257,8 +266,8 @@ void Graphix_window::clear_graph(size_t graph_index)
     // убираем все спрятанные фрагменты графика с экрана
     if (graphics.size() > graph_index)
     {
-        for (int j = 0; j < graphics[graph_index].size(); ++j)
-            detach(graphics[graph_index][j]);
+        for (int i = 0; i < graphics[graph_index].size(); ++i)
+            detach(graphics[graph_index][i]);
     }
 
     // прячем график
@@ -316,7 +325,7 @@ void Graphix_window::show_points()
 
     // проходимся по всем строкам, куда пользователь вводит функции и рисуем их корни,
     // (если они не скрыты)
-    for (auto& input_box : enter_menu)
+    for (const auto& input_box : enter_menu)
     {
         string func = input_box->get_string();
         size_t graph_index = input_box->get_number();
@@ -330,7 +339,7 @@ void Graphix_window::show_points()
                                              point_prec};
                 // создаём марки, добавляем их на окно
                 Marks* dots = new Marks{"x"};
-                for (auto& p : fr.get_function_roots())
+                for (const auto& p : fr.get_function_roots())
                     dots->add(convert_to_pix(p));
                 attach(*dots);
                 // и добавляем в общий массив всех точек на экране
@@ -346,10 +355,10 @@ void Graphix_window::show_points()
         for (size_t j = i + 1; j < enter_menu.size(); j++)
         {
 
-            auto& input_box = enter_menu[i];
+            const auto& input_box = enter_menu[i];
             string func = input_box->get_string();
             // "другой input_box"
-            auto& oth_input_box = enter_menu[j];
+            const auto& oth_input_box = enter_menu[j];
             string oth_func = oth_input_box->get_string();
 
             bool hidden = input_box->is_hidden() || oth_input_box->is_hidden();
