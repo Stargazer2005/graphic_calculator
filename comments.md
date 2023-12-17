@@ -7,8 +7,8 @@ graphic_calculator/
 |       |───Graphix_calc/
 |       |       |---Axis.cpp
 |       |       |---Axis.h
-|       |       |---Input_box.cpp
-|       |       |---Input_box.h
+|       |       |---Function_box.cpp
+|       |       |---Function_box.h
 |       |       |---Point_box.cpp
 |       |       |---Point_box.h
 |       |       |---Numbed_button.h
@@ -36,8 +36,8 @@ graphic_calculator/
 |       |       |---servant.cpp
 |       |       `---servant.h
 |       |
-|       |---exposed_dep_function.cpp
-|       |---exposed_dep_function.h
+|       |---expose_dep_function.cpp
+|       |---expose_dep_function.h
 |       |---function_string.cpp
 |       |---function_string.h
 |       `---function_string_checkers.cpp

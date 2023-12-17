@@ -5,7 +5,7 @@ set(TARGET "graphic_calculator")
 set(HEADERS
 # front
     frontend/Graphix_calc/Axis.h
-    frontend/Graphix_calc/Input_box.h
+    frontend/Graphix_calc/Function_box.h
     frontend/Graphix_calc/Point_box.h
     frontend/Graphix_calc/Numbed_button.h
     frontend/Graphix_calc/Segmented_function.h
@@ -18,6 +18,7 @@ set(HEADERS
 
 # back
     backend/Math_calc/domain_segments.h
+    backend/Math_calc/function_extremes.h
     backend/Math_calc/function_crosses.h
     backend/Math_calc/function_roots.h
     backend/Math_calc/math_base.h
@@ -25,7 +26,7 @@ set(HEADERS
     backend/servant/servant.h
     backend/servant/constants.h
 
-    backend/exposed_dep_function.h
+    backend/expose_dep_function.h
     backend/function_string.h
 
     backend.h
@@ -40,7 +41,7 @@ set(HEADERS
 set(SOURCES
 # front
     frontend/Graphix_calc/Axis.cpp
-    frontend/Graphix_calc/Input_box.cpp
+    frontend/Graphix_calc/Function_box.cpp
     frontend/Graphix_calc/Point_box.cpp
     frontend/Graphix_calc/Segmented_function.cpp
 
@@ -48,12 +49,13 @@ set(SOURCES
     
 # back
     backend/Math_calc/domain_segments.cpp
+    backend/Math_calc/function_extremes.cpp
     backend/Math_calc/function_crosses.cpp
     backend/Math_calc/function_roots.cpp
 
     backend/servant/servant.cpp
 
-    backend/exposed_dep_function.cpp
+    backend/expose_dep_function.cpp
     backend/function_string.cpp
     backend/function_string_checkers.cpp
 
