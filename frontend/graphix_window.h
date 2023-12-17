@@ -2,32 +2,23 @@
 
 // std libs
 #include <string>
-using std::string;
 #include <vector>
-using std::vector;
+using std::vector, std::string;
 
 // Graphix_calc
 #include "Graphix_calc/Axis.h"
-using Graphix_calc::Axis;
 #include "Graphix_calc/Function_box.h"
-using Graphix_calc::Function_box;
+#include "Graphix_calc/Graphix.h"
 #include "Graphix_calc/Point_box.h"
-using Graphix_calc::Point_box;
 #include "Graphix_calc/Segmented_function.h"
-using Graphix_calc::Segmented_function;
-
-// Backend
-#include "../backend.h"
+using namespace Graphix_calc;
 
 // Graph_lib
 #include <Graph_lib/GUI.h>
 #include <Graph_lib/Graph.h>
 using Graph_lib::Color;
-using Graph_lib::Function;
 #include <Graph_lib/Window.h>
-using Graph_lib::Button;
-using Graph_lib::Marks;
-using Graph_lib::Vector_ref;
+using Graph_lib::Button, Graph_lib::Marks, Graph_lib::Vector_ref;
 
 namespace Frontend {
 
@@ -56,9 +47,11 @@ class Graphix_window : public Graph_lib::Window
 
     // общее значение масштаба: количество пикселей в единичном отрезке
     int scale;
-    // начало координат в пикселях (используется только в Graph_lib::Function и методах на
+    // начало координат в пикселях (используется только в Graph_lib::Graphix и методах на
     // отображение точки)
     Graph_lib::Point origin;
+    // линия - ограничитель системы координат от меню ввода
+    Graph_lib::Line border;
     // вертикальная и горизонтальная оси
     Axis *x_axis, *y_axis;
     // вектор введенных пользователем строк
@@ -76,9 +69,9 @@ class Graphix_window : public Graph_lib::Window
     vector<Function_box*> enter_menu;
 
     // общий массив со всеми сегментированными функциями (графиками)
-    vector<Vector_ref<Function>> graphics;
+    vector<Vector_ref<Graphix>> graphics;
     // общий массив со всеми сегментированными производными функций (графиками)
-    vector<Vector_ref<Function>> derivatives;
+    vector<Vector_ref<Graphix>> derivatives;
 
     // меню с общим полем для точек
     Point_box point_box;
@@ -120,17 +113,20 @@ class Graphix_window : public Graph_lib::Window
         quit_button_pushed = true;
     }
 
+    // вспомогательная функция, меняющая текущий масштаб
     void change_scale (int new_scale);
 
     void incr_scale ();
 
     void decr_scale ();
 
-    // void update_graph (size_t func_index);
+    // вспомогательная функция, полностью перерисовывающая график, но не вызывающая Fl::redraw()
+    void update_graph (size_t func_index);
 
     void draw_graph (size_t func_index);
 
-    // void update_der (size_t der_index);
+    // вспомогательная функция, полностью перерисовывающая график, но не вызывающая Fl::redraw()
+    void update_der (size_t der_index);
 
     void draw_der (size_t der_index);
 
@@ -141,7 +137,7 @@ class Graphix_window : public Graph_lib::Window
     void rem_func (size_t func_index);
 
     // вспомогательная фунция, добавляющая в вектор введенных пользователем строк всё из enter_menu
-    void fill_graphs ();
+    void fill_inputed_funcs ();
 
     // вспомогательная фунция, отчищающая память и удаляющая все строки из вектора введенных
     // пользователем строк
@@ -149,9 +145,9 @@ class Graphix_window : public Graph_lib::Window
 
     void clear_der (size_t der_index);
 
-    void cb_new_func ();
+    void new_func ();
 
-    // void update_points ();
+    void update_points ();
 
     void show_points ();
 

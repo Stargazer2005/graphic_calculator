@@ -5,6 +5,9 @@
 #include "servant/constants.h"
 using namespace Front_consts;
 
+// Backend
+#include "../backend.h"
+
 namespace Frontend {
 
 // из-за количества кнопок на экране конструктор сильно перегружен, но что поделать :)
@@ -13,8 +16,9 @@ Graphix_window::Graphix_window(Graph_lib::Point left_corner, int width, int heig
                                const string& title, int scale)
     : Graph_lib::Window(left_corner, width, height, title), scale{scale},
       // точка начала системы координат смещена вправо, чтобы графики и оси не заезжали на меню
-      origin{(width + function_box_w) / 2, height / 2},
-      x_axis{new Axis{Axis::Orientation::horisontal, origin, width - function_box_w, scale, "X"}},
+      origin{(width + func_box_w) / 2, height / 2},
+      border{Point{func_box_w, 0}, Point{func_box_w, height}},
+      x_axis{new Axis{Axis::Orientation::horisontal, origin, width - func_box_w, scale, "X"}},
       y_axis{new Axis{Axis::Orientation::vertical, origin, height, scale, "Y"}},
       // кнопка quit находится в левом верхнем углу
       quit_button{Graph_lib::Point{width - btn_w, 0}, btn_w, btn_h, "Quit", cb_quit},
@@ -44,13 +48,14 @@ Graphix_window::Graphix_window(Graph_lib::Point left_corner, int width, int heig
 
     // поскольку enter_menu не была инициализирована, её size() = 0, а значит, мы создаем нулевой по
     // счету Function_box
-    Function_box* cb_new_func = new Function_box{enter_menu.size(), cb_draw_graph, cb_hide_graph,
-                                                 cb_rem_func,       cb_draw_der,   cb_hide_der};
-    cb_new_func->set_number(enter_menu.size());
+    Function_box* func_box = new Function_box{enter_menu.size(), cb_draw_graph, cb_hide_graph,
+                                              cb_rem_func,       cb_draw_der,   cb_hide_der};
+    func_box->set_number(enter_menu.size());
     // и добавляем его в общий список всех input_box'ов
-    enter_menu.push_back(cb_new_func);
+    enter_menu.push_back(func_box);
 
     // аттачим всё
+    attach(border);
     attach(*x_axis);
     attach(*y_axis);
     attach(quit_button);
@@ -58,7 +63,7 @@ Graphix_window::Graphix_window(Graph_lib::Point left_corner, int width, int heig
     attach(decr_button);
     attach(new_button);
 
-    cb_new_func->attach(*this);
+    func_box->attach(*this);
     point_box.attach(*this);
 }
 
@@ -113,7 +118,7 @@ void Graphix_window::cb_rem_func(void*, void* widget)
 void Graphix_window::cb_new_func(void*, void* widget)
 {
     auto& btn = Graph_lib::reference_to<Button>(widget);
-    dynamic_cast<Graphix_window&>(btn.window()).cb_new_func();
+    dynamic_cast<Graphix_window&>(btn.window()).new_func();
 }
 
 void Graphix_window::cb_show_points(void*, void* widget)
@@ -142,8 +147,7 @@ void Graphix_window::change_scale(int new_scale)
 
         // создаём новые оси и задаём цвет
 
-        x_axis =
-            new Axis{Axis::Orientation::horisontal, origin, win_w() - function_box_w, scale, "X"};
+        x_axis = new Axis{Axis::Orientation::horisontal, origin, win_w() - func_box_w, scale, "X"};
         x_axis->set_color(Color::Color_type::dark_cyan);
 
         y_axis = new Axis{Axis::Orientation::vertical, origin, win_h(), scale, "Y"};
@@ -156,16 +160,16 @@ void Graphix_window::change_scale(int new_scale)
         // перересовываем все графики
         for (size_t i = 0; i < enter_menu.size(); ++i)
             if (!enter_menu[i]->is_graph_hidden())
-                draw_graph(i);
+                update_graph(i);
 
         // перересовываем все производные
         for (size_t i = 0; i < enter_menu.size(); ++i)
             if (!enter_menu[i]->is_der_hidden())
-                draw_der(i);
+                update_der(i);
 
         // перерисовываем все точки, если они видны
         if (is_points_visible)
-            show_points();
+            update_points();
     }
 }
 
@@ -181,15 +185,14 @@ void Graphix_window::decr_scale()
     button_pushed = true;
 }
 
-void Graphix_window::draw_graph(size_t func_index)
+void Graphix_window::update_graph(size_t func_index)
 {
     // чистим старый график и точки
     clear_graph(func_index);
 
     // записываем в вектор введенных строк то, что ввёл пользователь
-    fill_graphs();
+    fill_inputed_funcs();
 
-    // добавили обработку ошибок
     try
     {
         // локальная переменная - введенная строка
@@ -201,7 +204,7 @@ void Graphix_window::draw_graph(size_t func_index)
         // создаём сегментированную функцию
         Segmented_function seged_func(func, scale, origin, win_w(), win_h());
         // график - композиция нескольких графиков, каждый из которых определен на своём сегменте
-        Vector_ref<Function> graphic = seged_func.get_segmented_function();
+        Vector_ref<Graphix> graphic = seged_func.get_segmented_function();
 
         //  аттачим сегментированную функцию
         for (int i = 0; i < graphic.size(); i++)
@@ -226,17 +229,21 @@ void Graphix_window::draw_graph(size_t func_index)
         enter_menu[func_index]->set_message(e.what());
         enter_menu[func_index]->graph_hide();
     }
+}
 
+void Graphix_window::draw_graph(size_t func_index)
+{
+    update_graph(func_index);
     button_pushed = true;
 }
 
-void Graphix_window::draw_der(size_t der_index)
+void Graphix_window::update_der(size_t der_index)
 {
     // чистим старый график и точки
     clear_der(der_index);
 
     // записываем в вектор введенных строк то, что ввёл пользователь
-    fill_graphs();
+    fill_inputed_funcs();
 
     // добавили обработку ошибок
     try
@@ -249,7 +256,7 @@ void Graphix_window::draw_der(size_t der_index)
 
         // создаём сегментированную функцию
         Segmented_function seged_func(func, scale, origin, win_w(), win_h());
-        Vector_ref<Function> derivative = seged_func.get_segmented_function();
+        Vector_ref<Graphix> derivative = seged_func.get_segmented_derivative();
 
         // аттачим сегментированную функцию
         for (int i = 0; i < derivative.size(); i++)
@@ -274,14 +281,22 @@ void Graphix_window::draw_der(size_t der_index)
         enter_menu[der_index]->set_message(e.what());
         enter_menu[der_index]->der_hide();
     }
+}
 
+void Graphix_window::draw_der(size_t der_index)
+{
+    update_der(der_index);
+    if (!enter_menu[der_index]->is_der_hidden())
+        enter_menu[der_index]->set_der("(" + inputed_funcs[der_index] + ")'");
+    else
+        enter_menu[der_index]->set_der("error");
     button_pushed = true;
 }
 
 void Graphix_window::hide_graph(size_t func_index)
 {
     // прячем старый график и чистим память
-    clear_graph(func_index);
+    clear_der(func_index);
 
     button_pushed = true;
 }
@@ -303,7 +318,7 @@ void Graphix_window::rem_func(size_t func_index)
     for (size_t j = func_index + 1; j < enter_menu.size(); ++j)
     {
         // двигаем их вверх и меняем номер на пердыдущий
-        enter_menu[j]->move(0, -function_box_h);
+        enter_menu[j]->move(0, -func_box_h);
         enter_menu[j]->set_number(enter_menu[j]->get_number() - 1);
     }
     // также изменяем размеры самого вектора
@@ -311,19 +326,20 @@ void Graphix_window::rem_func(size_t func_index)
 
     if (graphics.size() > func_index)
     {
-        // детачим этот график и чистим память
+        // детачим этот график, его производную и чистим память
         clear_graph(func_index);
+        clear_der(func_index);
         // также изменяем размеры самого вектора
         graphics.erase(graphics.begin() + func_index);
     }
 
-    // возвращаем кнопку "cb_new_func" на экран, если был удален хоть один
+    // возвращаем кнопку "new_button" на экран, если был удален хоть один
     if (enter_menu.size() == max_functions_amount - 1)
         attach(new_button);
 
     // если не осталось полей для ввода, двигаем "new_button"
     if (enter_menu.empty())
-        new_button.move(-function_box_w, 0);
+        new_button.move(-func_box_w, 0);
 
     // в случае удаления одного из графиков удаляем все точки
     clear_points();
@@ -365,39 +381,37 @@ void Graphix_window::clear_der(size_t der_index)
         derivatives[der_index].clear();
 }
 
-void Graphix_window::cb_new_func()
+void Graphix_window::new_func()
 {
     // создаем новый инпут_бокс
-    Function_box* cb_new_func = new Function_box{enter_menu.size(), cb_draw_graph, cb_hide_graph,
-                                                 cb_rem_func,       cb_draw_der,   cb_hide_der};
+    Function_box* func_box = new Function_box{enter_menu.size(), cb_draw_graph, cb_hide_graph,
+                                              cb_rem_func,       cb_draw_der,   cb_hide_der};
 
     // задаём ему последний номер и аттачим его
-    cb_new_func->set_number(enter_menu.size());
-    cb_new_func->attach(*this);
+    func_box->set_number(enter_menu.size());
+    func_box->attach(*this);
 
     // если до увеличения массив инпут_боксов был пуст, то мы обратно двигаем new_button
     if (enter_menu.empty())
-        new_button.move(function_box_w, 0);
+        new_button.move(func_box_w, 0);
 
     // добавляем новый инпут_бокс в соотв. вектор
-    enter_menu.push_back(cb_new_func);
+    enter_menu.push_back(func_box);
 
     // увеличиваем размер вектора с графиками (резервируем под новую сегментированную функцию)
-    graphics.push_back(Vector_ref<Function>{});
+    graphics.push_back(Vector_ref<Graphix>{});
 
-    // если количество графиков стало максимально, скрываем кнопку "cb_new_func"
+    // если количество графиков стало максимально, скрываем кнопку "new_button"
     if (enter_menu.size() == max_functions_amount)
         detach(new_button);
 
     button_pushed = true;
 }
 
-void Graphix_window::show_points()
+void Graphix_window::update_points()
 {
     // чистим память от всех предыдущих точек
     clear_points();
-
-    is_points_visible = true;
 
     // воспомогательная функция, которая переводит бэкендовы вещественные точки в пиксельные
     auto convert_to_pix = [&] (Math_calc::Point p) -> Graph_lib::Point
@@ -408,7 +422,7 @@ void Graphix_window::show_points()
 
     // переводим границы экрана в вещественные, чтобы использовать для бэкендовских функций
 
-    double l_border = -((double)win_w() / (2 * scale)) + function_box_w / (2 * scale);
+    double l_border = -((double)win_w() / (2 * scale)) + func_box_w / (2 * scale);
     double r_border = -l_border;
     double h_border = (double)win_h() / (2 * scale);
     double point_prec = (((double)win_w() / (scale * 2500)));
@@ -503,6 +517,12 @@ void Graphix_window::show_points()
             }
         }
     }
+}
+
+void Graphix_window::show_points()
+{
+    update_points();
+    is_points_visible = true;
 
     button_pushed = true;
 }
@@ -523,7 +543,7 @@ void Graphix_window::clear_points()
     all_points.clear();
 }
 
-void Graphix_window::fill_graphs()
+void Graphix_window::fill_inputed_funcs()
 {
     for (size_t i = 0; i < enter_menu.size(); i++)
         inputed_funcs[i] = enter_menu[i]->get_string();

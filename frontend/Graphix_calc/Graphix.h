@@ -4,10 +4,6 @@
 #include <functional>
 using std::function;
 
-// Backend
-#include "../../backend.h"
-using Backend::function_string;
-
 // Graph_lib
 #include <Graph_lib/Graph.h>
 using Graph_lib::Function;

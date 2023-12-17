@@ -5,6 +5,7 @@ set(TARGET "graphic_calculator")
 set(HEADERS
 # front
     frontend/Graphix_calc/Axis.h
+    frontend/Graphix_calc/Graphix.h
     frontend/Graphix_calc/Function_box.h
     frontend/Graphix_calc/Point_box.h
     frontend/Graphix_calc/Numbed_button.h
@@ -41,6 +42,7 @@ set(HEADERS
 set(SOURCES
 # front
     frontend/Graphix_calc/Axis.cpp
+    frontend/Graphix_calc/Graphix.cpp
     frontend/Graphix_calc/Function_box.cpp
     frontend/Graphix_calc/Point_box.cpp
     frontend/Graphix_calc/Segmented_function.cpp

@@ -7,6 +7,8 @@ graphic_calculator/
 |       |───Graphix_calc/
 |       |       |---Axis.cpp
 |       |       |---Axis.h
+|       |       |---Graphix.cpp
+|       |       |---Graphix.h
 |       |       |---Function_box.cpp
 |       |       |---Function_box.h
 |       |       |---Point_box.cpp
@@ -25,6 +27,8 @@ graphic_calculator/
 |       |───Math_calc/ 
 |       |       |---domain_segments.cpp
 |       |       |---domain_segments.h
+|       |       |---function_extremes.cpp
+|       |       |---function_extremes.h
 |       |       |---function_crosses.cpp
 |       |       |---function_crosses.h
 |       |       |---function_roots.cpp
@@ -57,3 +61,8 @@ graphic_calculator/
 
 Фронтенд: пиксели и графики
 Бэкенд: числа с плавающей запятой и функции
+
+func - строки
+grapgic - Graphix'ы
+
+(для производных der = func, deriative = graphic)

@@ -6,10 +6,7 @@ using std::string;
 
 // Graph_lib
 #include <Graph_lib/Graph.h>
-using Graph_lib::Color;
-using Graph_lib::Point;
-
-using pix_numb = int;
+using Graph_lib::Color, Graph_lib::Point;
 
 namespace Graphix_calc {
 
@@ -23,7 +20,7 @@ class Axis : public Graph_lib::Shape
         vertical
     };
 
-    Axis(Orientation d, Point center, pix_numb length, pix_numb scale, const string& label);
+    Axis(Orientation d, Point center, int length, int scale, const string& label);
 
     // methods
 
@@ -35,7 +32,7 @@ class Axis : public Graph_lib::Shape
     // variables
 
     //  расстояние между насечками
-    pix_numb dist;
+    int dist;
     Graph_lib::Text label;
     Graph_lib::Lines notches;
 };

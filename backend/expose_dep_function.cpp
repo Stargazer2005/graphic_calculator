@@ -1,6 +1,10 @@
 // header
 #include "expose_dep_function.h"
 
+// std libs
+#include <stdexcept>
+using std::invalid_argument;
+
 // servant
 #include "servant/servant.h"
 using Back_serv::c_in_s;

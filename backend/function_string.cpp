@@ -3,12 +3,14 @@
 
 // std libs
 #include <cmath>
+#include <stack>
+using std::stack;
 
 // servant
-#include "servant/constants.h"
-using namespace Back_consts;
 #include "servant/servant.h"
 using namespace Back_serv;
+#include "servant/constants.h"
+using namespace Back_consts;
 
 namespace Backend {
 

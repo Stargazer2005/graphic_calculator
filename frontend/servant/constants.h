@@ -40,9 +40,9 @@ constexpr int out_box_w = in_box_w + in_box_lab_w;
 constexpr int out_box_h = 20;
 
 // длина всей структуры, где пользователь может рисовать графики
-constexpr int function_box_w = out_box_w;
+constexpr int func_box_w = out_box_w;
 // высота всей структуры, где пользователь может рисовать графики
-constexpr int function_box_h = in_box_h + 2 * btn_h + out_box_h + padding;
+constexpr int func_box_h = in_box_h + 2 * btn_h + out_box_h + padding;
 
 constexpr int height_buff = 3;
 

@@ -2,10 +2,10 @@
 #include "function_string.h"
 
 // servant
-#include "servant/constants.h"
-using namespace Back_consts;
 #include "servant/servant.h"
 using namespace Back_serv;
+#include "servant/constants.h"
+using namespace Back_consts;
 
 namespace Backend {
 

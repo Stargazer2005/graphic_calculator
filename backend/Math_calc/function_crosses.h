@@ -5,7 +5,6 @@
 using std::pair;
 
 // Math_calc
-#include "domain_segments.h"
 #include "function_roots.h"
 
 namespace Math_calc {

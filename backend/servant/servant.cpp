@@ -1,6 +1,12 @@
 // header
 #include "servant.h"
 
+// std libs
+#include <sstream>
+
+// #include <iostream>
+// using std::endl;
+
 namespace Back_serv {
 
 bool c_in_s (char c, const std::string& s) { return (s.find(c) != std::string::npos); }
@@ -21,32 +27,32 @@ bool is_float (std::string str)
     return iss.eof() && !iss.fail();
 }
 
-template <typename T> void print (const std::vector<T>& v)
-{
-    std::cout << " size: " << v.size() << endl;
-    std::cout << "{ ";
-    for (size_t i = 0; i < v.size(); i++)
-    {
-        std::cout << "''" << v[i] << "''";
-        if (i != v.size() - 1)
-            std::cout << ", ";
-    }
-    std::cout << " }" << endl;
-}
+// template <typename T> void print (const std::vector<T>& v)
+// {
+//     std::cout << " size: " << v.size() << endl;
+//     std::cout << "{ ";
+//     for (size_t i = 0; i < v.size(); i++)
+//     {
+//         std::cout << "''" << v[i] << "''";
+//         if (i != v.size() - 1)
+//             std::cout << ", ";
+//     }
+//     std::cout << " }" << endl;
+// }
 
-template <typename T> void print (std::stack<T> st)
-{
-    std::cout << " size: " << st.size() << endl;
-    std::cout << "{ ";
-    while (!st.empty())
-    {
-        std::cout << "''" << st.top() << "''";
-        st.pop();
-        if (!st.empty())
-            std::cout << ", ";
-    }
-    std::cout << " }" << endl;
-}
+// template <typename T> void print (std::stack<T> st)
+// {
+//     std::cout << " size: " << st.size() << endl;
+//     std::cout << "{ ";
+//     while (!st.empty())
+//     {
+//         std::cout << "''" << st.top() << "''";
+//         st.pop();
+//         if (!st.empty())
+//             std::cout << ", ";
+//     }
+//     std::cout << " }" << endl;
+// }
 
 std::string spaces_deleted (const std::string& s)
 {

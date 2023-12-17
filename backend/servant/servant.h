@@ -1,9 +1,6 @@
 #pragma once
 
 // std libs
-#include <iostream>
-using std::endl;
-#include <sstream>
 #include <stack>
 #include <string>
 #include <vector>
@@ -18,9 +15,9 @@ char transform_to_char (const std::string& s);
 
 bool is_float (std::string str);
 
-template <typename T> void print (const std::vector<T>& v);
+// template <typename T> void print (const std::vector<T>& v);
 
-template <typename T> void print (std::stack<T> st);
+// template <typename T> void print (std::stack<T> st);
 
 std::string spaces_deleted (const std::string& s);
 

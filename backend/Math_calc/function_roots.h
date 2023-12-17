@@ -5,7 +5,6 @@
 using std::vector;
 
 // Math_calc
-#include "domain_segments.h"
 #include "math_base.h"
 
 // Backend
@@ -19,7 +18,8 @@ class function_roots
 {
   public:
     function_roots();
-    function_roots(string func, double l_border, double r_border, double h_border, double precision);
+    function_roots(string func, double l_border, double r_border, double h_border,
+                   double precision);
 
     // methods
 

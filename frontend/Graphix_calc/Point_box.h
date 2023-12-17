@@ -1,9 +1,5 @@
 #pragma once
 
-// std libs
-#include <string>
-using std::string;
-
 // Graph_lib
 #include <Graph_lib/GUI.h>
 using Graph_lib::Button;

@@ -6,9 +6,7 @@
 
 // servant
 #include "../servant/constants.h"
-using Front_consts::function_box_w;
-using Front_consts::height_buff;
-using Front_consts::max_scale;
+using namespace Front_consts;
 
 namespace Graphix_calc {
 
@@ -25,12 +23,12 @@ vector<Segment> Segmented_function::derivative_segment(int max_x, int max_y, int
 {
     // эксперементально вычесленная удачная точность для деления на сегменты
     double prec_seg = (((double)max_x / sqrt(scale))) / (abs(max_scale - scale));
-    // переводим переданные пиксели в рациональные числа
-    double l_border = -((double)max_x / (2 * scale)) + ((double)function_box_w / (2 * scale));
+    // переводим переданные пиксели в веществ. числа
+    double l_border = -((double)max_x / (2 * scale)) + ((double)func_box_w / (2 * scale));
     double r_border = ((double)max_x / (2 * scale));
     double h_border = (height_buff * (double)max_y / (2 * scale));
 
-    // использование функции из бэкенда, которая дробит на рациональные числа
+    // использование функции из бэкенда, которая дробит на веществ. числа
     vector<Segment> res =
         domain_segments(func_str.differentiate, l_border, r_border, h_border, prec_seg);
     return res;
@@ -40,46 +38,45 @@ vector<Segment> Segmented_function::segments(int max_x, int max_y, int scale) co
 {
     // эксперементально вычесленная удачная точность для деления на сегменты
     double prec_seg = (((double)max_x / sqrt(scale))) / (abs(max_scale - scale));
-    // переводим переданные пиксели в рациональные числа
-    double l_border = -((double)max_x / (2 * scale)) + ((double)function_box_w / (2 * scale));
+    // переводим переданные пиксели в веществ. числа
+    double l_border = -((double)max_x / (2 * scale)) + ((double)func_box_w / (2 * scale));
     double r_border = ((double)max_x / (2 * scale));
     double h_border = (height_buff * (double)max_y / (2 * scale));
 
-    // использование функции из бэкенда, которая дробит на рациональные числа
+    // использование функции из бэкенда, которая дробит на веществ. числа
     vector<Segment> res =
         domain_segments(func_str.calculate, l_border, r_border, h_border, prec_seg);
     return res;
 }
 
-Vector_ref<Function> Segmented_function::segmented_function(int scale, Point center,
-                                                            int max_x) const
+Vector_ref<Graphix> Segmented_function::segmented_function(int scale, Point center, int max_x) const
 {
-    Vector_ref<Function> res;
+    Vector_ref<Graphix> res;
     // это количество точек идеально подходит под наши задачи, однако если у нас нет переменной,
     // то это горизонтальная линия (по хорошему тут должна быть геометрическая прогрессия, но
     // ресурсов она требует неоправданно много)
-    int point_amount = has_var ? (4 / 3) * max_x * sqrt(scale) : 10;
+    int point_amount = has_var ? (4 / 3) * max_x * sqrt(scale) : 2;
     for (auto seg : segs_func)
     {
-        Function* f = new Function{func_str.calculate, seg.start,     seg.end,      center,
-                                   point_amount,       double(scale), double(scale)};
+        Graphix* f =
+            new Graphix{func_str.calculate, seg.start, seg.end, center, point_amount, scale};
         res.push_back(*f);
     }
     return res;
 }
 
-Vector_ref<Function> Segmented_function::segmented_derivative(int scale, Point center,
-                                                              int max_x) const
+Vector_ref<Graphix> Segmented_function::segmented_derivative(int scale, Point center,
+                                                             int max_x) const
 {
-    Vector_ref<Function> res;
+    Vector_ref<Graphix> res;
     // это количество точек идеально подходит под наши задачи, однако если у нас нет переменной,
     // то это горизонтальная линия (по хорошему тут должна быть геометрическая прогрессия, но
     // ресурсов она требует неоправданно много)
-    int point_amount = has_var ? (4 / 3) * max_x * sqrt(scale) : 10;
+    int point_amount = has_var ? (4 / 3) * max_x * sqrt(scale) : 2;
     for (auto seg : segs_der)
     {
-        Function* f = new Function{func_str.differentiate, seg.start,     seg.end,      center,
-                                   point_amount,           double(scale), double(scale)};
+        Graphix* f =
+            new Graphix{func_str.differentiate, seg.start, seg.end, center, point_amount, scale};
         res.push_back(*f);
     }
     return res;
