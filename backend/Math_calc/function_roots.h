@@ -1,15 +1,14 @@
 #pragma once
 
 // std libs
+#include <string>
 #include <vector>
-using std::vector;
 
 // Math_calc
 #include "math_base.h"
 
 // Backend
-#include "../function_string.h"
-using Backend::function_string;
+#include "../math_function.h"
 
 namespace Math_calc {
 
@@ -17,20 +16,21 @@ namespace Math_calc {
 class function_roots
 {
   public:
-    function_roots();
-    function_roots(string func, double l_border, double r_border, double h_border,
+    function_roots();  // этот конструктор нужен только для наследования
+    function_roots(std::string func, double l_border, double r_border, double h_border,
                    double precision);
 
     // methods
 
-    vector<Point> get_function_roots () const { return points; }
+    std::vector<Point> get_function_roots () const { return points; }
 
   protected:
     // methods
 
-    // деление сегмента на на подсегменты, где могут быть корни (используя метод золотого сечения)
-    vector<Segment> estimated_segment (Segment seg) const;
-    // нахождение корня на интервале
+    // деление сегмента на на подсегменты, где могут быть корни (используя тот факт, что по разные
+    // стороны от точки-корня функция имеет разные знаки, так как он лежит на y = 0)
+    std::vector<Segment> estimated_segment (Segment seg) const;
+    // нахождение корня на интервале (используя метод золотого сечения)
     double solution_on_interval (Segment seg) const;
 
   private:
@@ -39,14 +39,14 @@ class function_roots
     // точность (используем везде, поэтому сохраняем в качестве поля)
     double precision;
     // введенная функция
-    function_string func_str;
+    Backend::math_function func_str;
     // вектор точек, который и будем возвращать
-    vector<Point> points;
+    std::vector<Point> points;
 
     // methods
 
     // нахождение всех корней
-    vector<Point> solutions (double l_border, double r_border, double h_border) const;
+    std::vector<Point> solutions (double l_border, double r_border, double h_border) const;
 };
 
 }  // namespace Math_calc

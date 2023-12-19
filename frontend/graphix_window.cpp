@@ -1,12 +1,16 @@
 // header
 #include "Graphix_window.h"
 
-// servant
-#include "servant/constants.h"
-using namespace Front_consts;
+// std libs
+// #include <iostream>
+// using std::cout, std::endl;
 
 // Backend
 #include "../backend.h"
+
+// servant
+#include "servant/constants.h"
+using namespace Front_consts;
 
 namespace Frontend {
 
@@ -40,17 +44,20 @@ Graphix_window::Graphix_window(Graph_lib::Point left_corner, int width, int heig
 
     // инициализируем вектор введенных строк (пустыми)
     for (size_t i = 0; i < max_functions_amount; i++)
+    {
+        inputed_strings.push_back(empty_str);
         inputed_funcs.push_back(empty_str);
+    }
 
     // задаём цвет осям
     x_axis->set_color(Color::Color_type::dark_cyan);
     y_axis->set_color(Color::Color_type::dark_cyan);
 
-    // поскольку enter_menu не была инициализирована, её size() = 0, а значит, мы создаем нулевой по
+    // поскольку enter_menu не была инициализирована, а значит, мы создаем нулевой по
     // счету Function_box
-    Function_box* func_box = new Function_box{enter_menu.size(), cb_draw_graph, cb_hide_graph,
-                                              cb_rem_func,       cb_draw_der,   cb_hide_der};
-    func_box->set_number(enter_menu.size());
+    Function_box* func_box =
+        new Function_box{0, cb_draw_graph, cb_hide_graph, cb_rem_func, cb_draw_der, cb_hide_der};
+    func_box->set_index(0);
     // и добавляем его в общий список всех input_box'ов
     enter_menu.push_back(func_box);
 
@@ -190,16 +197,16 @@ void Graphix_window::update_graph(size_t func_index)
     // чистим старый график и точки
     clear_graph(func_index);
 
-    // записываем в вектор введенных строк то, что ввёл пользователь
-    fill_inputed_funcs();
+    // записываем в вектор введенных строк то, что ввёл пользователь и заодно проверяем
+    update_inputed_func(func_index);
 
-    try
+    if (enter_menu[func_index]->is_input_valid())
     {
         // локальная переменная - введенная строка
         string func = inputed_funcs[func_index];
 
         // раскрываем все зависимости вида y_n
-        Backend::expose_dep_function(inputed_funcs, func, func_index);
+        auto edfc = Backend::expose_dep_func_string{inputed_funcs, func};
 
         // создаём сегментированную функцию
         Segmented_function seged_func(func, scale, origin, win_w(), win_h());
@@ -219,15 +226,7 @@ void Graphix_window::update_graph(size_t func_index)
         else
             graphics.push_back(graphic);
 
-        // чистим поле с ошибкой и выводим график
-        enter_menu[func_index]->set_message(empty_str);
         enter_menu[func_index]->graph_show();
-    }
-    catch (const std::exception& e)
-    {
-        // выводим ошибку и прячем график
-        enter_menu[func_index]->set_message(e.what());
-        enter_menu[func_index]->graph_hide();
     }
 }
 
@@ -243,16 +242,15 @@ void Graphix_window::update_der(size_t der_index)
     clear_der(der_index);
 
     // записываем в вектор введенных строк то, что ввёл пользователь
-    fill_inputed_funcs();
+    update_inputed_func(der_index);
 
-    // добавили обработку ошибок
-    try
+    if (enter_menu[der_index]->is_input_valid())
     {
         // локальная переменная - введенная строка
         string func = inputed_funcs[der_index];
 
         // раскрываем все зависимости вида y_n
-        Backend::expose_dep_function(inputed_funcs, func, der_index);
+        auto edfc = Backend::expose_dep_func_string{inputed_strings, func};
 
         // создаём сегментированную функцию
         Segmented_function seged_func(func, scale, origin, win_w(), win_h());
@@ -271,32 +269,25 @@ void Graphix_window::update_der(size_t der_index)
         else
             derivatives.push_back(derivative);
 
-        // чистим поле с ошибкой и выводим график
-        enter_menu[der_index]->set_message(empty_str);
+        // выводим производную
         enter_menu[der_index]->der_show();
-    }
-    catch (const std::exception& e)
-    {
-        // выводим ошибку и прячем график
-        enter_menu[der_index]->set_message(e.what());
-        enter_menu[der_index]->der_hide();
     }
 }
 
 void Graphix_window::draw_der(size_t der_index)
 {
     update_der(der_index);
+
     if (!enter_menu[der_index]->is_der_hidden())
         enter_menu[der_index]->set_der("(" + inputed_funcs[der_index] + ")'");
-    else
-        enter_menu[der_index]->set_der("error");
+
     button_pushed = true;
 }
 
 void Graphix_window::hide_graph(size_t func_index)
 {
     // прячем старый график и чистим память
-    clear_der(func_index);
+    clear_graph(func_index);
 
     button_pushed = true;
 }
@@ -319,7 +310,7 @@ void Graphix_window::rem_func(size_t func_index)
     {
         // двигаем их вверх и меняем номер на пердыдущий
         enter_menu[j]->move(0, -func_box_h);
-        enter_menu[j]->set_number(enter_menu[j]->get_number() - 1);
+        enter_menu[j]->set_index(enter_menu[j]->get_index() - 1);
     }
     // также изменяем размеры самого вектора
     enter_menu.erase(enter_menu.begin() + func_index);
@@ -383,12 +374,12 @@ void Graphix_window::clear_der(size_t der_index)
 
 void Graphix_window::new_func()
 {
-    // создаем новый инпут_бокс
+    // создаем новый бокс
     Function_box* func_box = new Function_box{enter_menu.size(), cb_draw_graph, cb_hide_graph,
                                               cb_rem_func,       cb_draw_der,   cb_hide_der};
 
     // задаём ему последний номер и аттачим его
-    func_box->set_number(enter_menu.size());
+    func_box->set_index(enter_menu.size());
     func_box->attach(*this);
 
     // если до увеличения массив инпут_боксов был пуст, то мы обратно двигаем new_button
@@ -413,6 +404,8 @@ void Graphix_window::update_points()
     // чистим память от всех предыдущих точек
     clear_points();
 
+    fill_inputed_funcs();
+
     // воспомогательная функция, которая переводит бэкендовы вещественные точки в пиксельные
     auto convert_to_pix = [&] (Math_calc::Point p) -> Graph_lib::Point
     {
@@ -427,93 +420,66 @@ void Graphix_window::update_points()
     double h_border = (double)win_h() / (2 * scale);
     double point_prec = (((double)win_w() / (scale * 2500)));
 
-    // проходимся по всем строкам, куда пользователь вводит функции и рисуем их корни,
-    // (если они не скрыты)
-    for (auto& input_box : enter_menu)
-    {
-        string func = input_box->get_string();
-        size_t func_index = input_box->get_number();
-        if (!input_box->is_graph_hidden())
-        {
-            if (!func.empty())
-            {
-                // локальная переменная - введенная строка
-                string func = inputed_funcs[func_index];
-                // раскрываем все зависимости вида y_n
-                Backend::expose_dep_function(inputed_funcs, func, func_index);
-                Math_calc::function_roots fr{func, l_border, r_border, h_border, point_prec};
-                // создаём марки, добавляем их на окно
-                Marks* dots = new Marks{"x"};
-                for (auto& p : fr.get_function_roots())
-                    dots->add(convert_to_pix(p));
-                attach(*dots);
-                // и добавляем в общий массив всех точек на экране
-                all_points.push_back(*dots);
-            }
-        }
-    }
-
-    // проходимся по всем строкам, куда пользователь вводит функции и рисуем их экстремумы,
-    // (если они не скрыты)
-    for (auto& input_box : enter_menu)
-    {
-        string func = input_box->get_string();
-        size_t func_index = input_box->get_number();
-        if (!input_box->is_graph_hidden())
-        {
-            if (!func.empty())
-            {
-                // локальная переменная - введенная строка
-                string func = inputed_funcs[func_index];
-
-                // раскрываем все зависимости вида y_n
-                Backend::expose_dep_function(inputed_funcs, func, func_index);
-                Math_calc::function_extremes fe{func, l_border, r_border, h_border, point_prec};
-                // создаём марки, добавляем их на окно
-                Marks* dots = new Marks{"#"};
-                for (auto& p : fe.get_function_extremes())
-                    dots->add(convert_to_pix(p));
-                attach(*dots);
-                // и добавляем в общий массив всех точек на экране
-                all_points.push_back(*dots);
-            }
-        }
-    }
-    // проходимся по всем строкам, куда пользователь вводит функции и их всевозможные пересечения
-    // (если они не скрыты)
+    // проходимся по всем строкам, куда пользователь вводит функции и рисуем их экстремумы, корни и
+    // всевозможные пересечения (если они не скрыты)
     for (size_t i = 0; i < enter_menu.size(); i++)
     {
+        auto& input_box = enter_menu[i];
+        // введенная строка
+        string& func = inputed_funcs[i];
+
+        bool is_valid = input_box->is_input_valid();
+
+        Marks* dots = new Marks{empty_str};
+
+        if (is_valid)
+        {
+            // раскрываем все зависимости вида y_n
+
+            auto edfc = Backend::expose_dep_func_string{inputed_strings, func};
+            // cout << "func: " << func << endl;
+
+            Math_calc::function_extremes fe{func, l_border, r_border, h_border, point_prec};
+            // создаём марки, добавляем их на окно
+            Marks* dots = new Marks{"#"};
+            for (auto& p : fe.get_function_extremes())
+                dots->add(convert_to_pix(p));
+            attach(*dots);
+            // и добавляем в общий массив всех точек на экране
+            all_points.push_back(*dots);
+
+            Math_calc::function_roots fr{func, l_border, r_border, h_border, point_prec};
+            // создаём марки, добавляем их на окно
+            dots = new Marks{"x"};
+            for (auto& p : fr.get_function_roots())
+                dots->add(convert_to_pix(p));
+            attach(*dots);
+            // и добавляем в общий массив всех точек на экране
+            all_points.push_back(*dots);
+        }
+
         for (size_t j = i + 1; j < enter_menu.size(); j++)
         {
-
-            auto& input_box = enter_menu[i];
-            string func = input_box->get_string();
             // "другой input_box"
-            auto& oth_input_box = enter_menu[j];
-            string oth_func = oth_input_box->get_string();
+            auto oth_input_box = enter_menu[j];
+            string& oth_func = inputed_funcs[j];
 
-            bool hidden = input_box->is_graph_hidden() || oth_input_box->is_graph_hidden();
-            bool empty = func.empty() || oth_func.empty();
+            is_valid |= oth_input_box->is_input_valid();
 
-            if (!hidden)
+            if (is_valid)
             {
-                if (!empty)
-                {
-                    // раскрываем все зависимости вида y_n для func
-                    Backend::expose_dep_function(inputed_funcs, func, i);
-                    // раскрываем все зависимости вида y_n для oth_func
-                    Backend::expose_dep_function(inputed_funcs, oth_func, j);
+                // раскрываем все зависимости вида y_n
+                auto oth_edfc = Backend::expose_dep_func_string{inputed_strings, oth_func};
 
-                    Math_calc::function_crosses fc{
-                        {func, oth_func}, l_border, r_border, h_border, point_prec};
-                    // создаём марки, добавляем их на окно
-                    Marks* dots = new Marks{"o"};
-                    for (auto& p : fc.get_functions_crosses())
-                        dots->add(convert_to_pix(p));
-                    attach(*dots);
-                    // и добавляем в общий массив всех точек на экране
-                    all_points.push_back(*dots);
-                }
+                Math_calc::function_crosses fc{
+                    {func, oth_func}, l_border, r_border, h_border, point_prec};
+                // создаём марки, добавляем их на окно
+                dots = new Marks{"o"};
+                for (auto& p : fc.get_functions_crosses())
+                    dots->add(convert_to_pix(p));
+                attach(*dots);
+                // и добавляем в общий массив всех точек на экране
+                all_points.push_back(*dots);
             }
         }
     }
@@ -543,10 +509,48 @@ void Graphix_window::clear_points()
     all_points.clear();
 }
 
+void Graphix_window::update_inputed_func(size_t func_index)
+{
+    // локальная переменная - введенная строка
+    string& func = inputed_funcs[func_index];
+
+    // cout << "inputed strings now:" << endl;
+    for (size_t i = 0; i < enter_menu.size(); i++)
+    {
+        inputed_strings[i] = enter_menu[i]->get_string();
+        // cout << i << ": " + inputed_strings[i] << endl;
+    }
+    // cout << endl << endl;
+
+    func = inputed_strings[func_index];
+
+    try
+    {
+        // раскрываем все зависимости вида y_n
+        auto edfc = Backend::expose_dep_func_string{inputed_strings, func};
+
+        // создаём сегментированную функцию (чтобы потенциально проверить на ошибки)
+        Segmented_function seged_func(func, scale, origin, win_w(), win_h());
+
+        // если попытка раскрытия зависимостей создания функции не вызвали ошибок, то всё
+        // шикарно
+        enter_menu[func_index]->set_message(empty_str);
+        enter_menu[func_index]->input_valid();
+    }
+    catch (const std::exception& e)
+    {
+        // cout << "!update_inputed_func catched the error!" << endl;
+        // выводим ошибку и прячем график
+        enter_menu[func_index]->set_message(e.what());
+        enter_menu[func_index]->input_invalid();
+    }
+    // cout << func_index << ": " + func + " " << enter_menu[func_index]->is_input_valid() << endl;
+}
+
 void Graphix_window::fill_inputed_funcs()
 {
     for (size_t i = 0; i < enter_menu.size(); i++)
-        inputed_funcs[i] = enter_menu[i]->get_string();
+        update_inputed_func(i);
 }
 
 }  // namespace Frontend

@@ -3,6 +3,14 @@
 
 // std libs
 #include <cmath>
+using Backend::math_function;
+using Graph_lib::Point;
+using Graph_lib::Vector_ref;
+using Graphix_calc::Graphix;
+using Math_calc::domain_segments;
+using Math_calc::Segment;
+using std::string;
+using std::vector;
 
 // servant
 #include "../servant/constants.h"
@@ -12,7 +20,7 @@ namespace Graphix_calc {
 
 Segmented_function::Segmented_function(const string& func, int scale, Point center, int max_x,
                                        int max_y)
-    : func_str{function_string(func)}, has_var{func.find('x') != std::string::npos},
+    : func_str{math_function(func)}, has_var{func.find('x') != std::string::npos},
       segs_func{segments(max_x, max_y, scale)}, segs_der{derivative_segment(max_x, max_y, scale)},
       seg_func{segmented_function(scale, center, max_x)},
       seg_der{segmented_derivative(scale, center, max_x)}

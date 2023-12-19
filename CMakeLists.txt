@@ -28,7 +28,7 @@ set(HEADERS
     backend/servant/constants.h
 
     backend/expose_dep_function.h
-    backend/function_string.h
+    backend/math_function.h
 
     backend.h
 
@@ -58,8 +58,8 @@ set(SOURCES
     backend/servant/servant.cpp
 
     backend/expose_dep_function.cpp
-    backend/function_string.cpp
-    backend/function_string_checkers.cpp
+    backend/math_function.cpp
+    backend/math_function_validation.cpp
 
 # main
     main.cpp

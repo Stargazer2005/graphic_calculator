@@ -1,26 +1,25 @@
 // header
-#include "function_string.h"
+#include "math_function.h"
 
 // std libs
 #include <cmath>
 #include <stack>
-using std::stack;
+using std::stack, std::function, std::string, std::vector;
 
 // servant
 #include "servant/servant.h"
 using namespace Back_serv;
-#include "servant/constants.h"
 using namespace Back_consts;
 
 namespace Backend {
 
-function_string::function_string(string func) : func{func}
+math_function::math_function(string func) : func{func}
 {
     lexs = lexemes();
     rev_pol = reverse_polish();
 }
 
-vector<string> function_string::lexemes() const
+vector<string> math_function::lexemes() const
 {
     if (!is_str_valid())
         return {};
@@ -41,7 +40,7 @@ vector<string> function_string::lexemes() const
             }
             if (i == 0)
                 res.push_back("um");
-            else if (c_in_s(transform_to_char(res[res.size() - 1]), oper_chars + "("))
+            else if (c_in_s(s_to_c(res[res.size() - 1]), oper_chars + "("))
                 res.push_back("um");
             else
                 res.push_back("-");
@@ -103,7 +102,7 @@ vector<string> function_string::lexemes() const
     return (res);
 }
 
-vector<string> function_string::reverse_polish() const
+vector<string> math_function::reverse_polish() const
 {
     if (!is_lexs_valid())
         return {};
@@ -122,9 +121,9 @@ vector<string> function_string::reverse_polish() const
     for (auto& lex : lexs)
     {
         // символ, обозначающий текущую лексему
-        char curr = transform_to_char(lex);
+        char curr = s_to_c(lex);
         // символ, обозначающий последний элемент в стеке с операциями
-        char last = transform_to_char(st_oper.top());
+        char last = s_to_c(st_oper.top());
         switch (curr)
         {
         case number:
@@ -145,7 +144,7 @@ vector<string> function_string::reverse_polish() const
             {
                 res.push_back(st_oper.top());
                 st_oper.pop();
-                last = transform_to_char(st_oper.top());
+                last = s_to_c(st_oper.top());
             }
             st_oper.push(lex);
             break;
@@ -158,7 +157,7 @@ vector<string> function_string::reverse_polish() const
             {
                 res.push_back(st_oper.top());
                 st_oper.pop();
-                last = transform_to_char(st_oper.top());
+                last = s_to_c(st_oper.top());
             }
             st_oper.push(lex);
             break;
@@ -171,7 +170,7 @@ vector<string> function_string::reverse_polish() const
             {
                 res.push_back(st_oper.top());
                 st_oper.pop();
-                last = transform_to_char(st_oper.top());
+                last = s_to_c(st_oper.top());
             }
             st_oper.push(lex);
             break;
@@ -197,7 +196,7 @@ vector<string> function_string::reverse_polish() const
                     res.push_back(st_oper.top());
                     st_oper.pop();
                 }
-                last = transform_to_char(st_oper.top());
+                last = s_to_c(st_oper.top());
             }
             break;
         }
@@ -228,7 +227,7 @@ vector<string> function_string::reverse_polish() const
     return res;
 }
 
-double function_string::calc(double x) const
+double math_function::calc(double x) const
 {
     const string oper_chars = "+-*/^";   // строка с операциями
     const string func_chars = "sctelu";  // строка с функциями
@@ -239,8 +238,8 @@ double function_string::calc(double x) const
     {
         double l;  // последний символ в стэке
         double p;  // предпоследний символ в стэке (последний после удаления l)
-        char curr = transform_to_char(lex);  // текущий символ,
-                                             // если брать вместо строки (для switch)
+        char curr = s_to_c(lex);  // текущий символ,
+                                  // если брать вместо строки (для switch)
         if (c_in_s(curr, func_chars))
         {
             l = Stack.top();  // запоминаем только последний (так как функции

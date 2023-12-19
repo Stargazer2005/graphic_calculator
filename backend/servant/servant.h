@@ -11,9 +11,9 @@ namespace Back_serv {
 bool c_in_s (char c, const std::string& s);
 
 // вспомогательная функция, переводящая строку (лексему) в символ
-char transform_to_char (const std::string& s);
+char s_to_c (const std::string& s);
 
-bool is_float (std::string str);
+bool is_double (std::string str);
 
 // template <typename T> void print (const std::vector<T>& v);
 

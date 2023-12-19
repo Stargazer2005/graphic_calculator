@@ -2,11 +2,9 @@
 
 // std libs
 #include <string>
-using std::string;
 
 // Graph_lib
 #include <Graph_lib/Graph.h>
-using Graph_lib::Color, Graph_lib::Point;
 
 namespace Graphix_calc {
 
@@ -20,13 +18,13 @@ class Axis : public Graph_lib::Shape
         vertical
     };
 
-    Axis(Orientation d, Point center, int length, int scale, const string& label);
+    Axis(Orientation d, Graph_lib::Point center, int length, int scale, const std::string& label);
 
     // methods
 
     void draw_lines () const override;
 
-    void set_color (Color c);
+    void set_color (Graph_lib::Color c);
 
   private:
     // variables

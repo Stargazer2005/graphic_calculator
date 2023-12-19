@@ -54,8 +54,6 @@ class Graphix_window : public Graph_lib::Window
     Graph_lib::Line border;
     // вертикальная и горизонтальная оси
     Axis *x_axis, *y_axis;
-    // вектор введенных пользователем строк
-    vector<string> inputed_funcs;
     // кнопка выхода из программы
     Button quit_button;
     // кнопка масштаб "+"
@@ -68,10 +66,15 @@ class Graphix_window : public Graph_lib::Window
     // вектор полей ввода(группы поля ввода и трёх кнопок: draw, hide, remove)
     vector<Function_box*> enter_menu;
 
-    // общий массив со всеми сегментированными функциями (графиками)
+    // общий вектор введенных пользователем строк
+    vector<string> inputed_strings;
+    vector<string> inputed_funcs;
+    // общий вектор со всеми сегментированными функциями (графиками)
     vector<Vector_ref<Graphix>> graphics;
-    // общий массив со всеми сегментированными производными функций (графиками)
+    // общий вектор со всеми сегментированными производными функций (графиками)
     vector<Vector_ref<Graphix>> derivatives;
+    // ветор, содержащий все зависимости функций друг от друга
+    // vector<vector<size_t>> dependencies;
 
     // меню с общим полем для точек
     Point_box point_box;
@@ -135,6 +138,8 @@ class Graphix_window : public Graph_lib::Window
     void hide_der (size_t der_index);
 
     void rem_func (size_t func_index);
+
+    void update_inputed_func (size_t func_index);
 
     // вспомогательная фунция, добавляющая в вектор введенных пользователем строк всё из enter_menu
     void fill_inputed_funcs ();

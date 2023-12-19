@@ -62,7 +62,8 @@ graphic_calculator/
 Фронтенд: пиксели и графики
 Бэкенд: числа с плавающей запятой и функции
 
-func - строки
-grapgic - Graphix'ы
+strs - сырые строки, куда пользователь мог ввести всё, что угодно
+functions - правильные строки, которые может обработать graphix
+grapgic - Graphix'ы, построенные по funcs
 
 (для производных der = func, deriative = graphic)

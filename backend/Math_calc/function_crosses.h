@@ -1,11 +1,13 @@
 #pragma once
 
 // std libs
+#include <string>
 #include <utility>
-using std::pair;
+#include <vector>
 
 // Math_calc
 #include "function_roots.h"
+#include "math_base.h"
 
 namespace Math_calc {
 
@@ -13,27 +15,27 @@ namespace Math_calc {
 class function_crosses : public function_roots
 {
   public:
-    function_crosses(pair<string, string> funcs, double l_border, double r_border, double h_border,
-                     double precision);
+    function_crosses(std::pair<std::string, std::string> funcs, double l_border, double r_border,
+                     double h_border, double precision);
 
     // methods
 
-    vector<Point> get_functions_crosses () const { return points; }
+    std::vector<Point> get_functions_crosses () const { return points; }
 
   private:
     // variables
 
     // точность (используем везде, поэтому сохраняем в качестве поля)
     double precision;
-    // одна из введенных функций (одна, так как нужно просто найти y)
-    Backend::function_string func_str;
+    // одна из введенных функций (одна, так как нужно просто найти y, можно и в одну подставить)
+    Backend::math_function func_str;
     // вектор точек, который и будем возвращать
-    vector<Point> points;
+    std::vector<Point> points;
 
     // methods
 
     // нахождение всех пересечений
-    vector<Point> crosses (double l_border, double r_border, double h_border) const;
+    std::vector<Point> crosses (double l_border, double r_border, double h_border) const;
 };
 
 }  // namespace Math_calc

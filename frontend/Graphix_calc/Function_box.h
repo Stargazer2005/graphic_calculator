@@ -2,21 +2,17 @@
 
 // std libs
 #include <string>
-using std::string;
 
 // Graphix_calc
 #include "Numbed_button.h"
-using Graphix_calc::Numbed_button;
 
 // Graph_lib
 #include <Graph_lib/GUI.h>
-using Graph_lib::In_box;
-using Graph_lib::Out_box;
-using Graph_lib::Point;
 #include <Graph_lib/Window.h>
 
 namespace Graphix_calc {
 
+// структурка, содержащая в себе ввод, кнопки по работе с графиком, производной
 class Function_box : public Graph_lib::Widget
 {
   public:
@@ -27,50 +23,78 @@ class Function_box : public Graph_lib::Widget
 
     // methods
 
-    bool is_graph_hidden () const;
+    void input_valid ()
+    {
+        is_func_valid = true;
+        set_der("");
+    }
 
-    void graph_show ();
+    void input_invalid ()
+    {
+        is_func_valid = false;
+        curr_der->put("invalid");
+    }
 
-    void graph_hide ();
+    bool is_input_valid () const { return is_func_valid; };
 
-    bool is_der_hidden () const;
+    void graph_show ()
+    {
+        is_graph_visible = true;
+        // если мы её рисуем, то она точно валидна
+        input_valid();
+    }
 
-    void der_show ();
+    void graph_hide () { is_graph_visible = false; }
 
-    void der_hide ();
+    bool is_graph_hidden () const { return !is_graph_visible; }
 
-    void move (int dx, int dy) override;
+    void der_show ()
+    {
+        is_der_visible = true;
+        // если мы её рисуем, то она точно валидна
+        input_valid();
+    }
 
-    string get_string () const { return in_box->get_string(); }
+    void der_hide () { is_der_visible = false; }
 
-    int get_number () const { return draw_button->get_number(); }
+    bool is_der_hidden () const { return !is_der_visible; }
 
-    void set_number (int);
+    // just set_number to numbered elements
+    void set_index (int);
 
-    void set_message (const string&);
+    void set_message (const std::string& message) { out_box->put(message); }
 
-    void set_der (const string&);
+    void set_der (const std::string& der) { curr_der->put(der); }
+
+    std::string get_string () const { return in_box->get_string(); }
+
+    int get_index () const { return draw_button->get_number(); }
 
     // attach all buttons
-    void attach (Graph_lib::Window&);
+    void attach (Graph_lib::Window&) override;
 
     // detach all buttons
     void detach (Graph_lib::Window&);
+
+    // just move all elements
+    void move (int dx, int dy) override;
 
   private:
     // variables
 
     // поле, куда пользователь вводит функцию
-    In_box* in_box;
+    Graph_lib::In_box* in_box;
     Numbed_button* draw_button;
     Numbed_button* hide_button;
     Numbed_button* rem_button;
-    Out_box* curr_der;
+    Graph_lib::Out_box* curr_der;
     Numbed_button* draw_der_button;
     Numbed_button* hide_der_button;
-    Out_box* out_box;
-    bool is_graph_visible;
-    bool is_der_visible;
+    Graph_lib::Out_box* out_box;
+
+    bool is_func_valid{true};
+    bool is_graph_visible{false};
+    bool is_der_visible{false};
 };
 
 }  // namespace Graphix_calc

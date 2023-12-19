@@ -1,5 +1,8 @@
 // header
-#include "function_string.h"
+#include "math_function.h"
+
+// std libs
+using std::function, std::string, std::vector;
 
 // servant
 #include "servant/servant.h"
@@ -9,7 +12,7 @@ using namespace Back_consts;
 
 namespace Backend {
 
-bool function_string::is_str_valid() const
+bool math_function::is_str_valid() const
 {
     string f = spaces_deleted(func);
 
@@ -84,8 +87,7 @@ bool function_string::is_str_valid() const
         }
         // (при строке из одной цифры, эта проверка не подходит)
         else if (isdigit(c) && f.size() > 1)
-        {
-            // возле числа должен стоять либо знак, либо точка, либо скобка
+        {  // возле числа должен стоять либо знак, либо точка, либо скобка
 
             // вспомогательная функция для проверки рядом стоящего с числом
             // символа
@@ -121,7 +123,7 @@ bool function_string::is_str_valid() const
     return true;
 }
 
-bool function_string::is_lexs_valid() const
+bool math_function::is_lexs_valid() const
 {
     const string oper_chars = "+-*/^";   // строка с операциями
     const string func_chars = "sctelu";  // строка с функциями
@@ -129,12 +131,12 @@ bool function_string::is_lexs_valid() const
     for (size_t i = 0; i < lexs.size(); i++)
     {
         // string l = lexs[i];
-        char l_c = transform_to_char(lexs[i]);
+        char l_c = s_to_c(lexs[i]);
         char next_c = ' ';  // следующий символ
         if (i < (lexs.size() - 1))
-            next_c = transform_to_char(lexs[i + 1]);
+            next_c = s_to_c(lexs[i + 1]);
         // проверка использования постороннего имени
-        if (isalpha(l_c) && !(is_float(lexs[i])))
+        if (isalpha(l_c) && !(is_double(lexs[i])))
         {
             if (c_in_s(l_c, func_chars))
             {

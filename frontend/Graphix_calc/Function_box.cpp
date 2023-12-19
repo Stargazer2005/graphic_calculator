@@ -1,6 +1,17 @@
 // header
 #include "Function_box.h"
 
+// std libs
+using std::string;
+
+// Graphix_calc
+using Graphix_calc::Numbed_button;
+
+// Graph_lib
+using Graph_lib::In_box;
+using Graph_lib::Out_box;
+using Graph_lib::Point;
+
 // servant
 #include "../servant/constants.h"
 using namespace Front_consts;
@@ -12,9 +23,10 @@ namespace Graphix_calc {
 Function_box::Function_box(unsigned long long int graphics_amount, void cb_draw_graph(void*, void*),
                            void cb_hide_graph(void*, void*), void cb_rem_func(void*, void*),
                            void cb_draw_der(void*, void*), void cb_hide_der(void*, void*))
-    // так как предок нигде не используется, даём ему минимальные значения
-    : Graph_lib::Widget{Point{0, 0}, 1, 1, "", nullptr},
-      in_box{new In_box{Point{in_box_h, func_box_h * int(graphics_amount)}, in_box_w, in_box_h,
+    : Graph_lib::Widget{Point{0, func_box_h * int(graphics_amount)}, func_box_w, func_box_h, "",
+                        nullptr},
+      // необходимо отступить расстояние, где находится "y = "
+      in_box{new In_box{Point{in_box_lab_w, func_box_h * int(graphics_amount)}, in_box_w, in_box_h,
                         "y = "}},
       draw_button{new Numbed_button{Point{0, func_box_h * int(graphics_amount) + in_box_h}, btn_w,
                                     btn_h, "Draw", cb_draw_graph}},
@@ -37,18 +49,6 @@ Function_box::Function_box(unsigned long long int graphics_amount, void cb_draw_
 {
 }
 
-bool Function_box::is_graph_hidden() const { return !is_graph_visible; }
-
-void Function_box::graph_show() { is_graph_visible = true; }
-
-void Function_box::graph_hide() { is_graph_visible = false; }
-
-bool Function_box::is_der_hidden() const { return !is_der_visible; }
-
-void Function_box::der_show() { is_der_visible = true; }
-
-void Function_box::der_hide() { is_der_visible = false; }
-
 void Function_box::move(int dx, int dy)
 {
     in_box->move(dx, dy);
@@ -61,7 +61,7 @@ void Function_box::move(int dx, int dy)
     out_box->move(dx, dy);
 }
 
-void Function_box::set_number(int value)
+void Function_box::set_index(int value)
 {
     draw_button->set_number(value);
     hide_button->set_number(value);
@@ -72,6 +72,8 @@ void Function_box::set_number(int value)
 
 void Function_box::attach(Graph_lib::Window& win)
 {
+    // try to decomment this :)
+    // win.attach(*this);
     win.attach(*in_box);
     win.attach(*draw_button);
     win.attach(*hide_button);
@@ -83,12 +85,10 @@ void Function_box::attach(Graph_lib::Window& win)
     own = &win;
 }
 
-void Function_box::set_message(const string& message) { out_box->put(message); }
-
-void Function_box::set_der(const string& der) { curr_der->put(der); }
-
 void Function_box::detach(Graph_lib::Window& win)
 {
+    // try to decomment this :)
+    // win.detach(*this);
     win.detach(*in_box);
     win.detach(*draw_button);
     win.detach(*hide_button);

@@ -4,6 +4,11 @@
 // std libs
 #include <stdexcept>
 using std::invalid_argument;
+using std::string;
+
+// Graph_lib
+#include <Graph_lib/Graph.h>
+using Graph_lib::Color, Graph_lib::Point;
 
 // servant
 #include "../servant/constants.h"

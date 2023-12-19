@@ -2,18 +2,35 @@
 #include "expose_dep_function.h"
 
 // std libs
+#include <algorithm>
+#include <stack>
 #include <stdexcept>
-using std::invalid_argument;
+using std::invalid_argument, std::vector, std::string, std::find, std::stack;
+// #include <iostream>
+// using std::cout, std::endl;
 
 // servant
 #include "servant/servant.h"
 using Back_serv::c_in_s;
 
+// namespace Backend {
+
+template <typename T> bool n_in_vec (const vector<T>& vec, T n)
+{
+    return find(vec.begin(), vec.end(), n) != vec.end();
+}
+
 namespace Backend {
 
-void expose_dep_function (const vector<string>& all_funcs, string& func, const size_t& func_index)
+expose_dep_func_string::expose_dep_func_string(const vector<string>& all_funcs, string& func)
+    : all_funcs{all_funcs}, func{func}, dependences{0}
 {
-    size_t func_number = func_index + 1;
+    expose_dep_func();
+}
+
+void expose_dep_func_string::expose_dep_func()
+{
+    stack<size_t> tempor;
     // если 'y' нету, то и делать ничего не надо
     if (!c_in_s('y', func))
         return;
@@ -47,37 +64,44 @@ void expose_dep_function (const vector<string>& all_funcs, string& func, const s
                 if (next_ch != '_')
                     throw invalid_argument("invalid usage 'y'");
 
-                // предполагаемый номер функции (может оказаться не валидным)
-                string est_number = "";
+                // считываемый предполагаемый номер функции (может оказаться не валидным)
+                string readed_est_number = "";
 
                 // считываем предполагаемый номер (склеиваем все цифры кроме нуля, которые идут
                 // после '_')
                 for (size_t j = i + 2; j < func.size(); j++)
                     if (isdigit(func[j]) && func[j] != '0')
-                        est_number += func[j];
+                        readed_est_number += func[j];
                     else
                         break;
 
                 // не считали, значит, это был либо 0, либо что-то иное
-                if (est_number.empty())
+                if (readed_est_number.empty())
                     throw invalid_argument("invalid expression number");
 
-                // считанный номер совпадает с текущей функцией
-                // (скорее всего, можно хитро проверить через укахатели)
-                if (stoull(est_number) == func_number)
-                    throw invalid_argument("expression self-usage");
+                // индекс предполагаемой функции
+                size_t est_number = stoull(readed_est_number);
+                size_t est_index = est_number - 1;
 
                 // номер сильно больше количества возможных к вводу функций
-                if (stoull(est_number) > all_funcs.size())
-                    throw invalid_argument("invalid expression number: " + est_number);
+                if (est_number > all_funcs.size())
+                    throw invalid_argument("invalid expression number: " + readed_est_number);
+
+                // функция под этим индексом либо пустая, либо ещё не была вообще добавлена
+                if (all_funcs[est_index].empty())
+                    throw invalid_argument("expression y_" + readed_est_number + " is invalid");
+
+                if (n_in_vec(dependences, est_number))
+                    throw invalid_argument("self-usage or loop");
 
                 // заменяем в func выражение y_n на то, что оно означает (и заключаем в скобки)
-                Back_serv::replace(func, "y_" + est_number,
-                                   '(' + all_funcs[stoull(est_number) - 1] + ')');
+                Back_serv::replace(func, "y_" + readed_est_number,
+                                   '(' + all_funcs[est_index] + ')');
 
-                // функция под этим номером либо пустая, либо ещё не была вообще добавлена
-                if (all_funcs[stoull(est_number) - 1].empty())
-                    throw invalid_argument("expression y_" + est_number + " is empty or not exist");
+                if (c_in_s('y', all_funcs[est_index]))
+                    dependences.push_back(est_number);
+                else
+                    dependences.clear();
             }
         }
     }

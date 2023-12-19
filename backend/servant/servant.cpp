@@ -2,16 +2,14 @@
 #include "servant.h"
 
 // std libs
-#include <sstream>
-
 // #include <iostream>
-// using std::endl;
+using namespace std;
 
 namespace Back_serv {
 
-bool c_in_s (char c, const std::string& s) { return (s.find(c) != std::string::npos); }
+bool c_in_s (char c, const string& s) { return (s.find(c) != string::npos); }
 
-char transform_to_char (const std::string& s)
+char s_to_c (const string& s)
 {
     if (s[0] >= '0' && s[0] <= '9')  // если число
         return ('n');                // заменяем на спец. символ
@@ -19,44 +17,49 @@ char transform_to_char (const std::string& s)
         return (s[0]);  // первая буква отражает название функции
 }
 
-bool is_float (std::string str)
+bool is_double (string str)
 {
-    std::istringstream iss(str);
-    double f;
-    iss >> std::noskipws >> f;
-    return iss.eof() && !iss.fail();
+    try
+    {
+        stod(str);
+    }
+    catch (...)
+    {
+        return false;
+    }
+    return true;
 }
 
-// template <typename T> void print (const std::vector<T>& v)
+// template <typename T> void print (const vector<T>& v)
 // {
-//     std::cout << " size: " << v.size() << endl;
-//     std::cout << "{ ";
+//     cout << " size: " << v.size() << endl;
+//     cout << "{ ";
 //     for (size_t i = 0; i < v.size(); i++)
 //     {
-//         std::cout << "''" << v[i] << "''";
+//         cout << "''" << v[i] << "''";
 //         if (i != v.size() - 1)
-//             std::cout << ", ";
+//             cout << ", ";
 //     }
-//     std::cout << " }" << endl;
+//     cout << " }" << endl;
 // }
 
-// template <typename T> void print (std::stack<T> st)
+// template <typename T> void print (stack<T> st)
 // {
-//     std::cout << " size: " << st.size() << endl;
-//     std::cout << "{ ";
+//     cout << " size: " << st.size() << endl;
+//     cout << "{ ";
 //     while (!st.empty())
 //     {
-//         std::cout << "''" << st.top() << "''";
+//         cout << "''" << st.top() << "''";
 //         st.pop();
 //         if (!st.empty())
-//             std::cout << ", ";
+//             cout << ", ";
 //     }
-//     std::cout << " }" << endl;
+//     cout << " }" << endl;
 // }
 
-std::string spaces_deleted (const std::string& s)
+string spaces_deleted (const string& s)
 {
-    std::string new_s;
+    string new_s;
     for (auto ch : s)
         if (ch != ' ')
             new_s += ch;
@@ -65,10 +68,11 @@ std::string spaces_deleted (const std::string& s)
 
 double absolute (double x) { return x >= 0 ? x : -x; }
 
-bool replace (std::string& str, const std::string& from, const std::string& to)
+bool replace (string& str, const string& from, const string& to)
 {
+
     size_t start_pos = str.find(from);
-    if (start_pos == std::string::npos)
+    if (start_pos == string::npos)
         return false;
     str.replace(start_pos, from.length(), to);
     return true;

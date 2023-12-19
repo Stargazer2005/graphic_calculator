@@ -4,35 +4,39 @@
 #include <functional>
 #include <string>
 #include <vector>
-using std::function, std::string, std::vector;
 
 // servant
 #include "servant/constants.h"
-using Back_consts::delta_x;
 
 namespace Backend {
 
-class function_string
+class math_function
 {
   public:
-    function_string(string func);
+    math_function(std::string func);
 
     // methods:
 
+    double operator() (double x) { return calc(x); }
+
     // лямбда-функция, считающая по заданному x значение функции
-    function<double(double)> calculate = [this] (double x) { return calc(x); };
-    function<double(double)> differentiate = [this] (double x)
-    { return (calculate(x + delta_x) - calculate(x - delta_x)) / (2 * delta_x); };
+    const std::function<double(double)> calculate = [this] (double x) { return calc(x); };
+    // лямбда-функция, считающая по заданному x значение производной функции
+    const std::function<double(double)> differentiate = [this] (double x)
+    {
+        return (calc(x + Back_consts::delta_x) - calc(x - Back_consts::delta_x)) /
+               (2 * Back_consts::delta_x);
+    };
 
   private:
     // variables:
 
     // значение строки
-    string func;
+    std::string func;
     // обратная польская нотация
-    vector<string> rev_pol;
+    std::vector<std::string> rev_pol;
     // список лексем
-    vector<string> lexs;
+    std::vector<std::string> lexs;
 
     // methods:
 
@@ -45,9 +49,9 @@ class function_string
     // корректность использования функций (cos, sin, tan, exp, ln, um)
     bool is_lexs_valid () const;
     // метод, который переводит введеную пользователем строку в список лексем
-    vector<string> lexemes () const;
+    std::vector<std::string> lexemes () const;
     // метод, который переводит список лексем в обратную польскую запись
-    vector<string> reverse_polish () const;
+    std::vector<std::string> reverse_polish () const;
     // метод, который по значению переменной x вычисляет значение y
     double calc (double x) const;
 };
