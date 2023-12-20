@@ -18,7 +18,8 @@ class Axis : public Graph_lib::Shape
         vertical
     };
 
-    Axis(Orientation d, Graph_lib::Point center, int length, int scale, const std::string& label);
+    Axis(Orientation d, Graph_lib::Point center, int length, double scale,
+         const std::string& label);
 
     // methods
 
@@ -32,6 +33,7 @@ class Axis : public Graph_lib::Shape
     //  расстояние между насечками
     int dist;
     Graph_lib::Text label;
+    Graph_lib::Vector_ref<Graph_lib::Text> marks;
     Graph_lib::Lines notches;
 };
 

@@ -4,7 +4,11 @@
 // std libs
 #include <cmath>
 #include <stack>
-using std::stack, std::function, std::string, std::vector;
+#include <stdexcept>
+using std::function;
+using std::stack;
+using std::string;
+using std::vector;
 
 // servant
 #include "servant/servant.h"

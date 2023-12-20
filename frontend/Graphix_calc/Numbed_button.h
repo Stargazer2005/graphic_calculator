@@ -2,15 +2,14 @@
 
 // Graph_lib
 #include <Graph_lib/GUI.h>
-using Graph_lib::Button;
 
 namespace Graphix_calc {
 
 // класс кнопки, которая имеет номер
-class Numbed_button : public Button
+class Numbed_button : public Graph_lib::Button
 {
   public:
-    using Button::Button;
+    using Graph_lib::Button::Button;
 
     // methods
 

@@ -7,9 +7,9 @@ namespace Front_consts {
 
 const std::string empty_str = "";
 // минимальное количество пикселей для ед. отрезка
-constexpr int min_scale = 3;
+constexpr int min_scale = 2;
 // максимальное количество пикселей для ед. отрезка
-constexpr int max_scale = 100000;
+constexpr int max_scale = 1024;
 // максимальное количество вводимых функций пользователем (тип связан с использованием в векторах)
 constexpr unsigned long long int max_functions_amount = 4;
 
@@ -46,4 +46,5 @@ constexpr int func_box_h = in_box_h + 2 * btn_h + out_box_h + padding;
 
 constexpr int height_buff = 3;
 
+constexpr int distance = 50;
 }  // namespace Front_consts

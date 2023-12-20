@@ -3,12 +3,12 @@
 
 // std libs
 #include <stdexcept>
-using std::invalid_argument;
+using std::invalid_argument, std::function;
 
 namespace Graphix_calc {
 
 Graphix::Graphix(function<double(double)> func, double l_border, double r_border,
-                 Graph_lib::Point center, int point_amount, int scale)
+                 Graph_lib::Point center, int point_amount, double scale)
 {
     auto convert_to_pix = [&] (double x, double y) -> Graph_lib::Point
     {
@@ -31,7 +31,7 @@ Graphix::Graphix(function<double(double)> func, double l_border, double r_border
         double r = l_border;
         for (int i = 0; i < point_amount; ++i)
         {
-            add(Point{center.x + int(r * scale), center.y - int(func(r) * scale)});
+            add(Graph_lib::Point{center.x + int(r * scale), center.y - int(func(r) * scale)});
             r += dist;
         }
     }

@@ -8,7 +8,6 @@ using std::pair, std::string, std::vector;
 #include "domain_segments.h"
 
 // servant
-#include "../servant/constants.h"
 #include "../servant/servant.h"
 using Back_serv::absolute;
 

@@ -2,7 +2,10 @@
 #include "math_function.h"
 
 // std libs
-using std::function, std::string, std::vector;
+#include <stdexcept>
+using std::function;
+using std::string;
+using std::vector;
 
 // servant
 #include "servant/servant.h"
@@ -52,8 +55,8 @@ bool math_function::is_str_valid() const
             else
                 throw std::invalid_argument("unknown character '" + string{c} + "'");
         }
-        // возле знака операции не должно быть других операций и точек
-        // (если это не минус, так как он может быть унарный)
+        // возле знака операции не должно быть других операций и точек, а также открытой скобки
+        // слева и закрытой скобки справа (если это не минус, так как он может быть унарный)
         if (c_in_s(c, oper_chars) && c != minus)
         {
             if ((c_in_s(prev_c, oper_chars + point) || c_in_s(next_c, oper_chars + point)) &&
@@ -63,6 +66,10 @@ bool math_function::is_str_valid() const
             // минус не может стоять по обе стороны от знака
             else if (prev_c == minus && next_c == minus)
                 throw std::invalid_argument("invalid syntax near sign");
+
+            // проверка на правильность скобок возле знака
+            if (prev_c == open_br || next_c == closed_br)
+                throw std::invalid_argument("invalid brackets near sign");
         }
         // возле точки должны быть только числа
         if (c == point)

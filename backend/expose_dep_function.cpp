@@ -5,9 +5,14 @@
 #include <algorithm>
 #include <stack>
 #include <stdexcept>
-using std::invalid_argument, std::vector, std::string, std::find, std::stack;
 // #include <iostream>
-// using std::cout, std::endl;
+// using std::cout;
+// using std::endl;
+using std::find;
+using std::invalid_argument;
+using std::stack;
+using std::string;
+using std::vector;
 
 // servant
 #include "servant/servant.h"

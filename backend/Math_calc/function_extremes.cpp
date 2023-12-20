@@ -2,7 +2,8 @@
 #include "function_extremes.h"
 
 // std libs
-using std::vector, std::string;
+using std::string;
+using std::vector;
 
 // Math_calc
 #include "domain_segments.h"
@@ -13,8 +14,9 @@ using std::vector, std::string;
 using Back_serv::absolute;
 
 namespace Math_calc {
-Math_calc::function_extremes::function_extremes(string func, double l_border, double r_border,
-                                                double h_border, double precision)
+
+function_extremes::function_extremes(string func, double l_border, double r_border, double h_border,
+                                     double precision)
     : function_roots{func, l_border, r_border, h_border, precision},
       // FIXME: сейчас тут есть проверка на точность, которой быть не должно
       precision{precision < 0.01 ? precision : 0.01}, func_str{Backend::math_function{func}},
@@ -137,4 +139,5 @@ vector<Point> function_extremes::extremes(double l_border, double r_border, doub
 
     return res;
 }
+
 }  // namespace Math_calc

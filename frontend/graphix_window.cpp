@@ -1,9 +1,20 @@
 // header
-#include "Graphix_window.h"
+#include "graphix_window.h"
 
 // std libs
 // #include <iostream>
 // using std::cout, std::endl;
+using std::vector, std::string;
+
+// Graph_lib
+using Graph_lib::Button;
+using Graph_lib::Color;
+using Graph_lib::Marks;
+using Graph_lib::Point;
+using Graph_lib::Vector_ref;
+
+// Graphix_calc
+using namespace Graphix_calc;
 
 // Backend
 #include "../backend.h"
@@ -15,9 +26,8 @@ using namespace Front_consts;
 namespace Frontend {
 
 // из-за количества кнопок на экране конструктор сильно перегружен, но что поделать :)
-
 Graphix_window::Graphix_window(Graph_lib::Point left_corner, int width, int height,
-                               const string& title, int scale)
+                               const string& title, double scale)
     : Graph_lib::Window(left_corner, width, height, title), scale{scale},
       // точка начала системы координат смещена вправо, чтобы графики и оси не заезжали на меню
       origin{(width + func_box_w) / 2, height / 2},
@@ -34,7 +44,10 @@ Graphix_window::Graphix_window(Graph_lib::Point left_corner, int width, int heig
       // а кнопка New находится правее меню
       new_button{Graph_lib::Point{in_box_w + scl_btn_side, 0}, btn_w, btn_h, "New", cb_new_func},
       // меню с точками
-      point_box{width, height, cb_show_points, cb_hide_points}
+      point_box{width, height, cb_show_points, cb_hide_points},
+      scale_button{Graph_lib::Point{in_box_w + in_box_lab_w - btn_w, height - in_box_h}, btn_w,
+                   in_box_h, "Scale", cb_change_scale},
+      db{Graph_lib::Point{in_box_lab_w, height - in_box_h}, in_box_w - btn_w, in_box_h, "1:"}
 {
     // не даём пользователю менять размеры окна
     size_range(width, height, width, height);
@@ -69,6 +82,8 @@ Graphix_window::Graphix_window(Graph_lib::Point left_corner, int width, int heig
     attach(incr_button);
     attach(decr_button);
     attach(new_button);
+    attach(scale_button);
+    attach(db);
 
     func_box->attach(*this);
     point_box.attach(*this);
@@ -140,7 +155,13 @@ void Graphix_window::cb_hide_points(void*, void* widget)
     dynamic_cast<Graphix_window&>(btn.window()).hide_points();
 }
 
-void Graphix_window::change_scale(int new_scale)
+void Graphix_window::cb_change_scale(void*, void* widget)
+{
+    auto& btn = Graph_lib::reference_to<Button>(widget);
+    dynamic_cast<Graphix_window&>(btn.window()).change_scale();
+}
+
+void Graphix_window::update_scale(double new_scale)
 {
     if (new_scale < max_scale && new_scale > min_scale)
     {
@@ -180,15 +201,24 @@ void Graphix_window::change_scale(int new_scale)
     }
 }
 
+void Graphix_window::change_scale()
+{
+    int new_scale = db.get_int() * distance;
+    update_scale(new_scale);
+    button_pushed = true;
+}
+
 void Graphix_window::incr_scale()
 {
-    change_scale(scale * scale_coef);
+    update_scale(scale * scale_coef);
+    db.put_double(scale / distance);
     button_pushed = true;
 }
 
 void Graphix_window::decr_scale()
 {
-    change_scale(scale / scale_coef);
+    update_scale(scale / scale_coef);
+    db.put_double(scale / distance);
     button_pushed = true;
 }
 
@@ -437,7 +467,6 @@ void Graphix_window::update_points()
             // раскрываем все зависимости вида y_n
 
             auto edfc = Backend::expose_dep_func_string{inputed_strings, func};
-            // cout << "func: " << func << endl;
 
             Math_calc::function_extremes fe{func, l_border, r_border, h_border, point_prec};
             // создаём марки, добавляем их на окно
@@ -514,13 +543,8 @@ void Graphix_window::update_inputed_func(size_t func_index)
     // локальная переменная - введенная строка
     string& func = inputed_funcs[func_index];
 
-    // cout << "inputed strings now:" << endl;
     for (size_t i = 0; i < enter_menu.size(); i++)
-    {
         inputed_strings[i] = enter_menu[i]->get_string();
-        // cout << i << ": " + inputed_strings[i] << endl;
-    }
-    // cout << endl << endl;
 
     func = inputed_strings[func_index];
 
@@ -539,12 +563,10 @@ void Graphix_window::update_inputed_func(size_t func_index)
     }
     catch (const std::exception& e)
     {
-        // cout << "!update_inputed_func catched the error!" << endl;
         // выводим ошибку и прячем график
         enter_menu[func_index]->set_message(e.what());
         enter_menu[func_index]->input_invalid();
     }
-    // cout << func_index << ": " + func + " " << enter_menu[func_index]->is_input_valid() << endl;
 }
 
 void Graphix_window::fill_inputed_funcs()

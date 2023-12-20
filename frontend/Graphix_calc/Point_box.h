@@ -2,8 +2,7 @@
 
 // Graph_lib
 #include <Graph_lib/GUI.h>
-using Graph_lib::Button;
-using Graph_lib::Point;
+
 #include <Graph_lib/Window.h>
 
 namespace Graphix_calc {
@@ -25,8 +24,8 @@ class Point_box : public Graph_lib::Widget
   private:
     // variables
 
-    Button* show_button;
-    Button* hide_button;
+    Graph_lib::Button* show_button;
+    Graph_lib::Button* hide_button;
 };
 
 }  // namespace Graphix_calc

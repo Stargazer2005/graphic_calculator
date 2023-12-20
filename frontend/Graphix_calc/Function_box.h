@@ -92,9 +92,9 @@ class Function_box : public Graph_lib::Widget
     Numbed_button* hide_der_button;
     Graph_lib::Out_box* out_box;
 
-    bool is_func_valid{true};
-    bool is_graph_visible{false};
-    bool is_der_visible{false};
+    bool is_func_valid;
+    bool is_graph_visible;
+    bool is_der_visible;
 };
 
 }  // namespace Graphix_calc

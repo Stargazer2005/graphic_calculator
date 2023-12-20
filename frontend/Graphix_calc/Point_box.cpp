@@ -1,6 +1,10 @@
 // header
 #include "Point_box.h"
 
+// Graph_lib
+using Graph_lib::Button;
+using Graph_lib::Point;
+
 // servant
 #include "../servant/constants.h"
 

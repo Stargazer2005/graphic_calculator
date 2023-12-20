@@ -2,7 +2,8 @@
 #include "domain_segments.h"
 
 // std libs
-using std::function, std::vector;
+using std::function;
+using std::vector;
 
 namespace Math_calc {
 

@@ -3,14 +3,18 @@
 
 // std libs
 #include <cmath>
-using Backend::math_function;
-using Graph_lib::Point;
-using Graph_lib::Vector_ref;
-using Graphix_calc::Graphix;
-using Math_calc::domain_segments;
-using Math_calc::Segment;
+
 using std::string;
 using std::vector;
+
+// Graph_lib
+using Graph_lib::Point;
+using Graph_lib::Vector_ref;
+
+// backend
+using Backend::math_function;
+using Math_calc::domain_segments;
+using Math_calc::Segment;
 
 // servant
 #include "../servant/constants.h"
@@ -18,7 +22,7 @@ using namespace Front_consts;
 
 namespace Graphix_calc {
 
-Segmented_function::Segmented_function(const string& func, int scale, Point center, int max_x,
+Segmented_function::Segmented_function(const string& func, double scale, Point center, int max_x,
                                        int max_y)
     : func_str{math_function(func)}, has_var{func.find('x') != std::string::npos},
       segs_func{segments(max_x, max_y, scale)}, segs_der{derivative_segment(max_x, max_y, scale)},
@@ -27,7 +31,7 @@ Segmented_function::Segmented_function(const string& func, int scale, Point cent
 {
 }
 
-vector<Segment> Segmented_function::derivative_segment(int max_x, int max_y, int scale) const
+vector<Segment> Segmented_function::derivative_segment(int max_x, int max_y, double scale) const
 {
     // эксперементально вычесленная удачная точность для деления на сегменты
     double prec_seg = (((double)max_x / sqrt(scale))) / (abs(max_scale - scale));
@@ -42,7 +46,7 @@ vector<Segment> Segmented_function::derivative_segment(int max_x, int max_y, int
     return res;
 }
 
-vector<Segment> Segmented_function::segments(int max_x, int max_y, int scale) const
+vector<Segment> Segmented_function::segments(int max_x, int max_y, double scale) const
 {
     // эксперементально вычесленная удачная точность для деления на сегменты
     double prec_seg = (((double)max_x / sqrt(scale))) / (abs(max_scale - scale));
@@ -57,13 +61,15 @@ vector<Segment> Segmented_function::segments(int max_x, int max_y, int scale) co
     return res;
 }
 
-Vector_ref<Graphix> Segmented_function::segmented_function(int scale, Point center, int max_x) const
+Vector_ref<Graphix> Segmented_function::segmented_function(double scale, Point center,
+                                                           int max_x) const
 {
     Vector_ref<Graphix> res;
     // это количество точек идеально подходит под наши задачи, однако если у нас нет переменной,
     // то это горизонтальная линия (по хорошему тут должна быть геометрическая прогрессия, но
     // ресурсов она требует неоправданно много)
     int point_amount = has_var ? (4 / 3) * max_x * sqrt(scale) : 2;
+    // int point_amount = has_var ? 4 * max_x : 2;
     for (auto seg : segs_func)
     {
         Graphix* f =
@@ -73,7 +79,7 @@ Vector_ref<Graphix> Segmented_function::segmented_function(int scale, Point cent
     return res;
 }
 
-Vector_ref<Graphix> Segmented_function::segmented_derivative(int scale, Point center,
+Vector_ref<Graphix> Segmented_function::segmented_derivative(double scale, Point center,
                                                              int max_x) const
 {
     Vector_ref<Graphix> res;
@@ -81,6 +87,8 @@ Vector_ref<Graphix> Segmented_function::segmented_derivative(int scale, Point ce
     // то это горизонтальная линия (по хорошему тут должна быть геометрическая прогрессия, но
     // ресурсов она требует неоправданно много)
     int point_amount = has_var ? (4 / 3) * max_x * sqrt(scale) : 2;
+    // int point_amount = has_var ? 4 * max_x : 2;
+
     for (auto seg : segs_der)
     {
         Graphix* f =

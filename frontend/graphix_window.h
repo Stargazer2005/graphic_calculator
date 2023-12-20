@@ -3,22 +3,19 @@
 // std libs
 #include <string>
 #include <vector>
-using std::vector, std::string;
 
 // Graphix_calc
 #include "Graphix_calc/Axis.h"
+#include "Graphix_calc/Dext_box.h"
 #include "Graphix_calc/Function_box.h"
 #include "Graphix_calc/Graphix.h"
 #include "Graphix_calc/Point_box.h"
 #include "Graphix_calc/Segmented_function.h"
-using namespace Graphix_calc;
 
 // Graph_lib
 #include <Graph_lib/GUI.h>
 #include <Graph_lib/Graph.h>
-using Graph_lib::Color;
 #include <Graph_lib/Window.h>
-using Graph_lib::Button, Graph_lib::Marks, Graph_lib::Vector_ref;
 
 namespace Frontend {
 
@@ -26,8 +23,8 @@ namespace Frontend {
 class Graphix_window : public Graph_lib::Window
 {
   public:
-    Graphix_window(Graph_lib::Point left_corner, int width, int height, const string& title,
-                   int scale);
+    Graphix_window(Graph_lib::Point left_corner, int width, int height, const std::string& title,
+                   double scale);
 
     // methods
 
@@ -45,41 +42,45 @@ class Graphix_window : public Graph_lib::Window
   private:
     // variables
 
-    // общее значение масштаба: количество пикселей в единичном отрезке
-    int scale;
+    // общее значение масштаба: количество пикселей в единичном отрезке!?
+    double scale;
     // начало координат в пикселях (используется только в Graph_lib::Graphix и методах на
     // отображение точки)
     Graph_lib::Point origin;
     // линия - ограничитель системы координат от меню ввода
     Graph_lib::Line border;
     // вертикальная и горизонтальная оси
-    Axis *x_axis, *y_axis;
+    Graphix_calc::Axis *x_axis, *y_axis;
     // кнопка выхода из программы
-    Button quit_button;
+    Graph_lib::Button quit_button;
     // кнопка масштаб "+"
-    Button incr_button;
+    Graph_lib::Button incr_button;
     // кнопка масштаб "-"
-    Button decr_button;
+    Graph_lib::Button decr_button;
     // кнопка "создать новый график"
-    Button new_button;
+    Graph_lib::Button new_button;
 
     // вектор полей ввода(группы поля ввода и трёх кнопок: draw, hide, remove)
-    vector<Function_box*> enter_menu;
+    std::vector<Graphix_calc::Function_box*> enter_menu;
 
     // общий вектор введенных пользователем строк
-    vector<string> inputed_strings;
-    vector<string> inputed_funcs;
+    std::vector<std::string> inputed_strings;
+    std::vector<std::string> inputed_funcs;
     // общий вектор со всеми сегментированными функциями (графиками)
-    vector<Vector_ref<Graphix>> graphics;
+    std::vector<Graph_lib::Vector_ref<Graphix_calc::Graphix>> graphics;
     // общий вектор со всеми сегментированными производными функций (графиками)
-    vector<Vector_ref<Graphix>> derivatives;
+    std::vector<Graph_lib::Vector_ref<Graphix_calc::Graphix>> derivatives;
     // ветор, содержащий все зависимости функций друг от друга
     // vector<vector<size_t>> dependencies;
 
     // меню с общим полем для точек
-    Point_box point_box;
+    Graphix_calc::Point_box point_box;
     // общий массив всех точек на экране
-    Vector_ref<Marks> all_points;
+    Graph_lib::Vector_ref<Graph_lib::Marks> all_points;
+
+    Graph_lib::Button scale_button;
+
+    Graphix_calc::Dext_box db;
 
     bool is_points_visible{false};
     bool button_pushed{false};
@@ -106,6 +107,7 @@ class Graphix_window : public Graph_lib::Window
     static void cb_new_func (void*, void* widget);
     static void cb_show_points (void*, void* widget);
     static void cb_hide_points (void*, void* widget);
+    static void cb_change_scale (void*, void* widget);
 
     // функции, которые вызывают callbacks
 
@@ -117,7 +119,9 @@ class Graphix_window : public Graph_lib::Window
     }
 
     // вспомогательная функция, меняющая текущий масштаб
-    void change_scale (int new_scale);
+    void update_scale (double new_scale);
+
+    void change_scale ();
 
     void incr_scale ();
 
