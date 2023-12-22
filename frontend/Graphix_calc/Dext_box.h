@@ -1,9 +1,10 @@
 #pragma once
 
 // Graph_lib
-#include <Graph_lib/GUI.h>
-#include <Graph_lib/Point.h>
-#include <Graph_lib/Window.h>
+
+#include "../Graph_lib/GUI.h"
+#include "../Graph_lib/Point.h"
+#include "../Graph_lib/Window.h"
 
 namespace Graphix_calc {
 

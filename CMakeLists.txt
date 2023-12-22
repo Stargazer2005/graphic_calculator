@@ -3,6 +3,13 @@ cmake_minimum_required(VERSION 3.20)
 set(TARGET "graphic_calculator")
 
 set(HEADERS
+# Graph_lib
+    frontend/Graph_lib/Graph.h
+    frontend/Graph_lib/GUI.h
+    frontend/Graph_lib/Point.h
+    frontend/Graph_lib/Window.h
+    frontend/Graph_lib/fltk.h
+
 # front
     frontend/Graphix_calc/Axis.h
     frontend/Graphix_calc/Graphix.h
@@ -32,15 +39,14 @@ set(HEADERS
     backend/function.h
 
     backend.h
-
-# Graph_lib
-    ${LIB_DIR}/Graph_lib/Graph.h
-    ${LIB_DIR}/Graph_lib/GUI.h
-    ${LIB_DIR}/Graph_lib/Point.h
-    ${LIB_DIR}/Graph_lib/Window.h
 )
 
 set(SOURCES
+# Graph_lib
+    frontend/Graph_lib/Graph.cpp
+    frontend/Graph_lib/GUI.cpp
+    frontend/Graph_lib/Window.cpp
+
 # front
     frontend/Graphix_calc/Axis.cpp
     frontend/Graphix_calc/Graphix.cpp
@@ -66,11 +72,6 @@ set(SOURCES
 
 # main
     main.cpp
-
-# Graph_lib
-    ${LIB_DIR}/Graph_lib/Graph.cpp
-    ${LIB_DIR}/Graph_lib/GUI.cpp
-    ${LIB_DIR}/Graph_lib/Window.cpp
 )
 
 project(${TARGET} CXX)

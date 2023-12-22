@@ -1,7 +1,7 @@
 #pragma once
 
 // Graph_lib
-#include <Graph_lib/GUI.h>
+#include "../Graph_lib/GUI.h"
 
 namespace Graphix_calc {
 

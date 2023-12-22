@@ -294,7 +294,7 @@ void Graphix_window::update_inputed_func(size_t func_index, bool need_update_str
 
         if (string{e.what()} == "self-usage or loop")
         {
-            print(dependences);
+            // print(dependences);
             // апдейтим все зависимые функции
             for (auto i : dependences)
                 update_inputed_func(i - 1, false);

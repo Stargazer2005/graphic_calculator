@@ -7,7 +7,6 @@ using std::invalid_argument;
 using std::string;
 
 // Graph_lib
-#include <Graph_lib/Graph.h>
 using Graph_lib::Color;
 using Graph_lib::Point;
 using Graph_lib::Text;

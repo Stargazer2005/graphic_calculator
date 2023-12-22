@@ -5,7 +5,7 @@
 #include <vector>
 
 // Graph_lib
-#include <Graph_lib/Graph.h>
+#include "../Graph_lib/Graph.h"
 
 namespace Graphix_calc {
 
