@@ -5,7 +5,7 @@
 #include <vector>
 
 // Math_calc
-#include "math_base.h"
+#include "math_base.h"  // for Segment
 
 namespace Math_calc {
 

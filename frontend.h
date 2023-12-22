@@ -2,4 +2,4 @@
 
 // only headers
 
-#include "frontend/graphix_window.h"
+#include "frontend/graphix_window/Graphix_window.h"

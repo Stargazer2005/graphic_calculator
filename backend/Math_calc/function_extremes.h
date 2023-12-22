@@ -13,8 +13,8 @@ namespace Math_calc {
 class function_extremes : public function_roots
 {
   public:
-    function_extremes(std::string func, double l_border, double r_border, double h_border,
-                      double precision);
+    function_extremes(Backend::function _func, double l_border, double r_border, double h_border,
+                      double _precision);
 
     std::vector<Point> get_function_extremes () const { return points; }
 
@@ -29,7 +29,7 @@ class function_extremes : public function_roots
 
     // точность (используем везде, поэтому сохраняем в качестве поля)
     double precision;
-    Backend::math_function func_str;
+    Backend::function func;
     // вектор точек, который и будем возвращать
     std::vector<Point> points;
 

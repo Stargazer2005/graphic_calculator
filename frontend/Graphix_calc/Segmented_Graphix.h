@@ -15,36 +15,36 @@
 namespace Graphix_calc {
 
 // функция, поделенная на сегменты, связанные с её областью определения
-class Segmented_function
+class Segmented_Graphix
 {
   public:
-    Segmented_function(const std::string& func, double scale, Graph_lib::Point origin, int max_x,
-                       int max_y);
+    Segmented_Graphix(Backend::function _func, double scale, Graph_lib::Point origin, int max_x,
+                      int max_y);
 
     // methods
 
-    Graph_lib::Vector_ref<Graphix_calc::Graphix> get_segmented_function () const
+    Graph_lib::Vector_ref<Graphix_calc::Graphix> get_segmented_graphix () const
     {
-        return seg_func;
+        return seged_graphix;
     }
 
-    Graph_lib::Vector_ref<Graphix_calc::Graphix> get_segmented_derivative () const
+    Graph_lib::Vector_ref<Graphix_calc::Graphix> get_segmented_deriv () const
     {
-        return seg_der;
+        return seged_deriv;
     }
 
   private:
     // variables
 
     // значение строки
-    Backend::math_function func_str;
-    bool has_var;
+    Backend::function func;
     // список отрезков, на котором рисуем функцию
-    std::vector<Math_calc::Segment> segs_func;
+    std::vector<Math_calc::Segment> func_segs;
     std::vector<Math_calc::Segment> segs_der;
+
     // отсегментированная функция
-    Graph_lib::Vector_ref<Graphix_calc::Graphix> seg_func;
-    Graph_lib::Vector_ref<Graphix_calc::Graphix> seg_der;
+    Graph_lib::Vector_ref<Graphix_calc::Graphix> seged_graphix;
+    Graph_lib::Vector_ref<Graphix_calc::Graphix> seged_deriv;
 
     // methods
 
@@ -53,9 +53,9 @@ class Segmented_function
 
     // функция, создающая вектор Graphix - раздробленная функция на отрезки
     Graph_lib::Vector_ref<Graphix_calc::Graphix>
-    segmented_function (double scale, Graph_lib::Point center, int max_x) const;
+    segmented_graphix (double scale, Graph_lib::Point center, int max_x) const;
     Graph_lib::Vector_ref<Graphix_calc::Graphix>
-    segmented_derivative (double scale, Graph_lib::Point center, int max_x) const;
+    segmented_deriv (double scale, Graph_lib::Point center, int max_x) const;
 };
 
 }  // namespace Graphix_calc

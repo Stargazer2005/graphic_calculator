@@ -1,11 +1,10 @@
 // header
-#include "math_function.h"
+#include "function.h"
 
 // std libs
 #include <cmath>
 #include <stack>
 #include <stdexcept>
-using std::function;
 using std::stack;
 using std::string;
 using std::vector;
@@ -14,37 +13,55 @@ using std::vector;
 #include "servant/servant.h"
 using namespace Back_serv;
 using namespace Back_consts;
+#include "temp_help.h"
 
 namespace Backend {
 
-math_function::math_function(string func) : func{func}
+function::function(string _func_str)
+    : func_str{spaces_deleted(_func_str)}, lexs{lexemes()}, rev_pol{reverse_polish()}
 {
-    lexs = lexemes();
-    rev_pol = reverse_polish();
 }
 
-vector<string> math_function::lexemes() const
+function::function(const function& func)
+    : func_str{func.func_str}, lexs{func.lexs}, rev_pol{func.rev_pol}
+{
+}
+
+function function::operator= (const function& func)
+{
+    func_str = func.func_str;
+    lexs = func.lexs;
+    rev_pol = func.rev_pol;
+
+    return *this;
+}
+
+bool function::has_var() const { return c_in_s('x', func_str); }
+
+vector<string> function::lexemes() const
 {
     if (!is_str_valid())
         return {};
 
     vector<string> res;
-    string s;
-    const string oper_chars = "+-*/^u";
-    for (size_t i = 0; i < func.size(); i++)
+    string lex;
+    const string math_oper_chars = "+-*/^u";
+    for (size_t i = 0; i < func_str.size(); i++)
     {
-        switch (func[i])
+        // текущий символ строки
+        char ch = func_str[i];
+        switch (ch)
         {
         case minus:
         {
-            if (s.size() > 0)
+            if (lex.size() > 0)
             {
-                res.push_back(s);
-                s = "";
+                res.push_back(lex);
+                lex = "";
             }
             if (i == 0)
                 res.push_back("um");
-            else if (c_in_s(s_to_c(res[res.size() - 1]), oper_chars + "("))
+            else if (c_in_s(s_to_c(res[res.size() - 1]), math_oper_chars + "("))
                 res.push_back("um");
             else
                 res.push_back("-");
@@ -57,14 +74,14 @@ vector<string> math_function::lexemes() const
         case divi:
         case power:
         {
-            if (s.size() > 0)
+            if (lex.size() > 0)
             {
-                res.push_back(s);
-                s = "";
+                res.push_back(lex);
+                lex = "";
             }
-            s = func[i];
-            res.push_back(s);
-            s = "";
+            lex = ch;
+            res.push_back(lex);
+            lex = "";
             break;
         }
         case point:
@@ -79,34 +96,34 @@ vector<string> math_function::lexemes() const
         case '8':
         case '9':
         {
-            if (s.size() > 0 && !isdigit(s[0]))
+            if (lex.size() > 0 && !isdigit(lex[0]))
             {
-                res.push_back(s);
-                s = "";
+                res.push_back(lex);
+                lex = "";
             }
-            s += func[i];
+            lex += ch;
             break;
         }
         default:
         {
-            if (!isblank(func[i]))
+            if (!isblank(ch))
             {
-                if (s.size() > 0 && isdigit(s[0]))
+                if (lex.size() > 0 && isdigit(lex[0]))
                 {
-                    res.push_back(s);
-                    s = "";
+                    res.push_back(lex);
+                    lex = "";
                 }
-                s += func[i];
+                lex += ch;
             }
         }
         }
     }
-    if (s.size() > 0)
-        res.push_back(s);
+    if (lex.size() > 0)
+        res.push_back(lex);
     return (res);
 }
 
-vector<string> math_function::reverse_polish() const
+vector<string> function::reverse_polish() const
 {
     if (!is_lexs_valid())
         return {};
@@ -118,11 +135,11 @@ vector<string> math_function::reverse_polish() const
     st_oper.push("\0");
 
     // строка с функциями
-    const string func_chars = "sctelu";
+    const string math_func_chars = "sctelu";
     // строка с операциями
-    const string oper_chars = "+-*/^";
+    const string math_oper_chars = "+-*/^";
 
-    for (auto& lex : lexs)
+    for (const auto& lex : lexs)
     {
         // символ, обозначающий текущую лексему
         char curr = s_to_c(lex);
@@ -144,7 +161,7 @@ vector<string> math_function::reverse_polish() const
 
         case power:
         {
-            while (last == power || c_in_s(last, func_chars))
+            while (last == power || c_in_s(last, math_func_chars))
             {
                 res.push_back(st_oper.top());
                 st_oper.pop();
@@ -157,7 +174,7 @@ vector<string> math_function::reverse_polish() const
         case mul:
         case divi:
         {
-            while (last == mul || last == divi || last == power || c_in_s(last, func_chars))
+            while (last == mul || last == divi || last == power || c_in_s(last, math_func_chars))
             {
                 res.push_back(st_oper.top());
                 st_oper.pop();
@@ -170,7 +187,7 @@ vector<string> math_function::reverse_polish() const
         case plus:
         case minus:
         {
-            while (c_in_s(last, oper_chars) || c_in_s(last, func_chars))
+            while (c_in_s(last, math_oper_chars) || c_in_s(last, math_func_chars))
             {
                 res.push_back(st_oper.top());
                 st_oper.pop();
@@ -231,10 +248,10 @@ vector<string> math_function::reverse_polish() const
     return res;
 }
 
-double math_function::calc(double x) const
+double function::calc(double x) const
 {
-    const string oper_chars = "+-*/^";   // строка с операциями
-    const string func_chars = "sctelu";  // строка с функциями
+    const string math_oper_chars = "+-*/^";   // строка с операциями
+    const string math_func_chars = "sctelu";  // строка с функциями
     // (да, унарный минус - тоже функция)
 
     stack<double> Stack;
@@ -244,7 +261,7 @@ double math_function::calc(double x) const
         double p;  // предпоследний символ в стэке (последний после удаления l)
         char curr = s_to_c(lex);  // текущий символ,
                                   // если брать вместо строки (для switch)
-        if (c_in_s(curr, func_chars))
+        if (c_in_s(curr, math_func_chars))
         {
             l = Stack.top();  // запоминаем только последний (так как функции
                               // унарны)
@@ -271,7 +288,7 @@ double math_function::calc(double x) const
                 break;
             }
         }
-        else if (c_in_s(curr, oper_chars))
+        else if (c_in_s(curr, math_oper_chars))
         {
             l = Stack.top();
             Stack.pop();
@@ -317,5 +334,7 @@ double math_function::calc(double x) const
     }  // последнее, что осталось в стэке после всех действий - и есть ответ
     return Stack.top();
 }
+
+std::ostream& operator<< (std::ostream& os, function func) { return os << func.get_func_str(); }
 
 }  // namespace Backend

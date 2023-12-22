@@ -15,11 +15,11 @@ using Back_serv::absolute;
 
 namespace Math_calc {
 
-function_extremes::function_extremes(string func, double l_border, double r_border, double h_border,
-                                     double precision)
-    : function_roots{func, l_border, r_border, h_border, precision},
+function_extremes::function_extremes(Backend::function _func, double l_border, double r_border,
+                                     double h_border, double _precision)
+    : function_roots{_func, l_border, r_border, h_border, precision},
       // FIXME: сейчас тут есть проверка на точность, которой быть не должно
-      precision{precision < 0.01 ? precision : 0.01}, func_str{Backend::math_function{func}},
+      precision{_precision < 0.01 ? _precision : 0.01}, func{_func},
       points{extremes(l_border, r_border, h_border)}
 {
 }
@@ -27,7 +27,7 @@ function_extremes::function_extremes(string func, double l_border, double r_bord
 std::vector<Segment> function_extremes::estimated_segment(TypeExtreme extr, Segment seg) const
 {
     std::vector<Segment> res;
-    auto f = [this] (double x) { return func_str.calculate(x); };
+    auto f = [this] (double x) { return func.calculate(x); };
     switch (extr)
     {
     case TypeExtreme::pnt_min:
@@ -68,7 +68,7 @@ std::vector<Segment> function_extremes::estimated_segment(TypeExtreme extr, Segm
 
 double function_extremes::extreme_on_interval(TypeExtreme extr, Segment seg) const
 {
-    auto f = [this] (double x) { return func_str.calculate(x); };
+    auto f = [this] (double x) { return func.calculate(x); };
     switch (extr)
     {
     case TypeExtreme::pnt_min:
@@ -119,20 +119,20 @@ double function_extremes::extreme_on_interval(TypeExtreme extr, Segment seg) con
 vector<Point> function_extremes::extremes(double l_border, double r_border, double h_border) const
 {
     vector<Point> res;
-    for (auto seg : domain_segments(func_str.calculate, l_border, r_border, h_border, precision))
+    for (auto seg : domain_segments(func.calculate, l_border, r_border, h_border, precision))
     {
         // отдельные переборы придётся оставить, так как то, по каким сегментам мы проходимся -
         // имеет значение
         for (auto& local_seg : estimated_segment(pnt_min, seg))
         {
             double x = extreme_on_interval(pnt_min, local_seg);
-            double y = func_str.calculate(x);
+            double y = func.calculate(x);
             res.push_back(Point{x, y});
         }
         for (auto& local_seg : estimated_segment(pnt_max, seg))
         {
             double x = extreme_on_interval(pnt_max, local_seg);
-            double y = func_str.calculate(x);
+            double y = func.calculate(x);
             res.push_back(Point{x, y});
         }
     }

@@ -10,11 +10,11 @@ set(HEADERS
     frontend/Graphix_calc/Point_box.h
     frontend/Graphix_calc/Dext_box.h
     frontend/Graphix_calc/Numbed_button.h
-    frontend/Graphix_calc/Segmented_function.h
+    frontend/Graphix_calc/Segmented_Graphix.h
 
     frontend/servant/constants.h
 
-    frontend/graphix_window.h
+    frontend/graphix_window/Graphix_window.h
     
     frontend.h
 
@@ -28,8 +28,8 @@ set(HEADERS
     backend/servant/servant.h
     backend/servant/constants.h
 
-    backend/expose_dep_function.h
-    backend/math_function.h
+    backend/expose_func_str.h
+    backend/function.h
 
     backend.h
 
@@ -47,9 +47,10 @@ set(SOURCES
     frontend/Graphix_calc/Function_box.cpp
     frontend/Graphix_calc/Point_box.cpp
     frontend/Graphix_calc/Dext_box.cpp
-    frontend/Graphix_calc/Segmented_function.cpp
+    frontend/Graphix_calc/Segmented_Graphix.cpp
 
-    frontend/graphix_window.cpp
+    frontend/graphix_window/Graphix_window.cpp
+    frontend/graphix_window/Graphix_window_updaters.cpp
     
 # back
     backend/Math_calc/domain_segments.cpp
@@ -59,9 +60,9 @@ set(SOURCES
 
     backend/servant/servant.cpp
 
-    backend/expose_dep_function.cpp
-    backend/math_function.cpp
-    backend/math_function_validation.cpp
+    backend/expose_func_str.cpp
+    backend/function.cpp
+    backend/function_validation.cpp
 
 # main
     main.cpp

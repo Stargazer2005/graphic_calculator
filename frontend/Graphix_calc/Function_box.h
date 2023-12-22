@@ -17,7 +17,7 @@ class Function_box : public Graph_lib::Widget
 {
   public:
     // упрощенный конструктор
-    Function_box(unsigned long long int graphics_amount, void cb_draw(void*, void*),
+    Function_box(unsigned long long int box_index, void cb_draw(void*, void*),
                  void cb_hide(void*, void*), void cb_rem(void*, void*),
                  void cb_draw_der(void*, void*), void cb_hide_der(void*, void*));
 
@@ -26,7 +26,7 @@ class Function_box : public Graph_lib::Widget
     void input_valid ()
     {
         is_func_valid = true;
-        set_der("");
+        set_der_str("");
     }
 
     void input_invalid ()
@@ -62,9 +62,9 @@ class Function_box : public Graph_lib::Widget
     // just set_number to numbered elements
     void set_index (int);
 
-    void set_message (const std::string& message) { out_box->put(message); }
+    void set_message (const std::string& message);
 
-    void set_der (const std::string& der) { curr_der->put(der); }
+    void set_der_str (const std::string& der_str) { curr_der->put(der_str); }
 
     std::string get_string () const { return in_box->get_string(); }
 
@@ -92,9 +92,9 @@ class Function_box : public Graph_lib::Widget
     Numbed_button* hide_der_button;
     Graph_lib::Out_box* out_box;
 
-    bool is_func_valid;
-    bool is_graph_visible;
-    bool is_der_visible;
+    bool is_func_valid{true};
+    bool is_graph_visible{false};
+    bool is_der_visible{false};
 };
 
 }  // namespace Graphix_calc

@@ -14,8 +14,8 @@ graphic_calculator/
 |       |       |---Point_box.cpp
 |       |       |---Point_box.h
 |       |       |---Numbed_button.h
-|       |       |---Segmented_function.cpp
-|       |       `---Segmented_function.h
+|       |       |---Segmented_Graphix.cpp
+|       |       `---Segmented_Graphix.h
 |       |
 |       |───servant/
 |       |       `---constants.h
@@ -52,18 +52,13 @@ graphic_calculator/
 
 ```
 
-## Гайд по ошибкам
-
-ошибки с expression - ошибки при использовании y_n
-ошибки с function - ошибки при использовании tan(x), sin(x) и т.п.
-
 ## Идеалогия
 
 Фронтенд: пиксели и графики
 Бэкенд: числа с плавающей запятой и функции
 
-strs - сырые строки, куда пользователь мог ввести всё, что угодно
-functions - правильные строки, которые может обработать graphix
-grapgic - Graphix'ы, построенные по funcs
+std::string func_strs - обозначающие математические функции
+Backend::function funcs - екземпляры класса, с методом calculate, который используя func_strs считает y по x которые
+Graphix_calc::Graphix graphics - фигуры, представляющие собой графики, построенные по funcs
 
 (для производных der = func, deriative = graphic)

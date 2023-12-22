@@ -9,6 +9,11 @@ namespace Back_serv {
 
 bool c_in_s (char c, const string& s) { return (s.find(c) != string::npos); }
 
+// template <typename T> bool elem_in_vec (T elem, const vector<T>& vec)
+// {
+//     return find(vec.begin(), vec.end(), elem) != vec.end();
+// }
+
 char s_to_c (const string& s)
 {
     if (s[0] >= '0' && s[0] <= '9')  // если число
@@ -29,33 +34,6 @@ bool is_double (string str)
     }
     return true;
 }
-
-// template <typename T> void print (const vector<T>& v)
-// {
-//     cout << " size: " << v.size() << endl;
-//     cout << "{ ";
-//     for (size_t i = 0; i < v.size(); i++)
-//     {
-//         cout << "''" << v[i] << "''";
-//         if (i != v.size() - 1)
-//             cout << ", ";
-//     }
-//     cout << " }" << endl;
-// }
-
-// template <typename T> void print (stack<T> st)
-// {
-//     cout << " size: " << st.size() << endl;
-//     cout << "{ ";
-//     while (!st.empty())
-//     {
-//         cout << "''" << st.top() << "''";
-//         st.pop();
-//         if (!st.empty())
-//             cout << ", ";
-//     }
-//     cout << " }" << endl;
-// }
 
 string spaces_deleted (const string& s)
 {

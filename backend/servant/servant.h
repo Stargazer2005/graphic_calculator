@@ -10,6 +10,11 @@ namespace Back_serv {
 // вспомогательная функция: "содержится ли символ в строке?"
 bool c_in_s (char c, const std::string& s);
 
+template <typename T> bool elem_in_vec (T elem, const std::vector<T>& vec)
+{
+    return find(vec.begin(), vec.end(), elem) != vec.end();
+}
+
 // вспомогательная функция, переводящая строку (лексему) в символ
 char s_to_c (const std::string& s);
 

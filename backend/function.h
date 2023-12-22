@@ -10,17 +10,22 @@
 
 namespace Backend {
 
-class math_function
+class function
 {
   public:
-    math_function(std::string func);
+    function(std::string _func_str);
+
+    function(const function&);
 
     // methods:
+
+    function operator= (const function&);
 
     double operator() (double x) { return calc(x); }
 
     // лямбда-функция, считающая по заданному x значение функции
     const std::function<double(double)> calculate = [this] (double x) { return calc(x); };
+
     // лямбда-функция, считающая по заданному x значение производной функции
     const std::function<double(double)> differentiate = [this] (double x)
     {
@@ -28,15 +33,19 @@ class math_function
                (2 * Back_consts::delta_x);
     };
 
+    bool has_var () const;
+
+    std::string get_func_str () const { return func_str; }
+
   private:
     // variables:
 
     // значение строки
-    std::string func;
-    // обратная польская нотация
-    std::vector<std::string> rev_pol;
+    std::string func_str;
     // список лексем
     std::vector<std::string> lexs;
+    // обратная польская нотация
+    std::vector<std::string> rev_pol;
 
     // methods:
 
@@ -55,5 +64,8 @@ class math_function
     // метод, который по значению переменной x вычисляет значение y
     double calc (double x) const;
 };
+
+// перегрузка оператора (только для принта, который будет удален позднее)
+std::ostream& operator<< (std::ostream& os, function func);
 
 }  // namespace Backend

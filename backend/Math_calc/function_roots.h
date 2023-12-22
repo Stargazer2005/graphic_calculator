@@ -8,7 +8,7 @@
 #include "math_base.h"
 
 // Backend
-#include "../math_function.h"
+#include "../function.h"
 
 namespace Math_calc {
 
@@ -17,8 +17,8 @@ class function_roots
 {
   public:
     function_roots();  // этот конструктор нужен только для наследования
-    function_roots(std::string func, double l_border, double r_border, double h_border,
-                   double precision);
+    function_roots(Backend::function _func, double l_border, double r_border, double h_border,
+                   double _precision);
 
     // methods
 
@@ -39,7 +39,7 @@ class function_roots
     // точность (используем везде, поэтому сохраняем в качестве поля)
     double precision;
     // введенная функция
-    Backend::math_function func_str;
+    Backend::function func;
     // вектор точек, который и будем возвращать
     std::vector<Point> points;
 

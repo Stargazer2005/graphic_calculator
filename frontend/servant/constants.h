@@ -3,9 +3,14 @@
 // std libs
 #include <string>
 
+// Backend
+#include "../../backend.h"
+
 namespace Front_consts {
 
 const std::string empty_str = "";
+const Backend::function empty_func{"9999999999"};
+
 // минимальное количество пикселей для ед. отрезка
 constexpr int min_scale = 2;
 // максимальное количество пикселей для ед. отрезка
