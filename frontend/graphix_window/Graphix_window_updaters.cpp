@@ -10,7 +10,6 @@ using Graph_lib::Button;
 using Graph_lib::Color;
 using Graph_lib::Marks;
 using Graph_lib::Point;
-using Graph_lib::Vector_ref;
 
 // Graphix_calc
 using namespace Graphix_calc;
@@ -84,10 +83,10 @@ void Graphix_window::update_graphix(size_t func_index)
         auto graphic = seged_func.get_segmented_graphix();
 
         //  аттачим сегментированную функцию
-        for (int i = 0; i < graphic.size(); i++)
+        for (const auto& graphic_part : graphic)
         {
-            graphic[i].set_color(Color::black);
-            attach(graphic[i]);
+            graphic_part->set_color(Color::black);
+            attach(*graphic_part);
         }
 
         // записываем новую функцию в общий массив всех графиков
@@ -95,27 +94,21 @@ void Graphix_window::update_graphix(size_t func_index)
             graphics[func_index] = graphic;
         else
             graphics.push_back(graphic);
-
-        // меняем флажок в связанном Function_box
-        enter_menu[func_index]->graph_show();
     }
 }
 
 void Graphix_window::clear_graphix(size_t func_index)
 {
-    // убираем все спрятанные фрагменты графика с экрана
     if (graphics.size() > func_index)
     {
-        for (int j = 0; j < graphics[func_index].size(); ++j)
-            detach(graphics[func_index][j]);
-    }
+        auto graphic = graphics[func_index];
 
-    // прячем график
-    enter_menu[func_index]->graph_hide();
+        // убираем все спрятанные фрагменты графика с экрана
+        for (const auto& graphic_part : graphic)
+            detach(*graphic_part);
 
-    // высвобождаем память
-    if (graphics.size() > func_index)
         graphics[func_index].clear();
+    }
 
     clear_inputed_func(func_index);
 }
@@ -139,10 +132,10 @@ void Graphix_window::update_deriv(size_t der_index)
         auto deriv = seged_func.get_segmented_deriv();
 
         // аттачим сегментированную функцию
-        for (int i = 0; i < deriv.size(); i++)
+        for (const auto& deriv_part : deriv)
         {
-            deriv[i].set_color(Color::dark_red);
-            attach(deriv[i]);
+            deriv_part->set_color(Color::dark_red);
+            attach(*deriv_part);
         }
 
         // записываем новую функцию в общий массив всех графиков
@@ -150,27 +143,21 @@ void Graphix_window::update_deriv(size_t der_index)
             derivs[der_index] = deriv;
         else
             derivs.push_back(deriv);
-
-        // выводим производную
-        enter_menu[der_index]->der_show();
     }
 }
 
 void Graphix_window::clear_deriv(size_t der_index)
 {
-    // убираем все спрятанные фрагменты графика с экрана
     if (derivs.size() > der_index)
     {
-        for (int j = 0; j < derivs[der_index].size(); ++j)
-            detach(derivs[der_index][j]);
-    }
+        auto deriv = derivs[der_index];
 
-    // прячем график
-    enter_menu[der_index]->der_hide();
+        // убираем все спрятанные фрагменты графика с экрана
+        for (const auto& deriv_part : deriv)
+            detach(*deriv_part);
 
-    // высвобождаем память
-    if (derivs.size() > der_index)
         derivs[der_index].clear();
+    }
 }
 
 void Graphix_window::update_points()
@@ -215,7 +202,7 @@ void Graphix_window::update_points()
                 dots->add(convert_to_pix(p));
             attach(*dots);
             // и добавляем в общий массив всех точек на экране
-            all_points.push_back(*dots);
+            all_points.push_back(dots);
 
             Math_calc::function_roots fr{func, l_border, r_border, h_border, point_prec};
             // создаём марки, добавляем их на окно
@@ -224,7 +211,7 @@ void Graphix_window::update_points()
                 dots->add(convert_to_pix(p));
             attach(*dots);
             // и добавляем в общий массив всех точек на экране
-            all_points.push_back(*dots);
+            all_points.push_back(dots);
         }
 
         for (size_t j = i + 1; j < enter_menu.size(); j++)
@@ -245,7 +232,7 @@ void Graphix_window::update_points()
                     dots->add(convert_to_pix(p));
                 attach(*dots);
                 // и добавляем в общий массив всех точек на экране
-                all_points.push_back(*dots);
+                all_points.push_back(dots);
             }
         }
     }
@@ -253,8 +240,8 @@ void Graphix_window::update_points()
 
 void Graphix_window::clear_points()
 {
-    for (int i = 0; i < all_points.size(); i++)
-        detach(all_points[i]);
+    for (const auto& points : all_points)
+        detach(*points);
 
     all_points.clear();
 }

@@ -42,13 +42,13 @@ Axis::Axis(Orientation d, Point center, int length, double scale, const std::str
             Text* mark1 = new Text(Point(x1 - 3, center.y + 20), format(count));
             mark1->set_color(Graph_lib::Color::black);
             mark1->set_font_size(14);
-            marks.push_back(*mark1);
+            marks.push_back(mark1);
             x1 += dist;
             notches.add(Point{x2, center.y + 2}, Point{x2, center.y - 2});
             Text* mark2 = new Text(Point(x2 - 3, center.y + 20), format(-count));
             mark2->set_color(Graph_lib::Color::black);
             mark2->set_font_size(14);
-            marks.push_back(*mark2);
+            marks.push_back(mark2);
             x2 -= dist;
         }
         // label under the line
@@ -71,13 +71,13 @@ Axis::Axis(Orientation d, Point center, int length, double scale, const std::str
             Text* mark1 = new Text(Point(center.x + 10, y1 + 5), format(-count));
             mark1->set_color(Graph_lib::Color::black);
             mark1->set_font_size(14);
-            marks.push_back(*mark1);
+            marks.push_back(mark1);
             y1 += dist;
             notches.add(Point{center.x - 2, y2}, Point{center.x + 2, y2});
             Text* mark2 = new Text(Point(center.x + 10, y2 + 5), format(count));
             mark2->set_color(Graph_lib::Color::black);
             mark2->set_font_size(14);
-            marks.push_back(*mark2);
+            marks.push_back(mark2);
             y2 -= dist;
         }
         // label at top
@@ -91,8 +91,8 @@ void Axis::draw_lines() const
 {
     Shape::draw_lines();
     label.draw();
-    for (int i = 0; i < marks.size(); ++i)
-        marks[i].draw();
+    for (const auto& mark : marks)
+        mark->draw();
     notches.draw();
 }
 

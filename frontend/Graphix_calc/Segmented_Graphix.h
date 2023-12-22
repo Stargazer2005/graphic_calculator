@@ -23,15 +23,9 @@ class Segmented_Graphix
 
     // methods
 
-    Graph_lib::Vector_ref<Graphix_calc::Graphix> get_segmented_graphix () const
-    {
-        return seged_graphix;
-    }
+    std::vector<Graphix_calc::Graphix*> get_segmented_graphix () const { return seged_graphix; }
 
-    Graph_lib::Vector_ref<Graphix_calc::Graphix> get_segmented_deriv () const
-    {
-        return seged_deriv;
-    }
+    std::vector<Graphix_calc::Graphix*> get_segmented_deriv () const { return seged_deriv; }
 
   private:
     // variables
@@ -43,8 +37,8 @@ class Segmented_Graphix
     std::vector<Math_calc::Segment> segs_der;
 
     // отсегментированная функция
-    Graph_lib::Vector_ref<Graphix_calc::Graphix> seged_graphix;
-    Graph_lib::Vector_ref<Graphix_calc::Graphix> seged_deriv;
+    std::vector<Graphix_calc::Graphix*> seged_graphix;
+    std::vector<Graphix_calc::Graphix*> seged_deriv;
 
     // methods
 
@@ -52,10 +46,10 @@ class Segmented_Graphix
     std::vector<Math_calc::Segment> segments (int max_x, int max_y, double scale) const;
 
     // функция, создающая вектор Graphix - раздробленная функция на отрезки
-    Graph_lib::Vector_ref<Graphix_calc::Graphix>
-    segmented_graphix (double scale, Graph_lib::Point center, int max_x) const;
-    Graph_lib::Vector_ref<Graphix_calc::Graphix>
-    segmented_deriv (double scale, Graph_lib::Point center, int max_x) const;
+    std::vector<Graphix_calc::Graphix*> segmented_graphix (double scale, Graph_lib::Point center,
+                                                           int max_x) const;
+    std::vector<Graphix_calc::Graphix*> segmented_deriv (double scale, Graph_lib::Point center,
+                                                         int max_x) const;
 };
 
 }  // namespace Graphix_calc

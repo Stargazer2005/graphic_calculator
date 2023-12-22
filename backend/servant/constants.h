@@ -1,6 +1,6 @@
 #pragma once
 
-// str libs
+// std libs
 #include <cmath>
 
 namespace Back_consts {

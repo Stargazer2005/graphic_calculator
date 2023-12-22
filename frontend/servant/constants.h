@@ -3,6 +3,10 @@
 // std libs
 #include <string>
 
+// Graphix_calc
+#include "../Graphix_calc/Graphix.h"
+#include "../Graphix_calc/Segmented_Graphix.h"
+
 // Backend
 #include "../../backend.h"
 

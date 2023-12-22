@@ -82,16 +82,16 @@ class Graphix_window : public Graph_lib::Window
     std::vector<std::string> inputed_strings;
     std::vector<Backend::function> inputed_funcs;
     // общий вектор со всеми сегментированными функциями (графиками)
-    std::vector<Graph_lib::Vector_ref<Graphix_calc::Graphix>> graphics;
+    std::vector<std::vector<Graphix_calc::Graphix*>> graphics;
     // общий вектор со всеми сегментированными производными функций (графиками)
-    std::vector<Graph_lib::Vector_ref<Graphix_calc::Graphix>> derivs;
+    std::vector<std::vector<Graphix_calc::Graphix*>> derivs;
     // ветор, содержащий все зависимости функций друг от друга
     // vector<vector<size_t>> dependencies;
 
     // меню с общим полем для точек
     Graphix_calc::Point_box point_box;
     // общий массив всех точек на экране
-    Graph_lib::Vector_ref<Graph_lib::Marks> all_points;
+    std::vector<Graph_lib::Marks*> all_points;
 
     Graph_lib::Button scale_button;
 

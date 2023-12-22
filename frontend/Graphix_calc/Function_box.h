@@ -23,17 +23,9 @@ class Function_box : public Graph_lib::Widget
 
     // methods
 
-    void input_valid ()
-    {
-        is_func_valid = true;
-        set_der_str("");
-    }
+    void input_valid () { is_func_valid = true; }
 
-    void input_invalid ()
-    {
-        is_func_valid = false;
-        curr_der->put("invalid");
-    }
+    void input_invalid () { is_func_valid = false; }
 
     bool is_input_valid () const { return is_func_valid; };
 

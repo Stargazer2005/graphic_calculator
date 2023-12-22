@@ -10,7 +10,6 @@ using Graph_lib::Button;
 using Graph_lib::Color;
 using Graph_lib::Marks;
 using Graph_lib::Point;
-using Graph_lib::Vector_ref;
 
 // Graphix_calc
 using namespace Graphix_calc;
@@ -82,8 +81,8 @@ Graphix_window::Graphix_window(Graph_lib::Point left_corner, int width, int heig
     attach(scale_button);
     attach(db);
 
-    func_box->attach(*this);
-    point_box.attach(*this);
+    attach(*func_box);
+    attach(point_box);
 }
 
 void Graphix_window::cb_incr_scale(void*, void* widget)
@@ -187,12 +186,17 @@ void Graphix_window::draw_graphix(size_t func_index)
 {
     update_graphix(func_index);
 
+    enter_menu[func_index]->graph_show();
+
     button_pushed = true;
 }
 
 void Graphix_window::hide_graphix(size_t func_index)
 {
     clear_graphix(func_index);
+
+    // прячем график
+    enter_menu[func_index]->graph_hide();
 
     button_pushed = true;
 }
@@ -201,8 +205,9 @@ void Graphix_window::draw_deriv(size_t der_index)
 {
     update_deriv(der_index);
 
-    if (!enter_menu[der_index]->is_der_hidden())
-        enter_menu[der_index]->set_der_str("(" + inputed_funcs[der_index].get_func_str() + ")'");
+    enter_menu[der_index]->der_show();
+
+    enter_menu[der_index]->set_der_str("(" + inputed_funcs[der_index].get_func_str() + ")'");
 
     button_pushed = true;
 }
@@ -210,6 +215,8 @@ void Graphix_window::draw_deriv(size_t der_index)
 void Graphix_window::hide_deriv(size_t der_index)
 {
     clear_deriv(der_index);
+
+    enter_menu[der_index]->der_hide();
 
     button_pushed = true;
 }
@@ -238,7 +245,7 @@ void Graphix_window::new_func_box()
 
     // задаём ему последний номер и аттачим его
     func_box->set_index(enter_menu.size());
-    func_box->attach(*this);
+    attach(*func_box);
 
     // если до увеличения массив function_боксов был пуст, то мы обратно двигаем new_button
     if (enter_menu.empty())
@@ -248,7 +255,8 @@ void Graphix_window::new_func_box()
     enter_menu.push_back(func_box);
 
     // увеличиваем размер вектора с графиками (резервируем под новую сегментированную функцию)
-    graphics.push_back(Vector_ref<Graphix>{});
+    // FIXME: нужно написать конструктор по умолчанию для всех наших классов...
+    graphics.push_back(vector<Graphix*>{});
 
     // если количество графиков стало максимально, скрываем кнопку "new_button"
     if (enter_menu.size() == max_functions_amount)

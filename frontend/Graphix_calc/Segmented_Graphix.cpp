@@ -8,7 +8,6 @@ using std::vector;
 
 // Graph_lib
 using Graph_lib::Point;
-using Graph_lib::Vector_ref;
 
 // backend
 using Backend::function;
@@ -59,10 +58,9 @@ vector<Segment> Segmented_Graphix::segments(int max_x, int max_y, double scale) 
     return res;
 }
 
-Vector_ref<Graphix> Segmented_Graphix::segmented_graphix(double scale, Point center,
-                                                         int max_x) const
+vector<Graphix*> Segmented_Graphix::segmented_graphix(double scale, Point center, int max_x) const
 {
-    Vector_ref<Graphix> res;
+    vector<Graphix*> res;
     // это количество точек идеально подходит под наши задачи, однако если у нас нет переменной,
     // то это горизонтальная линия (по хорошему тут должна быть геометрическая прогрессия, но
     // ресурсов она требует неоправданно много)
@@ -71,14 +69,14 @@ Vector_ref<Graphix> Segmented_Graphix::segmented_graphix(double scale, Point cen
     for (auto seg : func_segs)
     {
         Graphix* f = new Graphix{func.calculate, seg.start, seg.end, center, point_amount, scale};
-        res.push_back(*f);
+        res.push_back(f);
     }
     return res;
 }
 
-Vector_ref<Graphix> Segmented_Graphix::segmented_deriv(double scale, Point center, int max_x) const
+vector<Graphix*> Segmented_Graphix::segmented_deriv(double scale, Point center, int max_x) const
 {
-    Vector_ref<Graphix> res;
+    vector<Graphix*> res;
     // это количество точек идеально подходит под наши задачи, однако если у нас нет переменной,
     // то это горизонтальная линия (по хорошему тут должна быть геометрическая прогрессия, но
     // ресурсов она требует неоправданно много)
@@ -89,7 +87,7 @@ Vector_ref<Graphix> Segmented_Graphix::segmented_deriv(double scale, Point cente
     {
         Graphix* f =
             new Graphix{func.differentiate, seg.start, seg.end, center, point_amount, scale};
-        res.push_back(*f);
+        res.push_back(f);
     }
     return res;
 }

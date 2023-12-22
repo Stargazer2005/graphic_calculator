@@ -33,7 +33,7 @@ class Axis : public Graph_lib::Shape
     //  расстояние между насечками
     int dist;
     Graph_lib::Text label;
-    Graph_lib::Vector_ref<Graph_lib::Text> marks;
+    std::vector<Graph_lib::Text*> marks;
     Graph_lib::Lines notches;
 };
 
