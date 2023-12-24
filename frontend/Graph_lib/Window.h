@@ -1,5 +1,4 @@
-#ifndef WINDOW_GUARD
-#define WINDOW_GUARD 1
+#pragma once
 
 #include <string>
 #include <vector>
@@ -59,5 +58,3 @@ inline int x_max () { return Fl::w(); }  // width of screen in pixels
 inline int y_max () { return Fl::h(); }  // height of screen in pixels
 
 }  // namespace Graph_lib
-
-#endif  // WINDOW_GUARD

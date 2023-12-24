@@ -26,7 +26,7 @@ void expose_func_str::expose_dep_func()
 {
     func_str = spaces_deleted(func_str);
 
-    // MEMO: вектор для записи зависимости, которая еще не дошла до выражения без y_n
+    // MEANS: вектор для записи зависимости, которая еще не дошла до выражения без y_n
     vector<size_t> unexposed_dependences;
 
     // если 'y' нету, то и делать ничего не надо
@@ -45,11 +45,11 @@ void expose_func_str::expose_dep_func()
     // (мы проходимся не рекурсией, а динамически: подтаскиваем все раскрытия y_n сразу)
     for (size_t i = 0; i < func_str.size(); i++)
     {
-        // MEMO: текущий символ
-        auto ch = func_str[i];
+        // MEANS: текущий символ
+        char ch = func_str[i];
 
-        // MEMO: следующий символ
-        auto next_ch = func_str[i + 1];
+        // MEANS: следующий символ
+        char next_ch = func_str[i + 1];
 
         if (ch == 'y')
         {
@@ -68,10 +68,10 @@ void expose_func_str::expose_dep_func()
             if (readed_est_number.empty())
                 throw invalid_argument("invalid function number");
 
-            // MEMO: номер предполагаемой функции
+            // MEANS: номер предполагаемой мат. функции в общем векторе
             size_t est_number = stoull(readed_est_number);
 
-            // MEMO: индекс предполагаемой функции
+            // MEANS: индекс предполагаемой функции в общем векторе
             size_t est_index = est_number - 1;
 
             // номер больше количества возможных к вводу функций

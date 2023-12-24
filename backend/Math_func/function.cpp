@@ -21,6 +21,10 @@ namespace Math_func {
 function::function(string _func_str)
     : func_str{spaces_deleted(_func_str)}, lexs{lexemes()}, rev_pol{reverse_polish()}
 {
+    // был введен "чит-код" на пустую мат. функцию
+    // (данная функция определена в одной единственной точке: (0,0))
+    if (_func_str == "0--0")
+        func_str = "";
 }
 
 function::function(const function& func)
@@ -45,15 +49,21 @@ vector<string> function::lexemes() const
         return {};
 
     vector<string> res;
-    // MEMO: текущая лексема
+
+    // MEANS: текущая лексема
     string lex;
-    // MEMO: строка со всеми разрешенными мат. операциями
+
+    // MEANS: строка со всеми разрешенными мат. операциями
     const string math_oper_chars = "+-*/^u";
+
     // FIXME: разобраться с этим несоответствием векторов знаков и функций в разных местах
     // TODO: перевести эти строки в служебные константы
+
+    // TODO: написать комментарии по работе этого цикла
+
     for (size_t i = 0; i < func_str.size(); i++)
     {
-        // MEMO: текущий символ строки
+        // MEANS: текущий символ строки
         char ch = func_str[i];
         switch (ch)
         {
@@ -133,26 +143,32 @@ vector<string> function::reverse_polish() const
     if (!is_lexs_valid())
         return {};
 
-    // MEMO: вектор, куда записывается итоговая запись
+    // MEANS: вектор, куда записывается итоговая обратная польская запись
     vector<string> res;
-    // MEMO: стэк для хранения операций в правильном порядке
+
+    // MEANS: стэк с записанными операциями
+    // (нужен для хранения операций в правильном порядке)
     stack<string> st_oper;
     st_oper.push("\0");
 
-    // FIXME: Дим, ты пишешь MEMO то рядом, то сверху
+    // MEANS: строка с разрешенными мат. функциями
+    const string math_func_chars = "sctelu";
 
-    const string math_func_chars = "sctelu";  // MEMO: строка с разрешенными мат. функциями
-    const string math_oper_chars = "+-*/^";  // MEMO: строка с разрешенными мат. операциями
+    // MEANS: строка с разрешенными мат. операциями
+    const string math_oper_chars = "+-*/^";
 
     for (const auto& lex : lexs)
     {
-        // MEMO: символ текущей лексемы
-        char curr = s_to_c(lex);
-        // MEMO: символ, обозначающий последний элемент в стеке с операциями
+        // MEANS: символ, обозначающий текущую лексему
+        // (типо lex_char, нужен для switch-case)
+        char l_c = s_to_c(lex);
+
+        // MEANS: символ, обозначающий последний элемент в стеке с операциями
         char last = s_to_c(st_oper.top());
 
-        // TODO: напиши комментарии по работе этого свитча
-        switch (curr)
+        // TODO: написать комментарии по работе этого свитча
+
+        switch (l_c)
         {
         case number:
         case var_x:
@@ -257,93 +273,111 @@ vector<string> function::reverse_polish() const
 
 double function::calc(double x) const
 {
-    const string math_oper_chars = "+-*/^";  // MEMO: строка с разрешенными мат. операциями
-    const string math_func_chars = "sctelu";  // MEMO: строка с с разрешенными мат. функциями
+    // "чит-код" был введен: после всех проверок строка,
+    // обозначающая мат. функцию, "вдруг" оказалась пустой
+    // (данная функция определена в одной единственной точке: (0,0))
+    if (func_str.empty() && x == 0.0)
+        return 0.0;
+    else if (func_str.empty())
+        throw std::invalid_argument("math invalid number");
 
-    stack<double> Stack;
-    for (auto& lex : rev_pol)
+    // MEANS: строка с разрешенными мат. операциями
+    const string math_oper_chars = "+-*/^";
+
+    // MEANS: строка с с разрешенными мат. функциями
+    const string math_func_chars = "sctelu";
+
+    // MEANS: стэк, куда складываем уже посчитанные числа
+    // IDK: а это точно так?
+    stack<double> calced_numbs;
+
+    // TODO: написать комментарии по работе этого цикла
+
+    // раскрываем обратную польскую нотацию, подставляя x
+    for (const auto& lex : rev_pol)
     {
-        double l;  // MEMO: последний символ в стэке
-        double p;  // MEMO: предпоследний символ в стэке (последний после удаления l)
-        char curr = s_to_c(lex);  // MEMO: текущий символ,
-                                  // (если брать вместо строки (для switch))
-        if (c_in_s(curr, math_func_chars))
+        // MEANS: последний символ в стэке
+        double l;
+
+        // MEANS: предпоследний символ в стэке (последний после удаления l)
+        double p;
+
+        // MEANS: символ, обозначающий текущую лексему в обратной польской записи
+        // (типо lex_char, нужен для switch-case)
+        char l_c = s_to_c(lex);
+
+        if (c_in_s(l_c, math_func_chars))
         {
-            l = Stack.top();  // запоминаем только последний
-                              // (так как функции унарны)
-            Stack.pop();
-            switch (curr)
+            l = calced_numbs.top();  // запоминаем только последний
+                                     // (так как функции унарны)
+            calced_numbs.pop();
+            switch (l_c)
             {
             case c_sin:
-                Stack.push(sin(l));
+                calced_numbs.push(sin(l));
                 break;
             case c_cos:
-                Stack.push(cos(l));
+                calced_numbs.push(cos(l));
                 break;
             case c_tan:
-                Stack.push(tan(l));
+                calced_numbs.push(tan(l));
                 break;
             case c_exp:
-                Stack.push(exp(l));
+                calced_numbs.push(exp(l));
                 break;
             case c_ln:
-                Stack.push(log(l));
+                calced_numbs.push(log(l));
                 break;
             case uminus:
-                Stack.push(-l);
+                calced_numbs.push(-l);
                 break;
             }
         }
-        else if (c_in_s(curr, math_oper_chars))
+        else if (c_in_s(l_c, math_oper_chars))
         {
-            l = Stack.top();
-            Stack.pop();
-            p = Stack.top();  // также запоминаем предпоследний
-                              // (так как операции бинарны)
-            Stack.pop();
-            switch (curr)
+            l = calced_numbs.top();
+            calced_numbs.pop();
+            p = calced_numbs.top();  // также запоминаем предпоследний
+                                     // (так как операции бинарны)
+            calced_numbs.pop();
+            switch (l_c)
             {
             case plus:
-                Stack.push(p + l);
+                calced_numbs.push(p + l);
                 break;
             case minus:
-                Stack.push(p - l);
+                calced_numbs.push(p - l);
                 break;
             case mul:
-                Stack.push(p * l);
+                calced_numbs.push(p * l);
                 break;
             case divi:
-                Stack.push(p / l);
+                calced_numbs.push(p / l);
                 break;
             case power:
-                Stack.push(pow(p, l));
+                calced_numbs.push(pow(p, l));
                 break;
             }
         }
         else
         {
-            switch (curr)
+            switch (l_c)
             {
             case number:
-                Stack.push(stod(lex));
+                calced_numbs.push(stod(lex));
                 break;
             case var_x:
-                Stack.push(x);
+                calced_numbs.push(x);
                 break;
             default:
                 throw std::runtime_error("Oops");
                 break;
             }
         }
-        if (std::isnan(Stack.top()) || std::isinf(Stack.top()))
+        if (std::isnan(calced_numbs.top()) || std::isinf(calced_numbs.top()))
             throw std::invalid_argument("math invalid number");
     }  // последнее, что осталось в стэке после всех действий - и есть ответ
-    return Stack.top();
+    return calced_numbs.top();
 }
 
 }  // namespace Math_func
-
-std::ostream& operator<< (std::ostream& os, Math_func::function func)
-{
-    return os << func.get_func_str();
-}

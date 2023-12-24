@@ -29,23 +29,13 @@ class Function_box : public Graph_lib::Widget
 
     bool is_input_valid () const { return is_func_valid; };
 
-    void graph_show ()
-    {
-        is_graph_visible = true;
-        // если мы её рисуем, то она точно валидна
-        input_valid();
-    }
+    void graph_show () { is_graph_visible = true; }
 
     void graph_hide () { is_graph_visible = false; }
 
     bool is_graph_hidden () const { return !is_graph_visible; }
 
-    void der_show ()
-    {
-        is_der_visible = true;
-        // если мы её рисуем, то она точно валидна
-        input_valid();
-    }
+    void der_show () { is_der_visible = true; }
 
     void der_hide () { is_der_visible = false; }
 
@@ -84,7 +74,7 @@ class Function_box : public Graph_lib::Widget
     Numbed_button* hide_der_button;
     Graph_lib::Out_box* out_box;
 
-    bool is_func_valid{true};
+    bool is_func_valid{false};
     bool is_graph_visible{false};
     bool is_der_visible{false};
 };

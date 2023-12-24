@@ -14,11 +14,11 @@ using Back_serv::absolute;
 
 namespace Math_calc {
 
-function_extremes::function_extremes(Math_func::function _func, double l_border, double r_border,
-                                     double h_border, double _precision)
+function_extremes::function_extremes(Math_func::function _func, double min_x, double max_x,
+                                     double max_y, double _precision)
     :  // FIXME: сейчас тут есть проверка на точность, которой быть не должно
       precision{_precision < 0.01 ? _precision : 0.01}, f{_func},
-      points{extremes(l_border, r_border, h_border)}
+      points{extremes(min_x, max_x, max_y)}
 {
 }
 
@@ -116,18 +116,18 @@ double function_extremes::extreme_on_interval(TypeExtreme extr, Segment seg) con
     return (seg.start + seg.end) / 2;
 }
 
-vector<Point> function_extremes::extremes(double l_border, double r_border, double h_border) const
+vector<Point> function_extremes::extremes(double min_x, double max_x, double max_y) const
 {
     vector<Point> res;
-    for (auto seg : domain_segments(f.calculate, l_border, r_border, h_border, precision))
+    for (const auto& seg : domain_segments(f.calculate, min_x, max_x, max_y, precision))
     {
-        for (auto& local_seg : estimated_segment(pnt_min, seg))
+        for (const auto& local_seg : estimated_segment(pnt_min, seg))
         {
             double x = extreme_on_interval(pnt_min, local_seg);
             double y = f(x);
             res.push_back(Point{x, y});
         }
-        for (auto& local_seg : estimated_segment(pnt_max, seg))
+        for (const auto& local_seg : estimated_segment(pnt_max, seg))
         {
             double x = extreme_on_interval(pnt_max, local_seg);
             double y = f(x);

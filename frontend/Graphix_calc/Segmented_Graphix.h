@@ -18,8 +18,8 @@ namespace Graphix_calc {
 class Segmented_Graphix
 {
   public:
-    Segmented_Graphix(Math_func::function _func, double scale, Graph_lib::Point origin, int max_x,
-                      int max_y);
+    Segmented_Graphix(Math_func::function _func, double scale, Graph_lib::Point origin,
+                      int r_border, int h_border);
 
     // methods
 
@@ -42,8 +42,10 @@ class Segmented_Graphix
 
     // methods
 
-    std::vector<Math_calc::Segment> derivative_segment (int max_x, int max_y, double scale) const;
-    std::vector<Math_calc::Segment> segments (int max_x, int max_y, double scale) const;
+    std::vector<Math_calc::Segment> derivative_segment (int l_border, int r_border, int h_border,
+                                                        double scale) const;
+    std::vector<Math_calc::Segment> segments (int l_border, int r_border, int h_border,
+                                              double scale) const;
 
     // функция, создающая вектор Graphix - раздробленная функция на отрезки
     std::vector<Graphix_calc::Graphix*> segmented_graphix (double scale, Graph_lib::Point center,

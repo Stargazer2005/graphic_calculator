@@ -12,41 +12,51 @@
 
 namespace Math_calc {
 
-// MEMO: класс, хранящий в себе вектор точек - пересечений графика func с осью Ox
+// MEANS: класс, хранящий в себе вектор точек - пересечений графика мат. функции с осью Ox
 class function_roots
 {
   public:
     function_roots();  // (этот конструктор нужен только для наследования)
-    function_roots(Math_func::function _func, double l_border, double r_border, double h_border,
+    function_roots(Math_func::function _func, double min_x, double max_x, double max_y,
                    double _precision);
 
     // methods
 
-    std::vector<Point> get_function_roots () const { return points; }
+    inline std::vector<Point> get_function_roots () const { return points; }
+
+    // ~methods
 
   protected:
     // methods
 
-    // MEMO: деление сегмента на на подсегменты, где могут быть корни
-    // (используя тот факт, что по разные стороны от точки-корня func имеет разные знаки)
+    // DOES: делит сегмент на на подсегменты, где могут быть корни
+    // (используя тот факт, что по разные стороны от точки-корня мат. функция имеет разные знаки)
     std::vector<Segment> estimated_segment(Segment) const;
 
-    // MEMO: нахождение корня на интервале (используя метод золотого сечения)
-    double solution_on_interval(Segment) const;
+    // DOES: находит корень на интервале, используя метод золотого сечения
+    double root_on_interval(Segment) const;
+
+    // ~methods
 
   private:
     // vars
 
-    // MEMO: точность (используем везде, поэтому сохраняем в качестве поля)
+    // MEANS: точность (используем везде, поэтому сохраняем в качестве поля)
     double precision;
-    // MEMO: введенная func
+
+    // MEANS: введенная мат. функция
     Math_func::function f;
+
     std::vector<Point> points;
+
+    // ~vars
 
     // methods
 
-    // MEMO: нахождение всех корней
-    std::vector<Point> roots (double l_border, double r_border, double h_border) const;
+    // DOES: находит все корни перебором по сегментам
+    std::vector<Point> roots (double min_x, double max_x, double max_y) const;
+
+    // ~methods
 };
 
 }  // namespace Math_calc

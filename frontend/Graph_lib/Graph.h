@@ -1,8 +1,8 @@
-#ifndef GRAPH_GUARD
-#define GRAPH_GUARD 1
+#pragma once
 
 #include <cmath>
 #include <functional>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -14,13 +14,6 @@ namespace Graph_lib {
 // defense against ill-behaved Linux macros:
 #undef major
 #undef minor
-
-// error() simply disguises throws:
-[[noreturn]] void error (const std::string& msg);
-[[noreturn]] void error (const std::string& msg, const std::string& msg2);
-
-int randint (int min, int max);
-int randint (int max);
 
 // C++ standard does not define any mathematical constants
 // NB! Constants, such as M_PI etc, are not cross-platform
@@ -130,53 +123,6 @@ class Font
     int f;
 };
 
-template <class T> class Vector_ref
-{
-    std::vector<T*> v;
-    std::vector<T*> owned;
-
-  public:
-    Vector_ref() = default;
-
-    Vector_ref(T* a, T* b = nullptr, T* c = nullptr, T* d = nullptr)
-    {
-        if (a)
-            push_back(a);
-        if (b)
-            push_back(b);
-        if (c)
-            push_back(c);
-        if (d)
-            push_back(d);
-    }
-
-    ~Vector_ref() { clear(); }
-
-    void push_back (T& s) { v.push_back(&s); }
-
-    void push_back (T* p)
-    {
-        v.push_back(p);
-        owned.push_back(p);
-    }
-
-    void clear ()
-    {
-        for (unsigned int i = 0; i < owned.size(); ++i)
-            delete owned[i];
-        owned.clear();
-        v.clear();
-    }
-
-    // ???void erase(???)
-
-    T& operator[] (int i) { return *v.at(i); }
-
-    const T& operator[] (int i) const { return *v.at(i); }
-
-    int size () const { return v.size(); }
-};
-
 class Shape  // deals with color and style, and holds sequence of lines
 {
   protected:
@@ -247,14 +193,14 @@ struct Rectangle : Shape
     Rectangle(Point xy, int ww, int hh) : w{ww}, h{hh}
     {
         if (h <= 0 || w <= 0)
-            error("Bad rectangle: non-positive side");
+            throw std::invalid_argument("Bad rectangle: non-positive side");
         add(xy);
     }
 
     Rectangle(Point x, Point y) : w{y.x - x.x}, h{y.y - x.y}
     {
         if (h <= 0 || w <= 0)
-            error("Bad rectangle: first point is not top left");
+            throw std::invalid_argument("Bad rectangle: first point is not top left");
         add(x);
     }
 
@@ -268,8 +214,6 @@ struct Rectangle : Shape
     int w;  // width
     int h;  // height
 };
-
-bool intersect (Point p1, Point p2, Point p3, Point p4);
 
 struct Open_polyline : Shape  // open sequence of lines
 {
@@ -302,7 +246,7 @@ struct Lines : Shape  // indepentdent lines
     Lines(std::initializer_list<Point> lst) : Shape{lst}
     {
         if (lst.size() % 2)
-            error("odd number of points for Lines");
+            throw std::invalid_argument("odd number of points for Lines");
     }
 
     void draw_lines () const override;
@@ -337,28 +281,6 @@ struct Text : Shape
     std::string lab;  // label
     Font fnt{fl_font()};
     int fnt_sz{(14 < fl_size()) ? fl_size() : 14};  // at least 14 point
-};
-
-struct Axis : Shape
-{
-    // representation left public
-    enum Orientation
-    {
-        x,
-        y,
-        z
-    };
-
-    Axis(Orientation d, Point xy, int length, int nummber_of_notches = 0,
-         const std::string& label = "");
-
-    void draw_lines () const override;
-    void move (int dx, int dy) override;
-
-    void set_color (Color c);
-
-    Text label;
-    Lines notches;
 };
 
 struct Circle : Shape
@@ -485,5 +407,3 @@ struct Image : Shape
 };
 
 }  // namespace Graph_lib
-
-#endif  // GRAPH_GUARD

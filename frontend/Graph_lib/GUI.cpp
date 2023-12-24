@@ -48,29 +48,3 @@ void Out_box::attach(Window& win)
     pw = new Fl_Output{loc.x, loc.y, width, height, label.c_str()};
     own = &win;
 }
-
-int Menu::attach(Button& b)
-{
-    b.width = width;
-    b.height = height;
-
-    switch (k)
-    {
-    case horizontal:
-        b.loc = Point{loc.x + offset, loc.y};
-        offset += b.width;
-        break;
-    case vertical:
-        b.loc = Point{loc.x, loc.y + offset};
-        offset += b.height;
-        break;
-    }
-    selection.push_back(&b);
-    return int(selection.size() - 1);
-}
-
-int Menu::attach(Button* p)
-{
-    //  owned.push_back(p);
-    return attach(*p);
-}

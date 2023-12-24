@@ -26,9 +26,9 @@ bool function::is_str_valid() const
     if (func_str == "")
         throw invalid_argument("empty expression");
 
-    // MEMO: строка со всеми разрешенными символами
+    // MEANS: строка со всеми разрешенными символами
     const string calc_chars = ".1234567890+-*/^()cosinexptal";
-    // MEMO: строка с разрешенными мат. операциями
+    // MEANS: строка с разрешенными мат. операциями
     const string math_oper_chars = "+-*/^";
 
     // проверка на количество скобочек
@@ -36,26 +36,32 @@ bool function::is_str_valid() const
         count(func_str.begin(), func_str.end(), closed_br))
         throw invalid_argument("brackets number mismatch");
 
-    // первый и последний символы не должны быть знаками или точками (кроме
-    // минуса)
+    // первый и последний символы не должны быть знаками или точками
+    // (кроме минуса спереди)
     if ((c_in_s(func_str[0], math_oper_chars + point) && func_str[0] != minus) ||
         c_in_s(func_str[func_str.size() - 1], math_oper_chars + point))
         throw invalid_argument("invalid syntax at edges");
 
+    // MEANS: счетчик незакрытых скобочек
     int count_brackets = 0;
-    // TODO: научиться проходиться по всем массивам используя :
-    // (для сравнения с предыдущим или следующим использовать указатели)
+
+    // проходимся по всей строке
     for (size_t i = 0; i < func_str.size(); i++)
     {
-        char c = func_str[i];  // MEMO: текущий символ
-        char prev_c = ' ';     // MEMO: предыдущий символ
-        char next_c = ' ';     // MEMO: следующий символ
+        // MEANS: текущий символ
+        char c = func_str[i];
 
-        // (вычисление значение этих символов)
+        // MEANS: предыдущий символ
+        char p_c = ' ';
+
+        // MEANS: следующий символ
+        char n_c = ' ';
+
+        // (вычисление значений этих символов)
         if (i > 0)
-            prev_c = func_str[i - 1];
+            p_c = func_str[i - 1];
         if (i < (func_str.size() - 1))
-            next_c = func_str[i + 1];
+            n_c = func_str[i + 1];
 
         // проверка на отсутсвие лишних символов
         if (!c_in_s(c, calc_chars))
@@ -65,36 +71,38 @@ bool function::is_str_valid() const
             else
                 throw invalid_argument("unknown character '" + string{c} + "'");
         }
-        // возле знака операции не должно быть других операций и точек, а также открытой скобки
-        // слева и закрытой скобки справа
+
+        // возле знака операции не должно быть других операций и точек,
+        // а также открытой скобки слева или закрытой скобки справа
         // (минус на это мы не проверяем, так как он может быть унарный)
         if (c_in_s(c, math_oper_chars) && c != minus)
         {
-            if ((c_in_s(prev_c, math_oper_chars + point) ||
-                 c_in_s(next_c, math_oper_chars + point)) &&
-                next_c != minus)  // но после знака минус стоять может
+            if ((c_in_s(p_c, math_oper_chars + point) || c_in_s(n_c, math_oper_chars + point)) &&
+                n_c != minus)  // но после знака минус стоять может
                 throw invalid_argument("invalid syntax near sign");
 
             // минус не может стоять по обе стороны от знака
-            else if (prev_c == minus && next_c == minus)
+            else if (p_c == minus && n_c == minus)
                 throw invalid_argument("invalid syntax near sign");
 
             // проверка на правильность скобок возле знака
-            if (prev_c == open_br || next_c == closed_br)
+            if (p_c == open_br || n_c == closed_br)
                 throw invalid_argument("invalid brackets near sign");
         }
+
         // возле точки должны быть только числа
         if (c == point)
         {
-            if ((!isdigit(prev_c) || !isdigit(next_c)))
+            if ((!isdigit(p_c) || !isdigit(n_c)))
                 throw invalid_argument("invalid syntax near point");
         }
+
         // считаем скобки
         else if (c == open_br)
         {
             count_brackets += 1;
             // и проверяем, что нету пустых
-            if (next_c == closed_br)
+            if (n_c == closed_br)
                 throw invalid_argument("empty brackets");
         }
         else if (c == closed_br)
@@ -104,42 +112,37 @@ bool function::is_str_valid() const
             if (count_brackets < 0)
                 throw invalid_argument("extra bracket");
         }
+
+        // возле числа должен стоять либо знак, либо точка, либо скобка
         // (при строке из одной цифры, эта проверка не подходит)
         else if (isdigit(c) && func_str.size() > 1)
         {
-            // возле числа должен стоять либо знак, либо точка, либо скобка
+            // MEANS: строка с почти всеми символами, которые могут быть возле цифры
+            // (почти, так как еще скобки с разных сторон, но мы их считаем далее)
+            string valid_chars_near_digit = "0123456789" + math_oper_chars + point;
 
-            // MEMO: вспомогательная функция для проверки рядом стоящего символа
-            auto is_neighborhood_ok = [&math_oper_chars] (char s, char bracket)
-            { return (isdigit(s) || s == point || c_in_s(s, math_oper_chars) || s == bracket); };
+            // MEANS: левый (предыдущий) символ валиден
+            // (у цифры слева может быть: цифра, точка, знак или открытая скобка)
+            bool is_left_valid = 1;
 
-            bool is_left_ok = 1;   // MEMO: левый символ валиден
-            bool is_right_ok = 1;  // MEMO: правый символ валиден
+            // MEANS: правый (следующий) символ валиден
+            // (у цифры справа может быть: цифра, точка, знак или закрытая скобка)
+            bool is_right_valid = 1;
 
-            // если мы в самом начале
+            // (вычисление значений этих флагов)
             if (i == 0)
-            {
-                // у числа справа может быть: число, точка, знак или closed_br
-                is_right_ok = is_neighborhood_ok(next_c, closed_br);
-                if (!is_right_ok)
-                    throw invalid_argument("invalid syntax near digit");
-            }
+                is_right_valid = c_in_s(n_c, valid_chars_near_digit + closed_br);
             else if (i == func_str.size() - 1)
-            {
-                // у числа слева может быть: число, точка, знак или open_br
-                is_left_ok = is_neighborhood_ok(prev_c, open_br);
-                if (!is_left_ok)
-                    throw invalid_argument("invalid syntax near digit");
-            }
+                is_left_valid = c_in_s(p_c, valid_chars_near_digit + open_br);
             else
             {
-                // у числа справа может быть: число, точка, знак или closed_br
-                is_right_ok = is_neighborhood_ok(next_c, closed_br);
-                // у числа слева может быть: число, точка, знак или open_br
-                is_left_ok = is_neighborhood_ok(prev_c, open_br);
-                if (!is_left_ok || !is_right_ok)
-                    throw invalid_argument("invalid syntax near digit");
+                is_right_valid = c_in_s(n_c, valid_chars_near_digit + closed_br);
+                is_left_valid = c_in_s(p_c, valid_chars_near_digit + open_br);
             }
+
+            // если хотя бы с одной стороны мы имеем не валидный символ, нам это не подходит
+            if (!is_left_valid || !is_right_valid)
+                throw invalid_argument("invalid syntax near digit");
         }
     }
     return true;
@@ -147,20 +150,27 @@ bool function::is_str_valid() const
 
 bool function::is_lexs_valid() const
 {
-    const string math_oper_chars = "+-*/^";  // MEMO: строка с разрешенными мат. операциями
-    const string math_func_chars = "sctelu";  // MEMO: строка с разрешенными мат. функциями
-    // MEMO: вектор, со всеми разрешенными лексемами мат. функций
+    // MEANS: строка с разрешенными мат. операциями
+    const string math_oper_chars = "+-*/^";
+
+    // MEANS: строка с разрешенными мат. функциями
+    const string math_func_chars = "sctelu";
+
+    // MEANS: вектор, со всеми разрешенными лексемами, обозначающими мат. функции
     const vector<string> functions{"sin", "cos", "tan", "exp", "ln", "um"};
 
     for (size_t i = 0; i < lexs.size(); i++)
     {
         // string l = lexs[i];
-        char l_c = s_to_c(lexs[i]);  // MEMO: символ текущей лексемы
-        char next_c = ' ';           // MEMO: символ следующей лексемы
+        // MEANS: символ, обозначающий текущую лексему
+        char l_c = s_to_c(lexs[i]);
 
-        // (вычисление этиго символа)
+        // MEANS: символ, обозначающий следущию лексему
+        char n_c = ' ';
+
+        // (вычисление этого символа)
         if (i < (lexs.size() - 1))
-            next_c = s_to_c(lexs[i + 1]);
+            n_c = s_to_c(lexs[i + 1]);
 
         // FIXME: дальше какая-то дичь творится..
 
@@ -188,7 +198,7 @@ bool function::is_lexs_valid() const
                     throw invalid_argument("wrong function usage");
 
                 // ситуация рода: x + tan + x
-                else if (l_c != uminus && next_c != open_br)
+                else if (l_c != uminus && n_c != open_br)
                     throw invalid_argument("wrong function usage");
             }
             else if (l_c != var_x)  // если имя начинается не с разрешенной буквы и

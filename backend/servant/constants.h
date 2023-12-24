@@ -26,9 +26,10 @@ constexpr char c_ln = 'l';
 constexpr char uminus = 'u';
 
 // for Math_calc
+
 constexpr double delta_x = 0.00001;
 
-// золотое сечение
+// MEANS: золотое сечение
 const double phi = (1 + sqrt(5)) / 2;
 constexpr int max_count = 10000;
 

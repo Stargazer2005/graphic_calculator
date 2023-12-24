@@ -9,11 +9,11 @@
 
 namespace Graphix_calc {
 
-// фигура, представляющая собой график f(x) с областью определения [l_border:r_border]
+// фигура, представляющая собой график f(x) с областью определения [min_x:max_x]
 class Graphix : public Graph_lib::Shape
 {
   public:
-    Graphix(std::function<double(double)> func, double l_border, double r_border,
+    Graphix(std::function<double(double)> func, double min_x, double max_x,
             Graph_lib::Point center, int point_amount, double scale);
 
     std::vector<Graph_lib::Point> get_points () const { return points; }

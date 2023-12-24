@@ -73,7 +73,6 @@ void Graphix_window::update_graphix(size_t func_index)
     // если проверка прошла успешна, рисуем график по введённой строке
     if (enter_menu[func_index]->is_input_valid())
     {
-
         // локальная переменная - введенная строка
         auto func = inputed_funcs[func_index];
 
@@ -166,20 +165,22 @@ void Graphix_window::update_points()
     // чистим память от всех предыдущих точек
     clear_points();
 
+    cout << "check1" << endl;
+
     fill_inputed_funcs();
 
+    cout << "check2" << endl;
+
     // воспомогательная функция, которая переводит бэкендовы вещественные точки в пиксельные
-    auto convert_to_pix = [&] (Math_calc::Point p) -> Graph_lib::Point
-    {
-        return Graph_lib::Point{origin.x + static_cast<int>(p.x * scale),
-                                origin.y - static_cast<int>(p.y * scale)};
+    auto convert_to_pix = [&] (Math_calc::Point p) -> Graph_lib::Point {
+        return {origin.x + int(p.x * scale), origin.y - int(p.y * scale)};
     };
 
     // переводим границы экрана в вещественные, чтобы использовать для бэкендовских функций
 
-    double l_border = -((double)win_w() / (2 * scale)) + func_box_w / (2 * scale);
-    double r_border = -l_border;
-    double h_border = (double)win_h() / (2 * scale);
+    double min_x = -((double)win_w() / (2 * scale)) + func_box_w / (2 * scale);
+    double max_x = -min_x;
+    double max_y = (double)win_h() / (2 * scale);
     double point_prec = (((double)win_w() / (scale * 2500)));
 
     // проходимся по всем строкам, куда пользователь вводит функции и рисуем их экстремумы, корни и
@@ -187,7 +188,7 @@ void Graphix_window::update_points()
     for (size_t i = 0; i < enter_menu.size(); i++)
     {
         auto function_box = enter_menu[i];
-        // введенная строка
+
         auto func = inputed_funcs[i];
 
         bool is_valid = function_box->is_input_valid();
@@ -196,23 +197,27 @@ void Graphix_window::update_points()
 
         if (is_valid)
         {
-            Math_calc::function_roots fr{func, l_border, r_border, h_border, point_prec};
+            cout << "check3" << endl;
+            Math_calc::function_roots fr{func, min_x, max_x, max_y, point_prec};
+            cout << "check4" << endl;
             // создаём марки, добавляем их на окно
             dots = new Marks{"x"};
-            for (auto& p : fr.get_function_roots())
+            for (const auto& p : fr.get_function_roots())
                 dots->add(convert_to_pix(p));
             attach(*dots);
 
             // и добавляем в общий массив всех точек на экране
             all_points.push_back(dots);
 
-            Math_calc::function_extremes fe{func, l_border, r_border, h_border, point_prec};
+            Math_calc::function_extremes fe{func, min_x, max_x, max_y, point_prec};
+            cout << "check5" << endl;
 
             // создаём марки, добавляем их на окно
             Marks* dots = new Marks{"#"};
-            for (auto& p : fe.get_function_extremes())
+            for (const auto& p : fe.get_function_extremes())
                 dots->add(convert_to_pix(p));
             attach(*dots);
+
             // и добавляем в общий массив всех точек на экране
             all_points.push_back(dots);
         }
@@ -223,15 +228,14 @@ void Graphix_window::update_points()
             auto oth_function_box = enter_menu[j];
             auto oth_func = inputed_funcs[j];
 
-            is_valid |= oth_function_box->is_input_valid();
-
-            if (is_valid)
+            if (oth_function_box->is_input_valid())
             {
-                Math_calc::function_crosses fc{
-                    {func, oth_func}, l_border, r_border, h_border, point_prec};
+                cout << "check6" << endl;
+                Math_calc::function_crosses fc{{func, oth_func}, min_x, max_x, max_y, point_prec};
+                cout << "check7" << endl;
                 // создаём марки, добавляем их на окно
                 dots = new Marks{"o"};
-                for (auto& p : fc.get_functions_crosses())
+                for (const auto& p : fc.get_functions_crosses())
                     dots->add(convert_to_pix(p));
                 attach(*dots);
                 // и добавляем в общий массив всех точек на экране
@@ -271,8 +275,8 @@ void Graphix_window::update_inputed_func(size_t func_index, bool need_update_str
         dependences = edfc.get_dependences();
 
         // апдейтим все зависимые функции
-        for (auto i : dependences)
-            update_inputed_func(i - 1, false);
+        for (const auto& n : dependences)
+            update_inputed_func(n - 1, false);
 
         // создаём функцию (чтобы потенциально проверить на ошибки)
         Math_func::function func{estimated_func_str};
@@ -289,7 +293,7 @@ void Graphix_window::update_inputed_func(size_t func_index, bool need_update_str
     {
         if (func_index < enter_menu.size())
         {
-            inputed_funcs[func_index] = empty_func;
+            // inputed_funcs[func_index] = empty_func;
             // выводим ошибку и прячем график
             enter_menu[func_index]->set_message(string{e.what()});
             enter_menu[func_index]->input_invalid();
@@ -299,8 +303,8 @@ void Graphix_window::update_inputed_func(size_t func_index, bool need_update_str
         {
             // print(dependences);
             // апдейтим все зависимые функции
-            for (auto i : dependences)
-                update_inputed_func(i - 1, false);
+            for (const auto& n : dependences)
+                update_inputed_func(n - 1, false);
         }
     }
 }

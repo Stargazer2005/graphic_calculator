@@ -8,18 +8,6 @@
 
 namespace Graph_lib {
 
-[[noreturn]] void error (const std::string& msg) { throw std::runtime_error{msg}; }
-
-[[noreturn]] void error (const std::string& msg, const std::string& msg2) { error(msg + msg2); }
-
-int randint (int min, int max)
-{
-    static std::default_random_engine ran;
-    return std::uniform_int_distribution<>{min, max}(ran);
-}
-
-int randint (int max) { return randint(0, max); }
-
 Shape::Shape(std::initializer_list<Point> lst)
 {
     for (Point p : lst)
@@ -92,13 +80,13 @@ void Polygon::add(Point p)
     if (1 < np)
     {
         if (p == point(np - 1))
-            error("polygon point equal to previous point");
+            throw std::invalid_argument("polygon point equal to previous point");
 
         bool parallel;
         line_intersect(point(np - 1), p, point(np - 2), point(np - 1), parallel);
 
         if (parallel)
-            error("two polygon points lie in a straight line");
+            throw std::invalid_argument("two polygon points lie in a straight line");
     }
 
     // check that new segment doesn't interset and old point
@@ -106,7 +94,7 @@ void Polygon::add(Point p)
     {
         Point ignore{0, 0};
         if (line_segment_intersect(point(np - 1), p, point(i - 1), point(i), ignore))
-            error("intersect in polygon");
+            throw std::invalid_argument("intersect in polygon");
     }
 
     Closed_polyline::add(p);
@@ -115,7 +103,7 @@ void Polygon::add(Point p)
 void Polygon::draw_lines() const
 {
     if (number_of_points() < 3)
-        error("less than 3 points in a Polygon");
+        throw std::invalid_argument("less than 3 points in a Polygon");
     Closed_polyline::draw_lines();
 }
 
@@ -175,23 +163,6 @@ void Text::draw_lines() const
     fl_font(ofnt, osz);
 }
 
-Function::Function(Fct f, double r1, double r2, Point xy, int count, double xscale, double yscale)
-// graph f(x) for x in [r1:r2) using count line segments with (0,0) displayed at xy
-// x coordinates are scaled by xscale and y coordinates scaled by yscale
-{
-    if (r2 - r1 <= 0)
-        error("bad graphing range");
-    if (count <= 0)
-        error("non-positive graphing count");
-    double dist = (r2 - r1) / count;
-    double r = r1;
-    for (int i = 0; i < count; ++i)
-    {
-        add(Point{xy.x + int(r * xscale), xy.y - int(f(r) * yscale)});
-        r += dist;
-    }
-}
-
 void Rectangle::draw_lines() const
 {
     if (fill_color().visibility())  // fill
@@ -203,76 +174,6 @@ void Rectangle::draw_lines() const
 
     if (color().visibility())  // edge on top of fill
         fl_rect(point(0).x, point(0).y, w, h);
-}
-
-Axis::Axis(Orientation d, Point xy, int length, int n, const std::string& lab)
-    : label{Point{0, 0}, lab}
-{
-    if (length < 0)
-        error("bad axis length");
-
-    switch (d)
-    {
-    case Axis::x:
-    {
-        Shape::add(xy);                          // axis line
-        Shape::add(Point{xy.x + length, xy.y});  // axis line
-        if (1 < n)
-        {
-            int dist = length / n;
-            int x = xy.x + dist;
-            for (int i = 0; i < n; ++i)
-            {
-                notches.add(Point{x, xy.y}, Point{x, xy.y - 5});
-                x += dist;
-            }
-        }
-        // label under the line
-        label.move(length / 3, xy.y + 20);
-        break;
-    }
-    case Axis::y:
-    {
-        Shape::add(xy);  // an y-axis goes up
-        Shape::add(Point{xy.x, xy.y - length});
-        if (1 < n)
-        {
-            int dist = length / n;
-            int y = xy.y - dist;
-            for (int i = 0; i < n; ++i)
-            {
-                notches.add(Point{xy.x, y}, Point{xy.x + 5, y});
-                y -= dist;
-            }
-        }
-        // label at top
-        label.move(xy.x - 10, xy.y - length - 10);
-        break;
-    }
-    case Axis::z:
-        error("z axis not implemented");
-    }
-}
-
-void Axis::draw_lines() const
-{
-    Shape::draw_lines();  // the line
-    notches.draw();       // the notches may have a different color from the line
-    label.draw();         // the label may have a different color from the line
-}
-
-void Axis::set_color(Color c)
-{
-    Shape::set_color(c);
-    notches.set_color(c);
-    label.set_color(c);
-}
-
-void Axis::move(int dx, int dy)
-{
-    Shape::move(dx, dy);
-    notches.move(dx, dy);
-    label.move(dx, dy);
 }
 
 void Circle::draw_lines() const

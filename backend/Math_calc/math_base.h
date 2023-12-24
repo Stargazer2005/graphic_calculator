@@ -5,25 +5,29 @@ namespace Math_calc {
 // MEMO: вещественная точка
 struct Point
 {
-    Point(double _x, double _y) : x{_x}, y{_y} {}
+    inline Point(double _x, double _y) : x{_x}, y{_y} {}
 
-    Point() : x{0}, y{0} {}
+    inline Point() : x{0}, y{0} {}
 
     // vars
 
     double x, y;
+
+    // ~vars
 };
 
 // MEMO: вещественный отрезок
 struct Segment
 {
-    Segment(double _start, double _end) : start{_start}, end{_end} {}
+    inline Segment(double _start, double _end) : start{_start}, end{_end} {}
 
-    Segment() : start{-0}, end{0} {}
+    inline Segment() : start{-0}, end{0} {}
 
     // vars
 
     double start, end;
+
+    // ~vars
 };
 
 }  // namespace Math_calc

@@ -19,11 +19,10 @@ namespace Math_calc {
 
 function_roots::function_roots() : precision{0}, f{function("99999999")}, points{vector<Point>{}} {}
 
-function_roots::function_roots(function _func, double l_border, double r_border, double h_border,
+function_roots::function_roots(function _func, double min_x, double max_x, double max_y,
                                double _precision)
     // FIXME: сейчас тут есть проверка на точность, которой быть не должно
-    : precision{_precision < 0.01 ? _precision : 0.01}, f{_func},
-      points{roots(l_border, r_border, h_border)}
+    : precision{_precision < 0.01 ? _precision : 0.01}, f{_func}, points{roots(min_x, max_x, max_y)}
 
 {
 }
@@ -50,8 +49,10 @@ vector<Segment> function_roots::estimated_segment(Segment seg) const
     return res;
 }
 
-double function_roots::solution_on_interval(Segment seg) const
+double function_roots::root_on_interval(Segment seg) const
 {
+    // DOES: находит значение по x от возведенной в квадрат мат. функции
+    // IDK: почему это здесь нужно?
     auto _f = [this] (double x) { return pow(f(x), 2); };
 
     // если не нашли точки за max_count приближений, то бросаём её - слишком затратно
@@ -75,17 +76,17 @@ double function_roots::solution_on_interval(Segment seg) const
     return (seg.start + seg.end) / 2;
 }
 
-vector<Point> function_roots::roots(double l_border, double r_border, double h_border) const
+vector<Point> function_roots::roots(double min_x, double max_x, double max_y) const
 {
     vector<Point> res;
-    for (auto seg : domain_segments(f.calculate, l_border, r_border, h_border, precision))
+    for (const auto& seg : domain_segments(f.calculate, min_x, max_x, max_y, precision))
     {
-        for (auto& local_seg : estimated_segment(seg))
+        for (const auto& local_seg : estimated_segment(seg))
         {
-            double x = solution_on_interval(local_seg);
+            double x = root_on_interval(local_seg);
             double y = f(x);
             // если точка достаточно близка к нулю, добавляем её
-            // (эта проверка нужна потому, что для solution_on_interval могло потребоваться куда
+            // (эта проверка нужна потому, что для root_on_interval могло потребоваться куда
             // большее количество приближений, но так как мы ему дали лишь max_count, ему ничего
             // не мешало вернуть ответ, который совсем не близок к нулю по y) (п.с. точность
             // использования метода ограничена доступной памятью)

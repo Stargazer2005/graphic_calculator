@@ -1,18 +1,10 @@
-
 #include "servant.h"
 
-// std libs
-// #include <iostream>
 using namespace std;
 
 namespace Back_serv {
 
 bool c_in_s (char c, const string& s) { return (s.find(c) != string::npos); }
-
-// template <typename T> bool elem_in_vec (T elem, const vector<T>& vec)
-// {
-//     return find(vec.begin(), vec.end(), elem) != vec.end();
-// }
 
 char s_to_c (const string& s)
 {
@@ -22,7 +14,7 @@ char s_to_c (const string& s)
         return (s[0]);  // первая буква отражает название функции
 }
 
-bool is_double (string str)
+bool is_double (const std::string& str)
 {
     try
     {
@@ -38,7 +30,7 @@ bool is_double (string str)
 string spaces_deleted (const string& s)
 {
     string new_s;
-    for (auto ch : s)
+    for (const auto& ch : s)
         if (ch != ' ')
             new_s += ch;
     return new_s;

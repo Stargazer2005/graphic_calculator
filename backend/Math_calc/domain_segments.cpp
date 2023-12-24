@@ -12,7 +12,7 @@ vector<Segment> domain_segments (const function<double(double)>& calc, double mi
     max_x *= 2;  // для большей точности
     double min_y = -max_y;
     std::vector<Segment> res;
-    // MEMO: начало отрезка уже было записано
+    // MEANS: начало отрезка уже было записано
     bool is_x_started = false;
     Segment seg;
     for (double x = min_x; x < max_x; x += precision)
@@ -31,8 +31,9 @@ vector<Segment> domain_segments (const function<double(double)>& calc, double mi
                 }
             }
             catch (...)
-            {  // в случае возникновение какой-либо ошибки, игнорируем эту точку, так как значение
-               // на ней нам точно не подходит
+            {
+                // в случае возникновение какой-либо ошибки, игнорируем эту точку, так как значение
+                // на ней нам точно не подходит
             }
         }
         else

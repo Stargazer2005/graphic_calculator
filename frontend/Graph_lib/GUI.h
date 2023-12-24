@@ -1,29 +1,18 @@
-//
-// This is a GUI support code to the chapters 12-16 of the book
-// "Programming -- Principles and Practice Using C++" by Bjarne Stroustrup
-//
-#ifndef GUI_GUARD
-#define GUI_GUARD
+#pragma once
 
 #include "Graph.h"
 #include "Window.h"
 
 namespace Graph_lib {
 
-//------------------------------------------------------------------------------
-
 using Address = void*;                        // Address is a synonym for void*
 using Callback = void (*)(Address, Address);  // FLTK's required function type for all callbacks
-
-//------------------------------------------------------------------------------
 
 template <class W> W& reference_to (Address pw)
 // treat an address as a reference to a W
 {
     return *static_cast<W*>(pw);
 }
-
-//------------------------------------------------------------------------------
 
 class Widget
 {
@@ -67,8 +56,6 @@ class Widget
     Fl_Widget* pw;  // connection to the FLTK Widget
 };
 
-//------------------------------------------------------------------------------
-
 struct Button : Widget
 {
     Button(Point xy, int w, int h, const std::string& label, Callback cb)
@@ -78,8 +65,6 @@ struct Button : Widget
 
     void attach (Window&);
 };
-
-//------------------------------------------------------------------------------
 
 struct In_box : Widget
 {
@@ -91,8 +76,6 @@ struct In_box : Widget
     void attach (Window& win);
 };
 
-//------------------------------------------------------------------------------
-
 struct Out_box : Widget
 {
     Out_box(Point xy, int w, int h, const std::string& s) : Widget{xy, w, h, s, nullptr} {}
@@ -103,56 +86,4 @@ struct Out_box : Widget
     void attach (Window& win);
 };
 
-//------------------------------------------------------------------------------
-
-struct Menu : Widget
-{
-    enum Kind
-    {
-        horizontal,
-        vertical
-    };
-
-    Menu(Point xy, int w, int h, Kind kk, const std::string& label)
-        : Widget{xy, w, h, label, nullptr}, k{kk}, offset{0}
-    {
-    }
-
-    Vector_ref<Button> selection;
-    Kind k;
-    int offset;
-
-    int attach (Button& b);  // Menu does not delete &b
-    int attach (Button* p);  // Menu deletes p
-
-    void show ()  // show all buttons
-    {
-        for (int i = 0; i < selection.size(); ++i)
-            selection[i].show();
-    }
-
-    void hide ()  // hide all buttons
-    {
-        for (int i = 0; i < selection.size(); ++i)
-            selection[i].hide();
-    }
-
-    void move (int dx, int dy)  // move all buttons
-    {
-        for (int i = 0; i < selection.size(); ++i)
-            selection[i].move(dx, dy);
-    }
-
-    void attach (Window& win)  // attach all buttons
-    {
-        for (int i = 0; i < selection.size(); ++i)
-            win.attach(selection[i]);
-        own = &win;
-    }
-};
-
-//------------------------------------------------------------------------------
-
 }  // namespace Graph_lib
-
-#endif  // GUI_GUARD

@@ -8,7 +8,7 @@ using std::function;
 
 namespace Graphix_calc {
 
-Graphix::Graphix(function<double(double)> func, double l_border, double r_border,
+Graphix::Graphix(function<double(double)> func, double min_x, double max_x,
                  Graph_lib::Point center, int point_amount, double scale)
 {
     auto convert_to_pix = [&] (double x, double y) -> Graph_lib::Point
@@ -17,20 +17,20 @@ Graphix::Graphix(function<double(double)> func, double l_border, double r_border
                                 center.y - static_cast<int>(y * scale)};
     };
 
-    if (r_border - l_border <= 0)
+    if (max_x - min_x <= 0)
         invalid_argument("bad graphing range");
 
     if (point_amount <= 0)
         invalid_argument("non-positive graphing count");
     else if (point_amount == 2)
     {
-        add_point(convert_to_pix(l_border, func(l_border)));
-        add_point(convert_to_pix(r_border, func(r_border)));
+        add_point(convert_to_pix(min_x, func(min_x)));
+        add_point(convert_to_pix(max_x, func(max_x)));
     }
     else
     {
-        double dist = (r_border - l_border) / point_amount;
-        double r = l_border;
+        double dist = (max_x - min_x) / point_amount;
+        double r = min_x;
         for (int i = 0; i < point_amount; ++i)
         {
             add_point(Graph_lib::Point{center.x + int(r * scale), center.y - int(func(r) * scale)});

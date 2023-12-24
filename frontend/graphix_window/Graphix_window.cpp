@@ -3,8 +3,8 @@
 
 // std libs
 #include <stdexcept>
-using std::vector;
 using std::string;
+using std::vector;
 
 // Graph_lib
 using Graph_lib::Button;
@@ -208,7 +208,8 @@ void Graphix_window::draw_deriv(size_t der_index)
 
     enter_menu[der_index]->der_show();
 
-    enter_menu[der_index]->set_der_str("(" + inputed_funcs[der_index].get_func_str() + ")'");
+    if (enter_menu[der_index]->is_input_valid())
+        enter_menu[der_index]->set_der_str("(" + inputed_funcs[der_index].get_func_str() + ")'");
 
     button_pushed = true;
 }
@@ -240,6 +241,10 @@ void Graphix_window::hide_points()
 
 void Graphix_window::new_func_box()
 {
+    // если до увеличения массив function_боксов был пуст, то мы обратно двигаем new_button
+    if (enter_menu.empty())
+        new_button.move(func_box_w, 0);
+
     // создаем новый бокс (с индексом последний + 1 (= размер))
     Function_box* func_box = new Function_box{enter_menu.size(), cb_draw_graph, cb_hide_graph,
                                               cb_rem_func,       cb_draw_der,   cb_hide_der};
@@ -247,10 +252,6 @@ void Graphix_window::new_func_box()
     // задаём ему последний номер и аттачим его
     func_box->set_index(enter_menu.size());
     attach(*func_box);
-
-    // если до увеличения массив function_боксов был пуст, то мы обратно двигаем new_button
-    if (enter_menu.empty())
-        new_button.move(func_box_w, 0);
 
     // добавляем новый function_бокс в соотв. вектор
     enter_menu.push_back(func_box);
@@ -291,6 +292,8 @@ void Graphix_window::rem_func_box(size_t func_index)
         graphics.erase(graphics.begin() + func_index);
     else
         graphics.clear();
+
+    // FIXME: почему-то не работает erase graphics.erase(graphics.begin())
 
     // возвращаем кнопку "new_button" на экран, если был удален хоть один
     if (enter_menu.size() == max_functions_amount - 1)

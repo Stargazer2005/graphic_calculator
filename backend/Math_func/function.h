@@ -12,7 +12,7 @@
 
 namespace Math_func {
 
-// MEMO: класс, представляющий собой математическую функцию
+// MEANS: класс, представляющий собой математическую функцию
 class function
 {
   public:
@@ -22,56 +22,78 @@ class function
 
     // methods:
 
-    function operator= (const function&);
+    // IDK: лямбда-выражения - это поля, которые я понимаю, как методы, но правильно ли это?
 
-    double operator() (double x) const { return calc(x); }
-
-    // MEMO: лямбда-функция, считающая по заданному x значение функции
+    // DOES: считает по заданному x значение мат. функции
     const std::function<double(double)> calculate = [this] (double x) { return calc(x); };
 
-    // MEMO: лямбда-функция, считающая по заданному x значение производной функции
+    // DOES: считает по заданному x значение мат. функции
+    inline double operator() (double x) const { return calc(x); }
+
+    // DOES: считает по заданному x значение производной мат. функции
     const std::function<double(double)> differentiate = [this] (double x)
     {
         return (calc(x + Back_consts::delta_x) - calc(x - Back_consts::delta_x)) /
                (2 * Back_consts::delta_x);
+        // IDK: delta_x не должно быть переменной, зависящей от масштаба?
     };
+
+    // нету подходящего оператора для удобного получения производной :(
+    //. DOES: считает по заданному x значение производной мат. функции
+    // inline double operator[] (double x) const { return differentiate(x); }
 
     bool has_var () const;
 
-    std::string get_func_str () const { return func_str; }
+    // DOES: возвращает мат. функцию в виде строки
+    inline std::string get_func_str () const { return func_str; }
+
+    function operator= (const function&);
+
+    // ~methods:
 
   private:
     // vars:
 
-    // MEMO: мат. функция в виде строки
+    // MEANS: мат. функция в виде строки
     std::string func_str;
-    // MEMO: список лексем
+
+    // MEANS: вектор лексем от мат. функции
     std::vector<std::string> lexs;
-    // MEMO: обратная польская нотация
+
+    // MEANS: вектор лексем, записанный в обратной польской нотации
     std::vector<std::string> rev_pol;
+
+    // ~vars:
 
     // methods:
 
-    // MEMO: метод, проверяющий на корректность строки
+    // DOES: проверяет мат. функцию в виде строки, на валидность
     // (правильное кол-во скобок, отсутствие лишних символов)
-    // (правильное использование знаков, точки, цифр)
+    // (правильное использование знаков, точек, цифр)
     bool is_str_valid () const;
 
-    // MEMO: метод, проверяющий на корректность лексем
-    // (корректность использования элементар. матю функций (cos, sin, tan, exp, ln, um))
-    // (использование лишних переменных)
+    // DOES: проверяет вектор лексем от мат. функции на валидность
+    // (правильное использование элементар. мат. функций (cos, sin, tan, exp, ln, um))
+    // (отсутствие лишних переменных)
     bool is_lexs_valid () const;
 
-    // MEMO: метод, который переводит введеную строку в список лексем
+    // DOES: переводит введеную строку в список вектор лексем от мат. функции
     std::vector<std::string> lexemes () const;
-    // MEMO: метод, который переводит список лексем в обратную польскую нотацию
+
+    // DOES: переводит вектор лексем, записанный в обратной польской нотации
     std::vector<std::string> reverse_polish () const;
-    // MEMO: метод, который по значению заданному x вычисляет значение функции
+
+    // DOES: считает по заданному x значение мат. функции
     double calc (double x) const;
+
+    // ~methods:
 };
 
 }  // namespace Math_func
 
-// MEMO: перегрузка оператора
+// DOES: выводит в поток мат. функцию в виде строки
 // (только для принта, который будет удален позднее)
-std::ostream& operator<< (std::ostream& os, Math_func::function func);
+inline std::ostream& operator<< (std::ostream& os, Math_func::function func)
+{
+    return os << func.get_func_str();
+}
