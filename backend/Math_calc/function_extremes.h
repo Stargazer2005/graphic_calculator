@@ -10,10 +10,11 @@
 
 namespace Math_calc {
 
+// MEMO: класс, хранящий в себе вектор точек - локальные экстремумы мат. функции
 class function_extremes : public function_roots
 {
   public:
-    function_extremes(Backend::function _func, double l_border, double r_border, double h_border,
+    function_extremes(Math_func::function _func, double l_border, double r_border, double h_border,
                       double _precision);
 
     std::vector<Point> get_function_extremes () const { return points; }
@@ -25,22 +26,23 @@ class function_extremes : public function_roots
         pnt_max
     };
 
-    // variables
+    // vars
 
-    // точность (используем везде, поэтому сохраняем в качестве поля)
+    // MEMO: точность
+    // (используем везде, поэтому сохраняем в качестве поля)
     double precision;
-    Backend::function func;
-    // вектор точек, который и будем возвращать
+    // MEMO: введенная функция
+    Math_func::function f;
     std::vector<Point> points;
 
     // methods
 
-    // деление сегмента на на подсегменты, где могут быть экстремумы
-    std::vector<Segment> estimated_segment (TypeExtreme extr, Segment seg) const;
-    // нахождение экстремума на интервале (используя метод золотого сечения)
-    double extreme_on_interval (TypeExtreme extr, Segment seg) const;
+    // MEMO: деление сегмента на на подсегменты, где могут быть экстремумы
+    std::vector<Segment> estimated_segment(TypeExtreme, Segment) const;
+    // MEMO: нахождение экстремума на интервале, используя метод золотого сечения
+    double extreme_on_interval(TypeExtreme, Segment) const;
 
-    // нахождение всех пересечений
+    // MEMO: нахождение всех локальных экстремумов
     std::vector<Point> extremes (double l_border, double r_border, double h_border) const;
 };
 }  // namespace Math_calc

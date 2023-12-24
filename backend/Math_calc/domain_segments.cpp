@@ -1,4 +1,3 @@
-// header
 #include "domain_segments.h"
 
 // std libs
@@ -10,11 +9,10 @@ namespace Math_calc {
 vector<Segment> domain_segments (const function<double(double)>& calc, double min_x, double max_x,
                                  double max_y, double precision)
 {
-    // для большей точности
-    max_x *= 2;
+    max_x *= 2;  // для большей точности
     double min_y = -max_y;
     std::vector<Segment> res;
-    // начало отрезка уже было записано
+    // MEMO: начало отрезка уже было записано
     bool is_x_started = false;
     Segment seg;
     for (double x = min_x; x < max_x; x += precision)

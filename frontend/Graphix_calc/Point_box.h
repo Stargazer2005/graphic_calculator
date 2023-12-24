@@ -21,7 +21,7 @@ class Point_box : public Graph_lib::Widget
     void detach (Graph_lib::Window&);
 
   private:
-    // variables
+    // vars
 
     Graph_lib::Button* show_button;
     Graph_lib::Button* hide_button;

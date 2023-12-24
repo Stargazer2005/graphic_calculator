@@ -1,9 +1,10 @@
-// header
+
 #include "Graphix.h"
 
 // std libs
 #include <stdexcept>
-using std::invalid_argument, std::function;
+using std::invalid_argument;
+using std::function;
 
 namespace Graphix_calc {
 

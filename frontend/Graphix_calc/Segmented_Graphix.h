@@ -18,7 +18,7 @@ namespace Graphix_calc {
 class Segmented_Graphix
 {
   public:
-    Segmented_Graphix(Backend::function _func, double scale, Graph_lib::Point origin, int max_x,
+    Segmented_Graphix(Math_func::function _func, double scale, Graph_lib::Point origin, int max_x,
                       int max_y);
 
     // methods
@@ -28,10 +28,10 @@ class Segmented_Graphix
     std::vector<Graphix_calc::Graphix*> get_segmented_deriv () const { return seged_deriv; }
 
   private:
-    // variables
+    // vars
 
     // значение строки
-    Backend::function func;
+    Math_func::function func;
     // список отрезков, на котором рисуем функцию
     std::vector<Math_calc::Segment> func_segs;
     std::vector<Math_calc::Segment> segs_der;

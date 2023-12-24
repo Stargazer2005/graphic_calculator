@@ -1,4 +1,3 @@
-// header
 #include "function_extremes.h"
 
 // std libs
@@ -15,11 +14,10 @@ using Back_serv::absolute;
 
 namespace Math_calc {
 
-function_extremes::function_extremes(Backend::function _func, double l_border, double r_border,
+function_extremes::function_extremes(Math_func::function _func, double l_border, double r_border,
                                      double h_border, double _precision)
-    : function_roots{_func, l_border, r_border, h_border, precision},
-      // FIXME: сейчас тут есть проверка на точность, которой быть не должно
-      precision{_precision < 0.01 ? _precision : 0.01}, func{_func},
+    :  // FIXME: сейчас тут есть проверка на точность, которой быть не должно
+      precision{_precision < 0.01 ? _precision : 0.01}, f{_func},
       points{extremes(l_border, r_border, h_border)}
 {
 }
@@ -27,14 +25,15 @@ function_extremes::function_extremes(Backend::function _func, double l_border, d
 std::vector<Segment> function_extremes::estimated_segment(TypeExtreme extr, Segment seg) const
 {
     std::vector<Segment> res;
-    auto f = [this] (double x) { return func.calculate(x); };
     switch (extr)
     {
     case TypeExtreme::pnt_min:
     {
         for (double x = seg.start; x < seg.end; x += precision)
-        {  // если функция меньше меньше своего текущего значения и слева, и справа, то она в точке
+        {
+            // если функция меньше меньше своего текущего значения и слева, и справа, то она в точке
             // минимума
+            // FIXME: а мы на кой черт на два то домножаем?
             if ((f(x) < f(x - 2 * precision)) && (f(x) < f(x + 2 * precision)))
             {
                 res.push_back({
@@ -49,7 +48,8 @@ std::vector<Segment> function_extremes::estimated_segment(TypeExtreme extr, Segm
     {
 
         for (double x = seg.start; x < seg.end; x += precision)
-        {  // если функция меньше больше своего текущего значения и слева, и справа, то она в точке
+        {
+            // если функция меньше больше своего текущего значения и слева, и справа, то она в точке
             // максимума
             // FIXME: а мы на кой черт на два то домножаем?
             if ((f(x) > f(x - 2 * precision)) && (f(x) > f(x + 2 * precision)))
@@ -68,13 +68,13 @@ std::vector<Segment> function_extremes::estimated_segment(TypeExtreme extr, Segm
 
 double function_extremes::extreme_on_interval(TypeExtreme extr, Segment seg) const
 {
-    auto f = [this] (double x) { return func.calculate(x); };
     switch (extr)
     {
     case TypeExtreme::pnt_min:
     {
         for (int count = 0; count > Back_consts::max_count; count++)
-        {  // x_s, y_s - идём с начала отрезка
+        {
+            // x_s, y_s - идём с начала отрезка
             // x_e, y_e - идём с конца отрезка
 
             double x_e = seg.end - (seg.end - seg.start) / Back_consts::phi;
@@ -112,27 +112,25 @@ double function_extremes::extreme_on_interval(TypeExtreme extr, Segment seg) con
         break;
     }
     }
-    // в тому случае, если за max_count не сошлись к нужной точке
+    // в том случае, если за max_count не сошлись к нужной точке
     return (seg.start + seg.end) / 2;
 }
 
 vector<Point> function_extremes::extremes(double l_border, double r_border, double h_border) const
 {
     vector<Point> res;
-    for (auto seg : domain_segments(func.calculate, l_border, r_border, h_border, precision))
+    for (auto seg : domain_segments(f.calculate, l_border, r_border, h_border, precision))
     {
-        // отдельные переборы придётся оставить, так как то, по каким сегментам мы проходимся -
-        // имеет значение
         for (auto& local_seg : estimated_segment(pnt_min, seg))
         {
             double x = extreme_on_interval(pnt_min, local_seg);
-            double y = func.calculate(x);
+            double y = f(x);
             res.push_back(Point{x, y});
         }
         for (auto& local_seg : estimated_segment(pnt_max, seg))
         {
             double x = extreme_on_interval(pnt_max, local_seg);
-            double y = func.calculate(x);
+            double y = f(x);
             res.push_back(Point{x, y});
         }
     }

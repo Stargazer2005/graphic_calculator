@@ -1,4 +1,4 @@
-// header
+
 #include "servant.h"
 
 // std libs

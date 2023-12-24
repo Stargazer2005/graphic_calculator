@@ -72,7 +72,7 @@ class Function_box : public Graph_lib::Widget
     void move (int dx, int dy) override;
 
   private:
-    // variables
+    // vars
 
     // поле, куда пользователь вводит функцию
     Graph_lib::In_box* in_box;

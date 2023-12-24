@@ -1,9 +1,10 @@
-// header
-#include "graphix_window.h"
+
+#include "Graphix_window.h"
 
 // std libs
 #include <stdexcept>
-using std::vector, std::string;
+using std::string;
+using std::vector;
 
 // Graph_lib
 using Graph_lib::Button;
@@ -185,7 +186,7 @@ void Graphix_window::update_points()
     // всевозможные пересечения (если они не скрыты)
     for (size_t i = 0; i < enter_menu.size(); i++)
     {
-        auto& function_box = enter_menu[i];
+        auto function_box = enter_menu[i];
         // введенная строка
         auto func = inputed_funcs[i];
 
@@ -195,19 +196,21 @@ void Graphix_window::update_points()
 
         if (is_valid)
         {
-            Math_calc::function_extremes fe{func, l_border, r_border, h_border, point_prec};
-            // создаём марки, добавляем их на окно
-            Marks* dots = new Marks{"#"};
-            for (auto& p : fe.get_function_extremes())
-                dots->add(convert_to_pix(p));
-            attach(*dots);
-            // и добавляем в общий массив всех точек на экране
-            all_points.push_back(dots);
-
             Math_calc::function_roots fr{func, l_border, r_border, h_border, point_prec};
             // создаём марки, добавляем их на окно
             dots = new Marks{"x"};
             for (auto& p : fr.get_function_roots())
+                dots->add(convert_to_pix(p));
+            attach(*dots);
+
+            // и добавляем в общий массив всех точек на экране
+            all_points.push_back(dots);
+
+            Math_calc::function_extremes fe{func, l_border, r_border, h_border, point_prec};
+
+            // создаём марки, добавляем их на окно
+            Marks* dots = new Marks{"#"};
+            for (auto& p : fe.get_function_extremes())
                 dots->add(convert_to_pix(p));
             attach(*dots);
             // и добавляем в общий массив всех точек на экране
@@ -264,7 +267,7 @@ void Graphix_window::update_inputed_func(size_t func_index, bool need_update_str
     try
     {
         // раскрываем все зависимости вида y_n
-        auto edfc = Backend::expose_func_str{inputed_strings, estimated_func_str};
+        auto edfc = Math_func::expose_func_str{inputed_strings, estimated_func_str};
         dependences = edfc.get_dependences();
 
         // апдейтим все зависимые функции
@@ -272,7 +275,7 @@ void Graphix_window::update_inputed_func(size_t func_index, bool need_update_str
             update_inputed_func(i - 1, false);
 
         // создаём функцию (чтобы потенциально проверить на ошибки)
-        Backend::function func{estimated_func_str};
+        Math_func::function func{estimated_func_str};
 
         // если попытка раскрытия зависимостей создания функции не вызвали ошибок, то всё
         // шикарно, предполагаемая функция действительно норм

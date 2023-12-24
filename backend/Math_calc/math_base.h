@@ -2,22 +2,26 @@
 
 namespace Math_calc {
 
-// вещественная точка
+// MEMO: вещественная точка
 struct Point
 {
-    Point(double x, double y) : x{x}, y{y} {}
+    Point(double _x, double _y) : x{_x}, y{_y} {}
 
     Point() : x{0}, y{0} {}
+
+    // vars
 
     double x, y;
 };
 
-// вещественный отрезок
+// MEMO: вещественный отрезок
 struct Segment
 {
-    Segment(double start, double stop) : start{start}, end{stop} {}
+    Segment(double _start, double _end) : start{_start}, end{_end} {}
 
-    Segment() : start{0}, end{0} {}
+    Segment() : start{-0}, end{0} {}
+
+    // vars
 
     double start, end;
 };

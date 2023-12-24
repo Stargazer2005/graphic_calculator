@@ -1,9 +1,10 @@
-// header
-#include "graphix_window.h"
+
+#include "Graphix_window.h"
 
 // std libs
 #include <stdexcept>
-using std::vector, std::string;
+using std::vector;
+using std::string;
 
 // Graph_lib
 using Graph_lib::Button;

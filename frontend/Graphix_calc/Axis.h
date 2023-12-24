@@ -28,7 +28,7 @@ class Axis : public Graph_lib::Shape
     void set_color (Graph_lib::Color c);
 
   private:
-    // variables
+    // vars
 
     //  расстояние между насечками
     int dist;

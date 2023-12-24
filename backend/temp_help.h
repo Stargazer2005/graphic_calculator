@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
-using std::cout, std::endl;
+using std::cout; 
+using std::endl;
 
 template <typename T> void print (const std::vector<T>& v)
 {

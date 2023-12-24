@@ -7,15 +7,15 @@
 
 // Math_calc
 #include "function_roots.h"
-#include "math_base.h"  // for Point
+#include "math_base.h"
 
 namespace Math_calc {
 
-// класс, хранящий в себе вектор точек - пересечений двух графиков заданных строками
+// MEMO: класс, хранящий в себе вектор точек - пересечений двух func'ов
 class function_crosses : public function_roots
 {
   public:
-    function_crosses(std::pair<Backend::function, Backend::function> funcs, double l_border,
+    function_crosses(std::pair<Math_func::function, Math_func::function> funcs, double l_border,
                      double r_border, double h_border, double _precision);
 
     // methods
@@ -23,20 +23,21 @@ class function_crosses : public function_roots
     std::vector<Point> get_functions_crosses () const { return points; }
 
   private:
-    // variables
+    // vars
 
-    // точность (используем везде, поэтому сохраняем в качестве поля)
+    // MEMO: точность
+    // (используем везде, поэтому сохраняем в качестве поля)
     double precision;
-    // одна из введенных функций (одна, так как нужно просто найти y, можно и в одну подставить)
-    Backend::function func;
-    // вектор точек, который и будем возвращать
+    // MEMO: одна из введенных функций
+    // (одна, так как нужно просто найти y, можно и в одну подставить)
+    Math_func::function f;
     std::vector<Point> points;
 
     // methods
 
-    // нахождение всех пересечений
+    // MEMO: нахождение всех пересечений
     std::vector<Point> crosses (double l_border, double r_border, double h_border)
-        const;  // чтобы не хранить границы внутри класса, передаём их в аргументы
+        const;  // (чтобы не хранить границы внутри класса, передаём их в аргументы)
 };
 
 }  // namespace Math_calc

@@ -1,4 +1,4 @@
-// header
+
 #include "function.h"
 
 // std libs
@@ -10,12 +10,13 @@ using std::string;
 using std::vector;
 
 // servant
-#include "servant/servant.h"
+#include "../servant/servant.h"
 using namespace Back_serv;
 using namespace Back_consts;
-#include "temp_help.h"
 
-namespace Backend {
+// #include "temp_help.h"
+
+namespace Math_func {
 
 function::function(string _func_str)
     : func_str{spaces_deleted(_func_str)}, lexs{lexemes()}, rev_pol{reverse_polish()}
@@ -44,11 +45,15 @@ vector<string> function::lexemes() const
         return {};
 
     vector<string> res;
+    // MEMO: текущая лексема
     string lex;
+    // MEMO: строка со всеми разрешенными мат. операциями
     const string math_oper_chars = "+-*/^u";
+    // FIXME: разобраться с этим несоответствием векторов знаков и функций в разных местах
+    // TODO: перевести эти строки в служебные константы
     for (size_t i = 0; i < func_str.size(); i++)
     {
-        // текущий символ строки
+        // MEMO: текущий символ строки
         char ch = func_str[i];
         switch (ch)
         {
@@ -128,23 +133,25 @@ vector<string> function::reverse_polish() const
     if (!is_lexs_valid())
         return {};
 
-    // вектор, куда записывается итоговая запись
+    // MEMO: вектор, куда записывается итоговая запись
     vector<string> res;
-    // стэк для хранения операций в правильном порядке
+    // MEMO: стэк для хранения операций в правильном порядке
     stack<string> st_oper;
     st_oper.push("\0");
 
-    // строка с функциями
-    const string math_func_chars = "sctelu";
-    // строка с операциями
-    const string math_oper_chars = "+-*/^";
+    // FIXME: Дим, ты пишешь MEMO то рядом, то сверху
+
+    const string math_func_chars = "sctelu";  // MEMO: строка с разрешенными мат. функциями
+    const string math_oper_chars = "+-*/^";  // MEMO: строка с разрешенными мат. операциями
 
     for (const auto& lex : lexs)
     {
-        // символ, обозначающий текущую лексему
+        // MEMO: символ текущей лексемы
         char curr = s_to_c(lex);
-        // символ, обозначающий последний элемент в стеке с операциями
+        // MEMO: символ, обозначающий последний элемент в стеке с операциями
         char last = s_to_c(st_oper.top());
+
+        // TODO: напиши комментарии по работе этого свитча
         switch (curr)
         {
         case number:
@@ -250,21 +257,20 @@ vector<string> function::reverse_polish() const
 
 double function::calc(double x) const
 {
-    const string math_oper_chars = "+-*/^";   // строка с операциями
-    const string math_func_chars = "sctelu";  // строка с функциями
-    // (да, унарный минус - тоже функция)
+    const string math_oper_chars = "+-*/^";  // MEMO: строка с разрешенными мат. операциями
+    const string math_func_chars = "sctelu";  // MEMO: строка с с разрешенными мат. функциями
 
     stack<double> Stack;
     for (auto& lex : rev_pol)
     {
-        double l;  // последний символ в стэке
-        double p;  // предпоследний символ в стэке (последний после удаления l)
-        char curr = s_to_c(lex);  // текущий символ,
-                                  // если брать вместо строки (для switch)
+        double l;  // MEMO: последний символ в стэке
+        double p;  // MEMO: предпоследний символ в стэке (последний после удаления l)
+        char curr = s_to_c(lex);  // MEMO: текущий символ,
+                                  // (если брать вместо строки (для switch))
         if (c_in_s(curr, math_func_chars))
         {
-            l = Stack.top();  // запоминаем только последний (так как функции
-                              // унарны)
+            l = Stack.top();  // запоминаем только последний
+                              // (так как функции унарны)
             Stack.pop();
             switch (curr)
             {
@@ -292,8 +298,8 @@ double function::calc(double x) const
         {
             l = Stack.top();
             Stack.pop();
-            p = Stack.top();  // также запоминаем предпоследний (так как операции
-                              // бинарны)
+            p = Stack.top();  // также запоминаем предпоследний
+                              // (так как операции бинарны)
             Stack.pop();
             switch (curr)
             {
@@ -330,11 +336,14 @@ double function::calc(double x) const
             }
         }
         if (std::isnan(Stack.top()) || std::isinf(Stack.top()))
-            throw std::invalid_argument("violation of domain of definition of function");
+            throw std::invalid_argument("math invalid number");
     }  // последнее, что осталось в стэке после всех действий - и есть ответ
     return Stack.top();
 }
 
-std::ostream& operator<< (std::ostream& os, function func) { return os << func.get_func_str(); }
+}  // namespace Math_func
 
-}  // namespace Backend
+std::ostream& operator<< (std::ostream& os, Math_func::function func)
+{
+    return os << func.get_func_str();
+}

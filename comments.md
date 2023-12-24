@@ -58,7 +58,7 @@ graphic_calculator/
 Бэкенд: числа с плавающей запятой и функции
 
 std::string func_strs - обозначающие математические функции
-Backend::function funcs - екземпляры класса, с методом calculate, который используя func_strs считает y по x которые
+Math_func::function funcs - екземпляры класса, с методом calculate, который используя func_strs считает y по x которые
 Graphix_calc::Graphix graphics - фигуры, представляющие собой графики, построенные по funcs
 
 (для производных der = func, deriative = graphic)

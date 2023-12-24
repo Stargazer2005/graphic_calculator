@@ -7,17 +7,17 @@
 // Math_calc
 #include "math_base.h"
 
-// Backend
-#include "../function.h"
+// Math_function
+#include "../Math_func/function.h"
 
 namespace Math_calc {
 
-// класс, хранящий в себе вектор точек - пересечений графика с осями (график задан строкой)
+// MEMO: класс, хранящий в себе вектор точек - пересечений графика func с осью Ox
 class function_roots
 {
   public:
-    function_roots();  // этот конструктор нужен только для наследования
-    function_roots(Backend::function _func, double l_border, double r_border, double h_border,
+    function_roots();  // (этот конструктор нужен только для наследования)
+    function_roots(Math_func::function _func, double l_border, double r_border, double h_border,
                    double _precision);
 
     // methods
@@ -27,26 +27,26 @@ class function_roots
   protected:
     // methods
 
-    // деление сегмента на на подсегменты, где могут быть корни (используя тот факт, что по разные
-    // стороны от точки-корня функция имеет разные знаки, так как он лежит на y = 0)
-    std::vector<Segment> estimated_segment (Segment seg) const;
-    // нахождение корня на интервале (используя метод золотого сечения)
-    double solution_on_interval (Segment seg) const;
+    // MEMO: деление сегмента на на подсегменты, где могут быть корни
+    // (используя тот факт, что по разные стороны от точки-корня func имеет разные знаки)
+    std::vector<Segment> estimated_segment(Segment) const;
+
+    // MEMO: нахождение корня на интервале (используя метод золотого сечения)
+    double solution_on_interval(Segment) const;
 
   private:
-    // variables
+    // vars
 
-    // точность (используем везде, поэтому сохраняем в качестве поля)
+    // MEMO: точность (используем везде, поэтому сохраняем в качестве поля)
     double precision;
-    // введенная функция
-    Backend::function func;
-    // вектор точек, который и будем возвращать
+    // MEMO: введенная func
+    Math_func::function f;
     std::vector<Point> points;
 
     // methods
 
-    // нахождение всех корней
-    std::vector<Point> solutions (double l_border, double r_border, double h_border) const;
+    // MEMO: нахождение всех корней
+    std::vector<Point> roots (double l_border, double r_border, double h_border) const;
 };
 
 }  // namespace Math_calc

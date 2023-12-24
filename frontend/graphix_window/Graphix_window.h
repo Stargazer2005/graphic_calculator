@@ -5,7 +5,7 @@
 #include <vector>
 
 // Graphix_calc
-#include "../../backend/function.h"
+#include "../../backend/Math_func/function.h"
 #include "../Graphix_calc/Axis.h"
 #include "../Graphix_calc/Dext_box.h"
 #include "../Graphix_calc/Function_box.h"
@@ -20,9 +20,6 @@
 #include "../Graph_lib/GUI.h"
 #include "../Graph_lib/Graph.h"
 #include "../Graph_lib/Window.h"
-
-// temp
-#include "../temp_help.h"
 
 namespace Frontend {
 
@@ -55,7 +52,7 @@ class Graphix_window : public Graph_lib::Window
     bool window_is_open () const { return !quit_button_pushed; }
 
   private:
-    // variables
+    // vars
 
     // общее значение масштаба: количество пикселей в единичном отрезке!?
     double scale;
@@ -80,7 +77,7 @@ class Graphix_window : public Graph_lib::Window
 
     // общий вектор введенных пользователем строк
     std::vector<std::string> inputed_strings;
-    std::vector<Backend::function> inputed_funcs;
+    std::vector<Math_func::function> inputed_funcs;
     // общий вектор со всеми сегментированными функциями (графиками)
     std::vector<std::vector<Graphix_calc::Graphix*>> graphics;
     // общий вектор со всеми сегментированными производными функций (графиками)

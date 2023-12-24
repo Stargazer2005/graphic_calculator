@@ -18,7 +18,7 @@ class Numbed_button : public Graph_lib::Button
     void set_number (int value) { number = value; }
 
   private:
-    // variables
+    // vars
 
     int number;
 };

@@ -35,8 +35,8 @@ set(HEADERS
     backend/servant/servant.h
     backend/servant/constants.h
 
-    backend/expose_func_str.h
-    backend/function.h
+    backend/Math_func/expose_func_str.h
+    backend/Math_func/function.h
 
     backend.h
 )
@@ -66,9 +66,9 @@ set(SOURCES
 
     backend/servant/servant.cpp
 
-    backend/expose_func_str.cpp
-    backend/function.cpp
-    backend/function_validation.cpp
+    backend/Math_func/expose_func_str.cpp
+    backend/Math_func/function.cpp
+    backend/Math_func/function_validation.cpp
 
 # main
     main.cpp

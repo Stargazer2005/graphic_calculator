@@ -1,4 +1,4 @@
-// header
+
 #include "Segmented_Graphix.h"
 
 // std libs
@@ -10,7 +10,7 @@ using std::vector;
 using Graph_lib::Point;
 
 // backend
-using Backend::function;
+using Math_func::function;
 using Math_calc::domain_segments;
 using Math_calc::Segment;
 
@@ -20,7 +20,7 @@ using namespace Front_consts;
 
 namespace Graphix_calc {
 
-Segmented_Graphix::Segmented_Graphix(Backend::function _func, double scale, Point center, int max_x,
+Segmented_Graphix::Segmented_Graphix(Math_func::function _func, double scale, Point center, int max_x,
                                      int max_y)
     : func{_func}, func_segs{segments(max_x, max_y, scale)},
       segs_der{derivative_segment(max_x, max_y, scale)},

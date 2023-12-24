@@ -1,4 +1,4 @@
-// header
+
 #include "Point_box.h"
 
 // Graph_lib
