@@ -19,7 +19,7 @@ set(HEADERS
     frontend/Graphix_calc/Numbed_button.h
     frontend/Graphix_calc/Segmented_Graphix.h
 
-    frontend/servant/constants.h
+    frontend/utility/constants.h
 
     frontend/graphix_window/Graphix_window.h
     
@@ -32,8 +32,8 @@ set(HEADERS
     backend/Math_calc/function_roots.h
     backend/Math_calc/math_base.h
 
-    backend/servant/servant.h
-    backend/servant/constants.h
+    backend/utility/utilities.h
+    backend/utility/constants.h
 
     backend/Math_func/expose_func_str.h
     backend/Math_func/function.h
@@ -64,7 +64,7 @@ set(SOURCES
     backend/Math_calc/function_crosses.cpp
     backend/Math_calc/function_roots.cpp
 
-    backend/servant/servant.cpp
+    backend/utility/utilities.cpp
 
     backend/Math_func/expose_func_str.cpp
     backend/Math_func/function.cpp

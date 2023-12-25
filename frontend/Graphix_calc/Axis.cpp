@@ -11,10 +11,10 @@ using Graph_lib::Color;
 using Graph_lib::Point;
 using Graph_lib::Text;
 
-// servant
-#include "../servant/constants.h"
-#include "../servant/format.h"
-using namespace Front_consts;
+// utility
+#include "../utility/constants.h"
+#include "../utility/format.h"
+using namespace Frontend_consts;
 
 namespace Graphix_calc {
 

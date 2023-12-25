@@ -30,16 +30,19 @@ class function_crosses : public function_roots
     // MEANS: точность
     // (используем везде, поэтому сохраняем в качестве поля)
     double precision;
+
     // MEANS: одна из введенных мат. функций
     // (одна, так как нужно просто найти y, можно и в одну подставить)
     Math_func::function f;
+
     std::vector<Point> points;
 
     // ~vars
 
     // methods
 
-    // DOES: находит все перемещения по известным макс., мин. значениям
+    // RETURNS: все пересечения двух мат. функций (точки: пары вида (x,y))
+    // (по известным макс., мин. значениям)
     std::vector<Point> crosses (double min_x, double max_x, double max_y)
         const;  // (чтобы не хранить границы внутри класса, передаём их в аргументы)
 

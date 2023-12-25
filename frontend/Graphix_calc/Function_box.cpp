@@ -9,9 +9,9 @@ using Graph_lib::In_box;
 using Graph_lib::Out_box;
 using Graph_lib::Point;
 
-// servant
-#include "../servant/constants.h"
-using namespace Front_consts;
+// utility
+#include "../utility/constants.h"
+using namespace Frontend_consts;
 
 namespace Graphix_calc {
 

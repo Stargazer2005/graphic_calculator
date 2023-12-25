@@ -29,11 +29,12 @@ class function_roots
   protected:
     // methods
 
-    // DOES: делит сегмент на на подсегменты, где могут быть корни
+    // RETURNS: подсегменты, где могут находиться корни
     // (используя тот факт, что по разные стороны от точки-корня мат. функция имеет разные знаки)
     std::vector<Segment> estimated_segment(Segment) const;
 
-    // DOES: находит корень на интервале, используя метод золотого сечения
+    // RETURNS: корень на интервале (значение x)
+    // (используя метод золотого сечения)
     double root_on_interval(Segment) const;
 
     // ~methods
@@ -53,7 +54,8 @@ class function_roots
 
     // methods
 
-    // DOES: находит все корни перебором по сегментам
+    // RETURNS: все корни (точки: пары вида (x,y))
+    // (проходясь перебором по сегментам)
     std::vector<Point> roots (double min_x, double max_x, double max_y) const;
 
     // ~methods

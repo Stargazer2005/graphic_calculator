@@ -5,8 +5,8 @@
 #include <string>
 #include <vector>
 
-// servant
-#include "../servant/constants.h"
+// utility
+#include "../utility/constants.h"
 
 #include "../temp_help.h"
 
@@ -24,27 +24,28 @@ class function
 
     // IDK: лямбда-выражения - это поля, которые я понимаю, как методы, но правильно ли это?
 
-    // DOES: считает по заданному x значение мат. функции
+    // RETURNS: значение y мат. функции
+    // (по заданному x)
     const std::function<double(double)> calculate = [this] (double x) { return calc(x); };
 
-    // DOES: считает по заданному x значение мат. функции
+    // RETURNS: значение y мат. функции
+    // (по заданному x)
     inline double operator() (double x) const { return calc(x); }
 
-    // DOES: считает по заданному x значение производной мат. функции
+    // RETURNS: значение y производной мат. функции
+    // (по заданному x)
     const std::function<double(double)> differentiate = [this] (double x)
     {
-        return (calc(x + Back_consts::delta_x) - calc(x - Back_consts::delta_x)) /
-               (2 * Back_consts::delta_x);
+        return (calc(x + Backend_consts::delta_x) - calc(x - Backend_consts::delta_x)) /
+               (2 * Backend_consts::delta_x);
         // IDK: delta_x не должно быть переменной, зависящей от масштаба?
     };
 
     // нету подходящего оператора для удобного получения производной :(
-    //. DOES: считает по заданному x значение производной мат. функции
-    // inline double operator[] (double x) const { return differentiate(x); }
 
     bool has_var () const;
 
-    // DOES: возвращает мат. функцию в виде строки
+    // RETURNS: мат. функция в виде строки
     inline std::string get_func_str () const { return func_str; }
 
     function operator= (const function&);
@@ -70,20 +71,21 @@ class function
     // DOES: проверяет мат. функцию в виде строки, на валидность
     // (правильное кол-во скобок, отсутствие лишних символов)
     // (правильное использование знаков, точек, цифр)
-    bool is_str_valid () const;
+    void func_str_validation () const;
 
     // DOES: проверяет вектор лексем от мат. функции на валидность
     // (правильное использование элементар. мат. функций (cos, sin, tan, exp, ln, um))
     // (отсутствие лишних переменных)
-    bool is_lexs_valid () const;
+    void func_lexs_validation () const;
 
-    // DOES: переводит введеную строку в список вектор лексем от мат. функции
+    // RETURNS: вектор лексем от мат. функции
     std::vector<std::string> lexemes () const;
 
-    // DOES: переводит вектор лексем, записанный в обратной польской нотации
+    // RETURNS: вектор лексем, записанный в обратной польской нотации
     std::vector<std::string> reverse_polish () const;
 
-    // DOES: считает по заданному x значение мат. функции
+    // RETURNS: значение y производной мат. функции
+    // (по заданному x)
     double calc (double x) const;
 
     // ~methods:
@@ -91,7 +93,7 @@ class function
 
 }  // namespace Math_func
 
-// DOES: выводит в поток мат. функцию в виде строки
+// RETURNS: поток ostream, в который вывели мат. функцию в виде строки
 // (только для принта, который будет удален позднее)
 inline std::ostream& operator<< (std::ostream& os, Math_func::function func)
 {

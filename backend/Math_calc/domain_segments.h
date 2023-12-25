@@ -9,7 +9,8 @@
 
 namespace Math_calc {
 
-// DOES: дробит на вещественные отрезки по лямбде, мин., макс. значениям и точности
+// RETURNS: вещественные отрезки, где мат. функция определена
+// (по лямбде от мат. функции, мин, макс значениям (краям) и точности)
 std::vector<Segment> domain_segments (const std::function<double(double)>& calc, double min_x,
                                       double max_x, double max_y, double precision);
 

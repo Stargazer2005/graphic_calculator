@@ -10,17 +10,21 @@
 // Backend
 #include "../../backend.h"
 
-namespace Front_consts {
+namespace Frontend_consts {
 
 const std::string empty_str = "";
-const Math_func::function empty_func{"0--0"};
+
+// (мы можем использовать такую запись функции не боясь за точки пересечения)
+// (это связано с тем, что у нас в любом случае изначально enter_menu[i]->is_input_valid = false)
+// (т.е. у только что созданных новых Function_box'ов не берется y = 0 в расчет для точек)
+const Math_func::function empty_func{"0"};
 
 // минимальное количество пикселей для ед. отрезка
 constexpr int min_scale = 2;
 // максимальное количество пикселей для ед. отрезка
 constexpr int max_scale = 1024;
 // максимальное количество вводимых функций пользователем (тип связан с использованием в векторах)
-constexpr unsigned long long int max_functions_amount = 4;
+constexpr unsigned long long int max_functions_amount = 6;
 
 constexpr double scale_coef = 2;
 
@@ -56,4 +60,5 @@ constexpr int func_box_h = in_box_h + 2 * btn_h + out_box_h + padding;
 constexpr int height_buff = 3;
 
 constexpr int distance = 50;
-}  // namespace Front_consts
+
+}  // namespace Frontend_consts

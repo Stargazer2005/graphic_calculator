@@ -2,7 +2,7 @@
 
 namespace Math_calc {
 
-// MEMO: вещественная точка
+// MEANS: вещественная точка
 struct Point
 {
     inline Point(double _x, double _y) : x{_x}, y{_y} {}
@@ -16,7 +16,7 @@ struct Point
     // ~vars
 };
 
-// MEMO: вещественный отрезок
+// MEANS: вещественный отрезок
 struct Segment
 {
     inline Segment(double _start, double _end) : start{_start}, end{_end} {}

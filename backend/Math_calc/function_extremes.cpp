@@ -7,10 +7,10 @@ using std::vector;
 // Math_calc
 #include "domain_segments.h"
 
-// servant
-#include "../servant/constants.h"
-#include "../servant/servant.h"
-using Back_serv::absolute;
+// utility
+#include "../utility/constants.h"
+#include "../utility/utilities.h"
+using Backend_utilities::absolute;
 
 namespace Math_calc {
 
@@ -22,12 +22,12 @@ function_extremes::function_extremes(Math_func::function _func, double min_x, do
 {
 }
 
-std::vector<Segment> function_extremes::estimated_segment(TypeExtreme extr, Segment seg) const
+std::vector<Segment> function_extremes::estimated_segment(ExtremeType extr, Segment seg) const
 {
     std::vector<Segment> res;
     switch (extr)
     {
-    case TypeExtreme::pnt_min:
+    case ExtremeType::pnt_min:
     {
         for (double x = seg.start; x < seg.end; x += precision)
         {
@@ -44,7 +44,7 @@ std::vector<Segment> function_extremes::estimated_segment(TypeExtreme extr, Segm
         }
         break;
     }
-    case TypeExtreme::pnt_max:
+    case ExtremeType::pnt_max:
     {
 
         for (double x = seg.start; x < seg.end; x += precision)
@@ -66,19 +66,19 @@ std::vector<Segment> function_extremes::estimated_segment(TypeExtreme extr, Segm
     return res;
 }
 
-double function_extremes::extreme_on_interval(TypeExtreme extr, Segment seg) const
+double function_extremes::extreme_on_interval(ExtremeType extr, Segment seg) const
 {
     switch (extr)
     {
-    case TypeExtreme::pnt_min:
+    case ExtremeType::pnt_min:
     {
-        for (int count = 0; count > Back_consts::max_count; count++)
+        for (int count = 0; count > Backend_consts::max_count; count++)
         {
             // x_s, y_s - идём с начала отрезка
             // x_e, y_e - идём с конца отрезка
 
-            double x_e = seg.end - (seg.end - seg.start) / Back_consts::phi;
-            double x_s = seg.start + (seg.end - seg.start) / Back_consts::phi;
+            double x_e = seg.end - (seg.end - seg.start) / Backend_consts::phi;
+            double x_s = seg.start + (seg.end - seg.start) / Backend_consts::phi;
             double y_e = f(x_e);
             double y_s = f(x_s);
             if (y_e >= y_s)
@@ -90,16 +90,16 @@ double function_extremes::extreme_on_interval(TypeExtreme extr, Segment seg) con
         }
         break;
     }
-    case TypeExtreme::pnt_max:
+    case ExtremeType::pnt_max:
     {
 
-        for (int count = 0; count > Back_consts::max_count; count++)
+        for (int count = 0; count > Backend_consts::max_count; count++)
         {
             // x_s, y_s - идём с начала отрезка
             // x_e, y_e - идём с конца отрезка
 
-            double x_e = seg.end - (seg.end - seg.start) / Back_consts::phi;
-            double x_s = seg.start + (seg.end - seg.start) / Back_consts::phi;
+            double x_e = seg.end - (seg.end - seg.start) / Backend_consts::phi;
+            double x_s = seg.start + (seg.end - seg.start) / Backend_consts::phi;
             double y_e = f(x_e);
             double y_s = f(x_s);
             if (y_e <= y_s)

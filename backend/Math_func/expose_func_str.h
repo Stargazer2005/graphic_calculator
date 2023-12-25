@@ -15,7 +15,7 @@ class expose_func_str
 
     // methods
 
-    std::vector<size_t> get_dependences () { return dependences; }
+    inline std::vector<size_t> get_dependences () { return dependences; }
 
     // ~methods
 
@@ -31,8 +31,10 @@ class expose_func_str
 
     // MEANS: вектор со всеми мат. функциями в виде строк
     std::vector<std::string> all_funcs_str;
+
     // MEANS: текущая мат. функция в виде строки
     std::string& func_str;
+
     // MEANS: общий вектор всех номеров мат. функций, которые зависят от текущей
     std::vector<size_t> dependences;
 

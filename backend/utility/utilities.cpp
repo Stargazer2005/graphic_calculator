@@ -1,8 +1,8 @@
-#include "servant.h"
+#include "utilities.h"
 
 using namespace std;
 
-namespace Back_serv {
+namespace Backend_utilities {
 
 bool c_in_s (char c, const string& s) { return (s.find(c) != string::npos); }
 
@@ -48,4 +48,4 @@ bool replace (string& str, const string& from, const string& to)
     return true;
 }
 
-}  // namespace Back_serv
+}  // namespace Backend_utilities

@@ -15,9 +15,9 @@ using Graph_lib::Point;
 // Graphix_calc
 using namespace Graphix_calc;
 
-// servant
-#include "../servant/constants.h"
-using namespace Front_consts;
+// utility
+#include "../utility/constants.h"
+using namespace Frontend_consts;
 
 namespace Frontend {
 

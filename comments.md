@@ -1,4 +1,5 @@
 ## Струкрутра проекта
+[//]: # FIXME
 
 ```console
 graphic_calculator/
@@ -17,7 +18,7 @@ graphic_calculator/
 |       |       |---Segmented_Graphix.cpp
 |       |       `---Segmented_Graphix.h
 |       |
-|       |───servant/
+|       |───utility/
 |       |       `---constants.h
 |       |
 |       |---Graphix_window.cpp
@@ -35,10 +36,10 @@ graphic_calculator/
 |       |       |---function_roots.h
 |       |       `---math_base.h
 |       |
-|       |───servant/
+|       |───utility/
 |       |       |---constants.h
-|       |       |---servant.cpp
-|       |       `---servant.h
+|       |       |---utilities.cpp
+|       |       `---utility.h
 |       |
 |       |---expose_dep_function.cpp
 |       |---expose_dep_function.h
@@ -60,5 +61,3 @@ graphic_calculator/
 std::string func_strs - обозначающие математические функции
 Math_func::function funcs - екземпляры класса, с методом calculate, который используя func_strs считает y по x которые
 Graphix_calc::Graphix graphics - фигуры, представляющие собой графики, построенные по funcs
-
-(для производных der = func, deriative = graphic)

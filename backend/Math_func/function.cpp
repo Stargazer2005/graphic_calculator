@@ -2,29 +2,24 @@
 #include "function.h"
 
 // std libs
-#include <cmath>
-#include <stack>
-#include <stdexcept>
-using std::stack;
 using std::string;
 using std::vector;
+#include <cmath>
+#include <stack>
+using std::stack;
+#include <stdexcept>
+using std::invalid_argument;
 
-// servant
-#include "../servant/servant.h"
-using namespace Back_serv;
-using namespace Back_consts;
-
-// #include "temp_help.h"
+// utility
+#include "../utility/utilities.h"
+using namespace Backend_utilities;
+using namespace Backend_consts;
 
 namespace Math_func {
 
 function::function(string _func_str)
     : func_str{spaces_deleted(_func_str)}, lexs{lexemes()}, rev_pol{reverse_polish()}
 {
-    // был введен "чит-код" на пустую мат. функцию
-    // (данная функция определена в одной единственной точке: (0,0))
-    if (_func_str == "0--0")
-        func_str = "";
 }
 
 function::function(const function& func)
@@ -45,8 +40,7 @@ bool function::has_var() const { return c_in_s('x', func_str); }
 
 vector<string> function::lexemes() const
 {
-    if (!is_str_valid())
-        return {};
+    func_str_validation();
 
     vector<string> res;
 
@@ -140,8 +134,7 @@ vector<string> function::lexemes() const
 
 vector<string> function::reverse_polish() const
 {
-    if (!is_lexs_valid())
-        return {};
+    func_lexs_validation();
 
     // MEANS: вектор, куда записывается итоговая обратная польская запись
     vector<string> res;
@@ -273,14 +266,6 @@ vector<string> function::reverse_polish() const
 
 double function::calc(double x) const
 {
-    // "чит-код" был введен: после всех проверок строка,
-    // обозначающая мат. функцию, "вдруг" оказалась пустой
-    // (данная функция определена в одной единственной точке: (0,0))
-    if (func_str.empty() && x == 0.0)
-        return 0.0;
-    else if (func_str.empty())
-        throw std::invalid_argument("math invalid number");
-
     // MEANS: строка с разрешенными мат. операциями
     const string math_oper_chars = "+-*/^";
 
@@ -374,9 +359,13 @@ double function::calc(double x) const
                 break;
             }
         }
+
+        // получили математически недопустимое число
         if (std::isnan(calced_numbs.top()) || std::isinf(calced_numbs.top()))
-            throw std::invalid_argument("math invalid number");
-    }  // последнее, что осталось в стэке после всех действий - и есть ответ
+            throw invalid_argument("violation of feasible region");
+    }
+
+    // последнее, что осталось в стэке после всех действий - и есть ответ
     return calced_numbs.top();
 }
 

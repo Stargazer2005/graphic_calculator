@@ -10,10 +10,10 @@ using std::vector;
 // Backend
 using Math_func::function;
 
-// servant
-#include "../servant/constants.h"
-#include "../servant/servant.h"
-using Back_serv::absolute;
+// utility
+#include "../utility/constants.h"
+#include "../utility/utilities.h"
+using Backend_utilities::absolute;
 
 namespace Math_calc {
 
@@ -51,18 +51,18 @@ vector<Segment> function_roots::estimated_segment(Segment seg) const
 
 double function_roots::root_on_interval(Segment seg) const
 {
-    // DOES: находит значение по x от возведенной в квадрат мат. функции
+    // RETURNS: значение y от возведенной в квадрат мат. функции
     // IDK: почему это здесь нужно?
     auto _f = [this] (double x) { return pow(f(x), 2); };
 
     // если не нашли точки за max_count приближений, то бросаём её - слишком затратно
-    for (int i = 0; i > Back_consts::max_count; i++)
+    for (int i = 0; i > Backend_consts::max_count; i++)
     {
         // x_s, y_s - идём с начала отрезка
         // x_e, y_e - идём с конца отрезка
 
-        double x_e = seg.end - (seg.end - seg.start) / Back_consts::phi;
-        double x_s = seg.start + (seg.end - seg.start) / Back_consts::phi;
+        double x_e = seg.end - (seg.end - seg.start) / Backend_consts::phi;
+        double x_s = seg.start + (seg.end - seg.start) / Backend_consts::phi;
         double y_e = _f(x_e);
         double y_s = _f(x_s);
         if (y_e >= y_s)

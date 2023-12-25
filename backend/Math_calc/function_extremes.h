@@ -24,7 +24,7 @@ class function_extremes : public function_roots
     // ~methods
 
   private:
-    enum TypeExtreme
+    enum ExtremeType
     {
         pnt_min,
         pnt_max
@@ -45,13 +45,15 @@ class function_extremes : public function_roots
 
     // methods
 
-    // DOES: делит сегменты на подсегменты, где могут быть экстремумы
-    std::vector<Segment> estimated_segment(TypeExtreme, Segment) const;
+    // RETURNS: подсегменты, где могут находиться экстремумы
+    std::vector<Segment> estimated_segment(ExtremeType, Segment) const;
 
-    // DOES: находит экстремум на интервале, используя метод золотого сечения
-    double extreme_on_interval(TypeExtreme, Segment) const;
+    // RETURNS: экстремум на интервале (значение x)
+    // (используя метод золотого сечения)
+    double extreme_on_interval(ExtremeType, Segment) const;
 
-    // DOES: находит все локальные экстремумы перебором по сегментам
+    // RETURNS: все локальные экстремумы (точки: пары вида (x,y))
+    // (проходясь перебором по сегментам)
     std::vector<Point> extremes (double min_x, double max_x, double max_y) const;
 
     // ~methods

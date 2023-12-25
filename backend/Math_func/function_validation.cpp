@@ -9,18 +9,16 @@ using std::invalid_argument;
 using std::string;
 using std::vector;
 
-// servant
-#include "../servant/servant.h"
-using namespace Back_serv;
-using namespace Back_consts;
-
-// #include "temp_help.h"
+// utility
+#include "../utility/utilities.h"
+using namespace Backend_utilities;
+using namespace Backend_consts;
 
 namespace Math_func {
 
 // TODO: полностью переписать эту дичь, используя string::find
 
-bool function::is_str_valid() const
+void function::func_str_validation() const
 {
     // проверка на пустую строку
     if (func_str == "")
@@ -145,10 +143,9 @@ bool function::is_str_valid() const
                 throw invalid_argument("invalid syntax near digit");
         }
     }
-    return true;
 }
 
-bool function::is_lexs_valid() const
+void function::func_lexs_validation() const
 {
     // MEANS: строка с разрешенными мат. операциями
     const string math_oper_chars = "+-*/^";
@@ -220,7 +217,6 @@ bool function::is_lexs_valid() const
             }
         }
     }
-    return true;
 }
 
 }  // namespace Math_func

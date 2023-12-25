@@ -5,29 +5,30 @@
 #include <string>
 #include <vector>
 
-namespace Back_serv {
+namespace Backend_utilities {
 
-// DOES: проверяет, содержится ли символ в строке
+// RETURNS: факт содержания символа в строке (bool)
 bool c_in_s (char c, const std::string& s);
 
-// DOES: проверяет, содержится ли елемент в векторе
+// RETURNS: факт содержания элемента в векторе (bool)
 template <typename T> bool elem_in_vec (T elem, const std::vector<T>& vec)
 {
     return find(vec.begin(), vec.end(), elem) != vec.end();
 }
 
-// DOES: переводит строку (лексему) в символ
+// RETURNS: символ, обозначающий строку (лексему)
 char s_to_c (const std::string& s);
 
 bool is_double (const std::string& str);
 
 std::string spaces_deleted (const std::string& s);
 
-// DOES: считает модуль для double
+// RETURNS: абсолютное значения числа типа double
 // (чтобы избежать неявного преобразования, используя std::abs)
 double absolute (double x);
 
 // DOES: заменяет кусочек строки другим, модифицируя саму строку
+// RETURNS: факт того, что всё прошло успешно (bool)
 bool replace (std::string& str, const std::string& from, const std::string& to);
 
-}  // namespace Back_serv
+}  // namespace Backend_utilities

@@ -10,9 +10,9 @@ using std::stack;
 using std::string;
 using std::vector;
 
-// servant
-#include "../servant/servant.h"
-using namespace Back_serv;
+// utility
+#include "../utility/utilities.h"
+using namespace Backend_utilities;
 
 namespace Math_func {
 
@@ -96,13 +96,15 @@ void expose_func_str::expose_dep_func()
 
             // заменяем в func_str выражение y_n на то, что оно означает
             // (заключаем в скобки, чтобы не нарушать мат. порядок действий)
+
             // FIXME: использование string::empty - костыль
-            // TODO: придумать универсальный вид функции, который будет обозначать ошибочную запись
+
             // TODO: выводить тип ошибки только в первичной функции, где нету y_n
             // TODO: а во всех остальных просто писать, что такая-то такая ошибочна
+
             if (!all_funcs_str[est_index].empty())
-                Back_serv::replace(func_str, "y_" + readed_est_number,
-                                   '(' + all_funcs_str[est_index] + ')');
+                Backend_utilities::replace(func_str, "y_" + readed_est_number,
+                                           '(' + all_funcs_str[est_index] + ')');
             else
                 func_str = all_funcs_str[est_index];
         }

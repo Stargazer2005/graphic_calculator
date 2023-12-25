@@ -8,9 +8,10 @@ using std::vector;
 // Math_calc
 #include "domain_segments.h"
 
-// servant
-#include "../servant/servant.h"
-using Back_serv::absolute;  // (при использовании std::abs происходит неявное преобразование)
+// utility
+#include "../utility/utilities.h"
+using Backend_utilities::absolute;  // (при использовании std::abs происходит неявное
+                                    // преобразование)
 
 namespace Math_calc {
 

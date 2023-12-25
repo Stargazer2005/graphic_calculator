@@ -14,9 +14,9 @@ using Math_calc::domain_segments;
 using Math_calc::Segment;
 using Math_func::function;
 
-// servant
-#include "../servant/constants.h"
-using namespace Front_consts;
+// utility
+#include "../utility/constants.h"
+using namespace Frontend_consts;
 
 namespace Graphix_calc {
 

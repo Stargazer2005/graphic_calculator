@@ -5,10 +5,10 @@
 using Graph_lib::Button;
 using Graph_lib::Point;
 
-// servant
-#include "../servant/constants.h"
+// utility
+#include "../utility/constants.h"
 
-using namespace Front_consts;
+using namespace Frontend_consts;
 
 namespace Graphix_calc {
 

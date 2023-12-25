@@ -15,9 +15,9 @@ using Graph_lib::Point;
 // Graphix_calc
 using namespace Graphix_calc;
 
-// servant
-#include "../servant/constants.h"
-using namespace Front_consts;
+// utility
+#include "../utility/constants.h"
+using namespace Frontend_consts;
 
 namespace Frontend {
 
@@ -51,12 +51,8 @@ Graphix_window::Graphix_window(Graph_lib::Point left_corner, int width, int heig
     // задаём цвет окну
     // this->color(Color::white);
 
-    // инициализируем вектор введенных строк (пустыми)
-    for (size_t i = 0; i < max_functions_amount; i++)
-    {
-        inputed_strings.push_back(empty_str);
-        inputed_funcs.push_back(empty_func);
-    }
+    inputed_strings.push_back(empty_str);
+    inputed_funcs.push_back(empty_func);
 
     // задаём цвет осям
     x_axis->set_color(Color::Color_type::dark_cyan);
@@ -257,8 +253,11 @@ void Graphix_window::new_func_box()
     enter_menu.push_back(func_box);
 
     // увеличиваем размер вектора с графиками (резервируем под новую сегментированную функцию)
-    // FIXME: нужно написать конструктор по умолчанию для всех наших классов...
+    // TODO: нужно написать конструктор по умолчанию для всех наших классов...
     graphics.push_back(vector<Graphix*>{});
+
+    inputed_strings.push_back(empty_str);
+    inputed_funcs.push_back(empty_func);
 
     // если количество графиков стало максимально, скрываем кнопку "new_button"
     if (enter_menu.size() == max_functions_amount)
@@ -282,6 +281,9 @@ void Graphix_window::rem_func_box(size_t func_index)
 
     // также изменяем размеры самого вектора
     enter_menu.erase(enter_menu.begin() + func_index);
+
+    inputed_strings.erase(inputed_strings.begin() + func_index);
+    inputed_funcs.erase(inputed_funcs.begin() + func_index);
 
     // детачим этот график, его производную и чистим память
     clear_graphix(func_index);
