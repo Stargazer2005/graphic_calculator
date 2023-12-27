@@ -14,7 +14,7 @@ class Graphix : public Graph_lib::Shape
 {
   public:
     Graphix(std::function<double(double)> func, double min_x, double max_x,
-            Graph_lib::Point center, int point_amount, double scale);
+            Graph_lib::Point center, int point_amount, double unit_intr);
 
     std::vector<Graph_lib::Point> get_points () const { return points; }
 

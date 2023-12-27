@@ -168,12 +168,12 @@ void Rectangle::draw_lines() const
     if (fill_color().visibility())  // fill
     {
         fl_color(fill_color().as_int());
-        fl_rectf(point(0).x, point(0).y, w, h);
+        fl_rectf(point(0).x, point(0).y, width, height);
         fl_color(color().as_int());  // reset color
     }
 
     if (color().visibility())  // edge on top of fill
-        fl_rect(point(0).x, point(0).y, w, h);
+        fl_rect(point(0).x, point(0).y, width, height);
 }
 
 void Circle::draw_lines() const

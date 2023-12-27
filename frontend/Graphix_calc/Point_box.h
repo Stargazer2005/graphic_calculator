@@ -10,7 +10,9 @@ class Point_box : public Graph_lib::Widget
 {
   public:
     // упрощенный конструктор
-    Point_box(int window_w, int window_h, void cb_show(void*, void*), void cb_hide(void*, void*));
+    // FIXME: это фигня, а не конструктор, всё, блин, держится на константах
+    Point_box(pix_amount window_w, pix_amount window_h, void cb_show(void*, void*),
+              void cb_hide(void*, void*));
 
     // methods
 

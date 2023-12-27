@@ -16,19 +16,21 @@ class Window : public Fl_Window
   public:
     using Fl_Window::resize;
 
-    Window(int w, int h, const std::string& title);            // let the system pick the location
-    Window(Point xy, int w, int h, const std::string& title);  // top left corner in xy
+    Window(pix_amount _width, pix_amount _height,
+           const std::string& title);  // let the system pick the location
+    Window(Point top_left_corner, pix_amount _width, pix_amount _height, const std::string& title);
 
     virtual ~Window() {}
 
-    int x_max () const { return w; }
+    pix_amount w () const { return width; }
 
-    int y_max () const { return h; }
+    pix_amount h () const { return height; }
 
-    void resize (int ww, int hh)
+    void resize (pix_amount _width, pix_amount _height)
     {
-        w = ww, h = hh;
-        size(ww, hh);
+        width = _width;
+        height = _height;
+        size(_width, _height);
     }
 
     void set_label (const std::string& s) { label(s.c_str()); }
@@ -46,15 +48,12 @@ class Window : public Fl_Window
 
   private:
     std::vector<Shape*> shapes;  // shapes attached to window
-    int w, h;                    // window size
+    pix_amount width;
+    pix_amount height;
 
     void init ();
 };
 
 int gui_main ();  // invoke GUI library's main event loop
-
-inline int x_max () { return Fl::w(); }  // width of screen in pixels
-
-inline int y_max () { return Fl::h(); }  // height of screen in pixels
 
 }  // namespace Graph_lib

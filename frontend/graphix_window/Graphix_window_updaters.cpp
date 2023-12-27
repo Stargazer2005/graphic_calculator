@@ -26,7 +26,7 @@ void Graphix_window::update_scale(double new_scale)
     // если выбранный масштаб допустим
     if (new_scale < max_scale && new_scale > min_scale)
     {
-        scale = new_scale;
+        unit_intr = new_scale;
 
         // детачим оси и высвобождаем память
         detach(*x_axis);
@@ -36,10 +36,10 @@ void Graphix_window::update_scale(double new_scale)
 
         // создаём новые оси и задаём цвет
 
-        x_axis = new Axis{Axis::Orientation::horisontal, origin, win_w() - func_box_w, scale, "X"};
+        x_axis = new Axis{Axis::Orientation::horisontal, origin, w() - func_box_w, unit_intr, "X"};
         x_axis->set_color(Color::Color_type::dark_cyan);
 
-        y_axis = new Axis{Axis::Orientation::vertical, origin, win_h(), scale, "Y"};
+        y_axis = new Axis{Axis::Orientation::vertical, origin, h(), unit_intr, "Y"};
         y_axis->set_color(Color::Color_type::dark_cyan);
 
         // аттачим новые оси
@@ -77,7 +77,7 @@ void Graphix_window::update_graphix(size_t func_index)
         auto func = inputed_funcs[func_index];
 
         // создаём сегментированную функцию
-        Segmented_Graphix seged_func(func, scale, origin, win_w(), win_h());
+        Segmented_Graphix seged_func(func, unit_intr, origin, w(), h());
 
         // график - композиция нескольких графиков, каждый из которых определен на своём сегменте
         auto graphic = seged_func.get_segmented_graphix();
@@ -128,7 +128,7 @@ void Graphix_window::update_deriv(size_t der_index)
         auto func = inputed_funcs[der_index];
 
         // создаём сегментированную функцию
-        Segmented_Graphix seged_func(func, scale, origin, win_w(), win_h());
+        Segmented_Graphix seged_func(func, unit_intr, origin, w(), h());
         auto deriv = seged_func.get_segmented_deriv();
 
         // аттачим сегментированную функцию
@@ -173,15 +173,15 @@ void Graphix_window::update_points()
 
     // воспомогательная функция, которая переводит бэкендовы вещественные точки в пиксельные
     auto convert_to_pix = [&] (Math_calc::Point p) -> Graph_lib::Point {
-        return {origin.x + int(p.x * scale), origin.y - int(p.y * scale)};
+        return {origin.x + int(p.x * unit_intr), origin.y - int(p.y * unit_intr)};
     };
 
     // переводим границы экрана в вещественные, чтобы использовать для бэкендовских функций
 
-    double min_x = -((double)win_w() / (2 * scale)) + func_box_w / (2 * scale);
+    double min_x = -((double)w() / (2 * unit_intr)) + func_box_w / (2 * unit_intr);
     double max_x = -min_x;
-    double max_y = (double)win_h() / (2 * scale);
-    double point_prec = (((double)win_w() / (scale * 2500)));
+    double max_y = (double)h() / (2 * unit_intr);
+    double point_prec = (((double)w() / (unit_intr * 2500)));
 
     // проходимся по всем строкам, куда пользователь вводит функции и рисуем их экстремумы, корни и
     // всевозможные пересечения (если они не скрыты)

@@ -17,6 +17,7 @@ class Function_box : public Graph_lib::Widget
 {
   public:
     // упрощенный конструктор
+    // FIXME: это фигня, а не конструктор, всё, блин, держится на константах
     Function_box(unsigned long long int box_index, void cb_draw(void*, void*),
                  void cb_hide(void*, void*), void cb_rem(void*, void*),
                  void cb_draw_der(void*, void*), void cb_hide_der(void*, void*));
@@ -41,7 +42,6 @@ class Function_box : public Graph_lib::Widget
 
     bool is_der_hidden () const { return !is_der_visible; }
 
-    // just set_number to numbered elements
     void set_index (int);
 
     void set_message (const std::string& message);

@@ -1,8 +1,9 @@
 #include <iostream>
 #include <vector>
-using std::cout; 
+using std::cout;
 using std::endl;
 
+// DOES: выводит все элементы вектора в консоль
 template <typename T> void print (const std::vector<T>& v)
 {
     cout << " size: " << v.size() << endl;

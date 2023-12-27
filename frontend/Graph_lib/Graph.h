@@ -77,7 +77,7 @@ struct Line_style
 
     Line_style(Line_style_type ss) : s{ss}, w{0} {}
 
-    Line_style(Line_style_type lst, int ww) : s{lst}, w{ww} {}
+    Line_style(Line_style_type lst, int _width) : s{lst}, w{_width} {}
 
     Line_style(int ss) : s{ss}, w{0} {}
 
@@ -170,15 +170,6 @@ class Shape  // deals with color and style, and holds sequence of lines
     Color fcolor{Color::invisible};
 };
 
-using Fct = std::function<double(double)>;
-
-struct Function : Shape
-{
-    // the function parameters are not stored
-    Function(Fct f, double r1, double r2, Point orig, int count = 100, double xscale = 25,
-             double yscale = 25);
-};
-
 struct Line : Shape
 {
     Line(Point p1, Point p2)
@@ -190,29 +181,29 @@ struct Line : Shape
 
 struct Rectangle : Shape
 {
-    Rectangle(Point xy, int ww, int hh) : w{ww}, h{hh}
+    Rectangle(Point xy, pix_amount _width, pix_amount _height) : width{_width}, height{_height}
     {
-        if (h <= 0 || w <= 0)
+        if (height <= 0 || width <= 0)
             throw std::invalid_argument("Bad rectangle: non-positive side");
         add(xy);
     }
 
-    Rectangle(Point x, Point y) : w{y.x - x.x}, h{y.y - x.y}
+    Rectangle(Point x, Point y) : width{y.x - x.x}, height{y.y - x.y}
     {
-        if (h <= 0 || w <= 0)
+        if (height <= 0 || width <= 0)
             throw std::invalid_argument("Bad rectangle: first point is not top left");
         add(x);
     }
 
     void draw_lines () const override;
 
-    int height () const { return h; }
+    pix_amount h () const { return height; }
 
-    int width () const { return w; }
+    pix_amount w () const { return width; }
 
   private:
-    int w;  // width
-    int h;  // height
+    pix_amount width;
+    pix_amount height;
 };
 
 struct Open_polyline : Shape  // open sequence of lines
@@ -305,10 +296,10 @@ struct Circle : Shape
 
 struct Ellipse : Shape
 {
-    Ellipse(Point p, int ww, int hh)  // center, min, and max distance from center
-        : w{ww}, h{hh}
+    Ellipse(Point p, int _width, int _height)  // center, min, and max distance from center
+        : w{_width}, h{_height}
     {
-        add(Point{p.x - ww, p.y - hh});
+        add(Point{p.x - _width, p.y - _height});
     }
 
     void draw_lines () const override;
@@ -318,11 +309,11 @@ struct Ellipse : Shape
     Point focus1 () const;
     Point focus2 () const;
 
-    void set_major (int ww);
+    void set_major (int _width);
 
     int major () const { return w; }
 
-    void set_minor (int hh);
+    void set_minor (int _height);
 
     int minor () const { return h; }
 
@@ -386,10 +377,10 @@ struct Image : Shape
 
     void draw_lines () const override;
 
-    void set_mask (Point xy, int ww, int hh)
+    void set_mask (Point xy, int _width, int _height)
     {
-        w = ww;
-        h = hh;
+        w = _width;
+        h = _height;
         cx = xy.x;
         cy = xy.y;
     }

@@ -47,12 +47,6 @@ vector<string> function::lexemes() const
     // MEANS: текущая лексема
     string lex;
 
-    // MEANS: строка со всеми разрешенными мат. операциями
-    const string math_oper_chars = "+-*/^u";
-
-    // FIXME: разобраться с этим несоответствием векторов знаков и функций в разных местах
-    // TODO: перевести эти строки в служебные константы
-
     // TODO: написать комментарии по работе этого цикла
 
     for (size_t i = 0; i < func_str.size(); i++)
@@ -70,7 +64,7 @@ vector<string> function::lexemes() const
             }
             if (i == 0)
                 res.push_back("um");
-            else if (c_in_s(s_to_c(res[res.size() - 1]), math_oper_chars + "("))
+            else if (c_in_s(s_to_c(res[res.size() - 1]), math_oper_chars + "(" + "u"))
                 res.push_back("um");
             else
                 res.push_back("-");
@@ -143,12 +137,6 @@ vector<string> function::reverse_polish() const
     // (нужен для хранения операций в правильном порядке)
     stack<string> st_oper;
     st_oper.push("\0");
-
-    // MEANS: строка с разрешенными мат. функциями
-    const string math_func_chars = "sctelu";
-
-    // MEANS: строка с разрешенными мат. операциями
-    const string math_oper_chars = "+-*/^";
 
     for (const auto& lex : lexs)
     {

@@ -9,12 +9,12 @@ using std::function;
 namespace Graphix_calc {
 
 Graphix::Graphix(function<double(double)> func, double min_x, double max_x,
-                 Graph_lib::Point center, int point_amount, double scale)
+                 Graph_lib::Point center, int point_amount, double unit_intr)
 {
     auto convert_to_pix = [&] (double x, double y) -> Graph_lib::Point
     {
-        return Graph_lib::Point{center.x + static_cast<int>(x * scale),
-                                center.y - static_cast<int>(y * scale)};
+        return Graph_lib::Point{center.x + static_cast<int>(x * unit_intr),
+                                center.y - static_cast<int>(y * unit_intr)};
     };
 
     if (max_x - min_x <= 0)
@@ -33,7 +33,7 @@ Graphix::Graphix(function<double(double)> func, double min_x, double max_x,
         double r = min_x;
         for (int i = 0; i < point_amount; ++i)
         {
-            add_point(Graph_lib::Point{center.x + int(r * scale), center.y - int(func(r) * scale)});
+            add_point(Graph_lib::Point{center.x + int(r * unit_intr), center.y - int(func(r) * unit_intr)});
             r += dist;
         }
     }

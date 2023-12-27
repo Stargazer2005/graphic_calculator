@@ -2,6 +2,7 @@
 
 // std libs
 #include <cmath>
+#include <string>
 
 namespace Backend_consts {
 
@@ -22,6 +23,12 @@ constexpr char c_tan = 't';
 constexpr char c_exp = 'e';
 constexpr char c_ln = 'l';
 constexpr char uminus = 'u';
+
+// MEANS: строка с разрешенными мат. функциями
+const std::string math_func_chars = "sctelu";
+
+// MEANS: строка с разрешенными мат. операциями
+const std::string math_oper_chars = "+-*/^";
 
 constexpr double delta_x = 0.00001;
 

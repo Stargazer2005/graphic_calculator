@@ -27,8 +27,8 @@ namespace Frontend {
 class Graphix_window : public Graph_lib::Window
 {
   public:
-    Graphix_window(Graph_lib::Point left_corner, int width, int height, const std::string& title,
-                   double scale);
+    Graphix_window(Graph_lib::Point left_corner, pix_amount width, pix_amount height,
+                   const std::string& title, pix_amount unit_intr);
 
     // methods
 
@@ -55,7 +55,7 @@ class Graphix_window : public Graph_lib::Window
     // vars
 
     // общее значение масштаба: количество пикселей в единичном отрезке!?
-    double scale;
+    pix_amount unit_intr;
     // начало координат в пикселях (используется только в Graph_lib::Graphix и методах на
     // отображение точки)
     Graph_lib::Point origin;
@@ -99,12 +99,6 @@ class Graphix_window : public Graph_lib::Window
     bool quit_button_pushed{false};
 
     // methods
-
-    // "переименовали" методы Страуструпа, чтобы избежать путанницы
-
-    int win_h () const { return y_max(); }
-
-    int win_w () const { return x_max(); }
 
     // callbacks
 

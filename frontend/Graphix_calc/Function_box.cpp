@@ -20,7 +20,8 @@ namespace Graphix_calc {
 Function_box::Function_box(unsigned long long int box_index, void cb_draw_graph(void*, void*),
                            void cb_hide_graph(void*, void*), void cb_rem_func(void*, void*),
                            void cb_draw_der(void*, void*), void cb_hide_der(void*, void*))
-    : Graph_lib::Widget{Point{0, func_box_h * int(box_index)}, func_box_w, func_box_h, "", nullptr},
+    : Graph_lib::Widget{Point{0, func_box_h * pix_amount(box_index)}, func_box_w, func_box_h, "",
+                        nullptr},
       // необходимо отступить расстояние, где находится "y = "
       in_box{
           new In_box{Point{in_box_lab_w, func_box_h * int(box_index)}, in_box_w, in_box_h, "y = "}},

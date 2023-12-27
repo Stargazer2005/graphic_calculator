@@ -2,14 +2,17 @@
 
 namespace Graph_lib {
 
-Window::Window(int ww, int hh, const std::string& title)
-    : Fl_Window{ww, hh, title.c_str()}, w{ww}, h{hh}
+Window::Window(pix_amount _width, pix_amount _height, const std::string& title)
+    : Fl_Window{int(_width), int(_height), title.c_str()}, width{_width}, height{_height}
 {
     init();
 }
 
-Window::Window(Point xy, int ww, int hh, const std::string& title)
-    : Fl_Window{xy.x, xy.y, ww, hh, title.c_str()}, w{ww}, h{hh}
+Window::Window(Point top_left_corner, pix_amount _width, pix_amount _height,
+               const std::string& title)
+    : Fl_Window{int(top_left_corner.x), int(top_left_corner.y), int(_width), int(_height),
+                title.c_str()},
+      width{_width}, height{_height}
 {
     init();
 }

@@ -1,14 +1,16 @@
 #pragma once
 
+using pix_amount = unsigned int;
+
 namespace Graph_lib {
 
 struct Point
 {
-    int x, y;
+    pix_amount x, y;
 
     Point() : x{0}, y{0} {}
 
-    constexpr Point(int xx, int yy) : x{xx}, y{yy} {}
+    constexpr Point(pix_amount _x, pix_amount _y) : x{_x}, y{_y} {}
 
     Point& operator+= (Point d)
     {

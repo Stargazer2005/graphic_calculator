@@ -19,8 +19,9 @@ set(HEADERS
     frontend/Graphix_calc/Numbed_button.h
     frontend/Graphix_calc/Segmented_Graphix.h
 
+    frontend/utility/utilities.h
     frontend/utility/constants.h
-
+    
     frontend/graphix_window/Graphix_window.h
     
     frontend.h
@@ -54,6 +55,8 @@ set(SOURCES
     frontend/Graphix_calc/Point_box.cpp
     frontend/Graphix_calc/Dext_box.cpp
     frontend/Graphix_calc/Segmented_Graphix.cpp
+
+    frontend/utility/utilities.cpp
 
     frontend/graphix_window/Graphix_window.cpp
     frontend/graphix_window/Graphix_window_updaters.cpp

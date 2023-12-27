@@ -13,77 +13,93 @@ using Graph_lib::Text;
 
 // utility
 #include "../utility/constants.h"
-#include "../utility/format.h"
+#include "../utility/utilities.h"
 using namespace Frontend_consts;
+using namespace Frontend_utilities;
 
 namespace Graphix_calc {
 
-Axis::Axis(Orientation d, Point center, int length, double scale, const std::string& lab)
-    : dist{distance}, label{Point{0, 0}, lab}
+Axis::Axis(Orientation d, Point origin, pix_amount length, pix_amount _unit_intr,
+           const std::string& label_text)
+    : unit_intr{_unit_intr}, mark_intr{_unit_intr},
+      label{Point{origin.x - margin, origin.y - length / 2 + margin}, label_text}
 {
-    if (length < 0 || dist < 0)
-        throw invalid_argument("bad axis length");
     switch (d)
     {
     case Axis::horisontal:
     {
-        Shape::add(Point{center.x - length / 2, center.y});
-        Shape::add(center);
-        Shape::add(Point{center.x + length / 2, center.y});
-        double count = 0;
-        // счетчики, с помощью которых мы ставим насечки на осях
-        int x1 = center.x + dist;
-        int x2 = center.x - dist;
-        for (int i = 0; i < length / (2 * dist); ++i)
+        Shape::add(origin);
+        Shape::add(Point{origin.x - length / 2, origin.y});
+        Shape::add(Point{origin.x + length / 2, origin.y});
+
+        for (int i = 1; i < length / 2; ++i)
         {
-            count += dist / scale;
-            notches.add(Point{x1, center.y + 2}, Point{x1, center.y - 2});
-            Text* mark1 = new Text(Point(x1 - 3, center.y + 20), format(count));
-            mark1->set_color(Graph_lib::Color::black);
-            mark1->set_font_size(14);
-            marks.push_back(mark1);
-            x1 += dist;
-            notches.add(Point{x2, center.y + 2}, Point{x2, center.y - 2});
-            Text* mark2 = new Text(Point(x2 - 3, center.y + 20), format(-count));
-            mark2->set_color(Graph_lib::Color::black);
-            mark2->set_font_size(14);
-            marks.push_back(mark2);
-            x2 -= dist;
+            if (i % unit_intr == 0)
+            {
+                notches.add(Point{origin.x + i, origin.y + 2}, Point{origin.x + i, origin.y - 2});
+                notches.add(Point{origin.x - i, origin.y + 2}, Point{origin.x - i, origin.y - 2});
+            }
+
+            if (i % mark_intr == 0)
+            {
+                Text* mark = new Text(
+                    Point(origin.x + i - 3, origin.y + 20),
+                    format(convert_to_real(origin, {origin.x + i, origin.y + 20}, unit_intr).x));
+                mark->set_color(Graph_lib::Color::black);
+                mark->set_font_size(14);
+                marks.push_back(mark);
+
+                mark = new Text(
+                    Point(origin.x - i - 6, origin.y + 20),
+                    format(convert_to_real(origin, {origin.x - i, origin.y + 20}, unit_intr).x));
+                mark->set_color(Graph_lib::Color::black);
+                mark->set_font_size(14);
+                marks.push_back(mark);
+            }
         }
-        // label under the line
-        label.move(center.x + length / 2 - margin, center.y + margin);
         break;
     }
     case Axis::vertical:
     {
-        Shape::add(Point{center.x, center.y + length / 2});
-        Shape::add(center);
-        Shape::add(Point{center.x, center.y - length / 2});
-        double count = 0;
-        // счетчики, с помощью которых мы ставим насечки на осях
-        int y1 = center.y + dist;
-        int y2 = center.y - dist;
-        for (int i = 0; i < length / (2 * dist); ++i)
+        Shape::add(Point{origin.x, origin.y + length / 2});
+        Shape::add(origin);
+        Shape::add(Point{origin.x, origin.y - length / 2});
+
+        for (int i = 1; i < length / 2; ++i)
         {
-            count += (double)dist / scale;
-            notches.add(Point{center.x - 2, y1}, Point{center.x + 2, y1});
-            Text* mark1 = new Text(Point(center.x + 10, y1 + 5), format(-count));
-            mark1->set_color(Graph_lib::Color::black);
-            mark1->set_font_size(14);
-            marks.push_back(mark1);
-            y1 += dist;
-            notches.add(Point{center.x - 2, y2}, Point{center.x + 2, y2});
-            Text* mark2 = new Text(Point(center.x + 10, y2 + 5), format(count));
-            mark2->set_color(Graph_lib::Color::black);
-            mark2->set_font_size(14);
-            marks.push_back(mark2);
-            y2 -= dist;
+            if (i % unit_intr == 0)
+            {
+                notches.add(Point{origin.x + 2, origin.y + i}, Point{origin.x - 2, origin.y + i});
+                notches.add(Point{origin.x + 2, origin.y - i}, Point{origin.x - 2, origin.y - i});
+            }
+
+            if (i % mark_intr == 0)
+            {
+                Text* mark = new Text(
+                    Point(origin.x + 20, origin.y + i + 3),
+                    format(convert_to_real(origin, {origin.x + 20, origin.y + i}, unit_intr).y));
+                mark->set_color(Graph_lib::Color::black);
+                mark->set_font_size(14);
+                marks.push_back(mark);
+
+                mark = new Text(
+                    Point(origin.x + 20, origin.y - i + 3),
+                    format(convert_to_real(origin, {origin.x + 20, origin.y - i}, unit_intr).y));
+                mark->set_color(Graph_lib::Color::black);
+                mark->set_font_size(14);
+                marks.push_back(mark);
+            }
         }
-        // label at top
-        label.move(center.x - margin, center.y - length / 2 + margin);
         break;
     }
     }
+}
+
+Axis::Axis(Orientation d, Graph_lib::Point origin, pix_amount length, pix_amount _unit_intr,
+           pix_amount _mark_intr, const std::string& label_text)
+    : unit_intr{_unit_intr}, mark_intr{_mark_intr},
+      label{Point{origin.x - margin, origin.y - length / 2 + margin}, label_text}
+{
 }
 
 void Axis::draw_lines() const

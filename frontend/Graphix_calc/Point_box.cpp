@@ -12,7 +12,7 @@ using namespace Frontend_consts;
 
 namespace Graphix_calc {
 
-Point_box::Point_box(int window_w, int window_h, void cb_show(void*, void*),
+Point_box::Point_box(pix_amount window_w, pix_amount window_h, void cb_show(void*, void*),
                      void cb_hide(void*, void*))
     : Widget{Point{window_w, window_h}, 1, 1, "", nullptr},
       show_button{new Button{Point{window_w - btn_w * 2 - padding, window_h - btn_h}, btn_w, btn_h,

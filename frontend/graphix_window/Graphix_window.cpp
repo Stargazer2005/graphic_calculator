@@ -3,7 +3,9 @@
 
 // std libs
 #include <stdexcept>
+using std::stod;
 using std::string;
+using std::to_string;
 using std::vector;
 
 // Graph_lib
@@ -22,14 +24,14 @@ using namespace Frontend_consts;
 namespace Frontend {
 
 // из-за количества кнопок на экране конструктор сильно перегружен, но что поделать :)
-Graphix_window::Graphix_window(Graph_lib::Point left_corner, int width, int height,
-                               const string& title, double scale)
-    : Graph_lib::Window(left_corner, width, height, title), scale{scale},
+Graphix_window::Graphix_window(Graph_lib::Point left_corner, pix_amount width, pix_amount height,
+                               const string& title, pix_amount unit_intr)
+    : Graph_lib::Window(left_corner, width, height, title), unit_intr{unit_intr},
       // точка начала системы координат смещена вправо, чтобы графики и оси не заезжали на меню
       origin{(width + func_box_w) / 2, height / 2},
       border{Point{func_box_w, 0}, Point{func_box_w, height}},
-      x_axis{new Axis{Axis::Orientation::horisontal, origin, width - func_box_w, scale, "X"}},
-      y_axis{new Axis{Axis::Orientation::vertical, origin, height, scale, "Y"}},
+      x_axis{new Axis{Axis::Orientation::horisontal, origin, width - func_box_w, unit_intr, "X"}},
+      y_axis{new Axis{Axis::Orientation::vertical, origin, height, unit_intr, "Y"}},
       // кнопка quit находится в левом верхнем углу
       quit_button{Graph_lib::Point{width - btn_w, 0}, btn_w, btn_h, "Quit", cb_quit},
       // кнопки изменения масштаба находятся справа и являются квадратами
@@ -157,24 +159,31 @@ void Graphix_window::cb_change_scale(void*, void* widget)
 void Graphix_window::change_scale()
 {
     // домножаем пользовательский масштаб на длину единичного отрезка
-    int new_scale = db.get_int() * distance;
-    update_scale(new_scale);
+    try
+    {
+        double new_scale = stod(db.get_string()) * distance;
+        update_scale(new_scale);
+    }
+    catch (...)
+    {
+        db.put_string("invalid unit_intr");
+    }
 
     button_pushed = true;
 }
 
 void Graphix_window::incr_scale()
 {
-    update_scale(scale * scale_coef);
-    db.put_double(scale / distance);
+    update_scale(unit_intr * scale_coef);
+    db.put_string(to_string(unit_intr * distance));
 
     button_pushed = true;
 }
 
 void Graphix_window::decr_scale()
 {
-    update_scale(scale / scale_coef);
-    db.put_double(scale / distance);
+    update_scale(unit_intr / scale_coef);
+    db.put_string(to_string(unit_intr * distance));
 
     button_pushed = true;
 }

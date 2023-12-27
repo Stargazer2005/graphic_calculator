@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cstdlib>
+// FLTK libs
 
 #include <FL/Enumerations.H>
 #include <FL/Fl.H>
@@ -13,5 +13,3 @@
 #include <FL/Fl_GIF_Image.H>
 #include <FL/Fl_JPEG_Image.H>
 #include <FL/Fl_PNG_Image.H>
-
-// TODO: отрефакторить Graph_lib

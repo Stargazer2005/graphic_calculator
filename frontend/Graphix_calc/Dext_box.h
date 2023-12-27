@@ -1,7 +1,9 @@
 #pragma once
 
-// Graph_lib
+// std libs
+#include <string>
 
+// Graph_lib
 #include "../Graph_lib/GUI.h"
 #include "../Graph_lib/Point.h"
 #include "../Graph_lib/Window.h"
@@ -12,10 +14,10 @@ namespace Graphix_calc {
 class Dext_box : public Graph_lib::Widget
 {
   public:
-    Dext_box(Graph_lib::Point xy, int w, int h, const std::string& s);
+    Dext_box(Graph_lib::Point xy, pix_amount _width, pix_amount _height, const std::string& s);
 
-    double get_int ();
-    void put_double (double);
+    std::string get_string ();
+    void put_string (const std::string&);
 
     void attach (Graph_lib::Window& win);
 };

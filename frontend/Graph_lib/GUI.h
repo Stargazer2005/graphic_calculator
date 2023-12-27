@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdexcept>
+
 #include "Graph.h"
 #include "Window.h"
 
@@ -20,13 +22,17 @@ class Widget
     // We try to keep our interface classes at arm's length from FLTK
 
   public:
-    Widget(Point xy, int w, int h, const std::string& s, Callback cb)
-        : loc{xy}, width{w}, height{h}, label{s}, do_it{cb}
+    Widget(Point _loc, pix_amount _width, pix_amount _height, const std::string& s, Callback cb)
+        : loc{_loc}, width{_width}, height{_height}, label{s}, do_it{cb}
     {
     }
 
+    // можем двигать и на отрицательные
     virtual void move (int dx, int dy)
     {
+        if (dx > loc.x || dy > loc.y)
+            throw std::invalid_argument("bad dx or dy");
+
         hide();
         pw->position(loc.x += dx, loc.y += dy);
         show();
@@ -40,12 +46,6 @@ class Widget
 
     Window& window () { return *own; }
 
-    Point loc;
-    int width;
-    int height;
-    std::string label;
-    Callback do_it;
-
     virtual ~Widget() {}
 
     Widget& operator= (const Widget&) = delete;  // don't copy Widgets
@@ -54,12 +54,19 @@ class Widget
   protected:
     Window* own;    // every Widget belongs to a Window
     Fl_Widget* pw;  // connection to the FLTK Widget
+
+    Point loc;
+    pix_amount width;
+    pix_amount height;
+
+    std::string label;
+    Callback do_it;
 };
 
 struct Button : Widget
 {
-    Button(Point xy, int w, int h, const std::string& label, Callback cb)
-        : Widget{xy, w, h, label, cb}
+    Button(Point _loc, pix_amount _width, pix_amount _height, const std::string& label, Callback cb)
+        : Widget{_loc, _width, _height, label, cb}
     {
     }
 
@@ -68,9 +75,11 @@ struct Button : Widget
 
 struct In_box : Widget
 {
-    In_box(Point xy, int w, int h, const std::string& s) : Widget{xy, w, h, s, nullptr} {}
+    In_box(Point _loc, pix_amount _width, pix_amount _height, const std::string& s)
+        : Widget{_loc, _width, _height, s, nullptr}
+    {
+    }
 
-    int get_int ();
     std::string get_string ();
 
     void attach (Window& win);
@@ -78,7 +87,10 @@ struct In_box : Widget
 
 struct Out_box : Widget
 {
-    Out_box(Point xy, int w, int h, const std::string& s) : Widget{xy, w, h, s, nullptr} {}
+    Out_box(Point _loc, pix_amount _width, pix_amount _height, const std::string& s)
+        : Widget{_loc, _width, _height, s, nullptr}
+    {
+    }
 
     void put (int);
     void put (const std::string&);
