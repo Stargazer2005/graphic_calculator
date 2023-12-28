@@ -29,14 +29,15 @@ string format (double num)
     return s;
 }
 
-Graph_lib::Point convert_to_pix (Graph_lib::Point origin, Math_calc::Point p, pix_amount unit_intr)
+Graph_lib::Point convert_to_pix (Graph_lib::Point origin, Math_calc::Point p, double unit_intr)
 {
-    return {origin.x + pix_amount(p.x) * unit_intr, origin.y + pix_amount(p.y) * unit_intr};
+    return {origin.x + pix_amount(p.x * unit_intr), origin.y + pix_amount(-p.y * unit_intr)};
 }
 
-Math_calc::Point convert_to_real (Graph_lib::Point origin, Graph_lib::Point p, pix_amount unit_intr)
+Math_calc::Point convert_to_real (Graph_lib::Point origin, Graph_lib::Point p, double unit_intr)
 {
-    return {(p.x - origin.x) / double(unit_intr), (p.y - origin.y) / double(unit_intr)};
+    return {(double(p.x) - double(origin.x)) / unit_intr,
+            (-double(p.y) + double(origin.y)) / unit_intr};
 }
 
-}
+}  // namespace Frontend_utilities

@@ -23,32 +23,35 @@ using namespace Frontend_consts;
 
 namespace Frontend {
 
+// TODO: создать функцию init(), куда всё это будет запихнуто
+// TODO: создать конструктор по умолчанию для окна
+
 // из-за количества кнопок на экране конструктор сильно перегружен, но что поделать :)
-Graphix_window::Graphix_window(Graph_lib::Point left_corner, pix_amount width, pix_amount height,
-                               const string& title, pix_amount unit_intr)
-    : Graph_lib::Window(left_corner, width, height, title), unit_intr{unit_intr},
+Graphix_window::Graphix_window(Graph_lib::Point left_corner, pix_amount _width, pix_amount _height,
+                               const string& title, pix_amount _unit_intr)
+    : Graph_lib::Window(left_corner, _width, _height, title), unit_intr{double(_unit_intr)},
       // точка начала системы координат смещена вправо, чтобы графики и оси не заезжали на меню
-      origin{(width + func_box_w) / 2, height / 2},
-      border{Point{func_box_w, 0}, Point{func_box_w, height}},
-      x_axis{new Axis{Axis::Orientation::horisontal, origin, width - func_box_w, unit_intr, "X"}},
-      y_axis{new Axis{Axis::Orientation::vertical, origin, height, unit_intr, "Y"}},
+      origin{(w() + func_box_w) / 2, h() / 2}, border{Point{func_box_w, 0}, Point{func_box_w, h()}},
+      x_axis{new Axis{Axis::Orientation::horisontal, origin, w() - func_box_w, unit_intr, mark_intr,
+                      "X"}},
+      y_axis{new Axis{Axis::Orientation::vertical, origin, h(), unit_intr, mark_intr, "Y"}},
       // кнопка quit находится в левом верхнем углу
-      quit_button{Graph_lib::Point{width - btn_w, 0}, btn_w, btn_h, "Quit", cb_quit},
+      quit_button{Graph_lib::Point{w() - btn_w, 0}, btn_w, btn_h, "Quit", cb_quit},
       // кнопки изменения масштаба находятся справа и являются квадратами
-      incr_button{Graph_lib::Point{width - scl_btn_side, 0 + btn_h}, scl_btn_side, scl_btn_side,
-                  "+", cb_incr_scale},
-      decr_button{Graph_lib::Point{width - scl_btn_side, 0 + btn_h + scl_btn_side}, scl_btn_side,
-                  scl_btn_side, "-", cb_decr_scale},
+      incr_button{Graph_lib::Point{w() - scl_btn_side, 0 + btn_h}, scl_btn_side, scl_btn_side, "+",
+                  cb_incr_unit_intr},
+      decr_button{Graph_lib::Point{w() - scl_btn_side, 0 + btn_h + scl_btn_side}, scl_btn_side,
+                  scl_btn_side, "-", cb_decr_unit_intr},
       // а кнопка New находится правее меню
       new_button{Graph_lib::Point{in_box_w + scl_btn_side, 0}, btn_w, btn_h, "New", cb_new_func},
       // меню с точками
-      point_box{width, height, cb_show_points, cb_hide_points},
-      scale_button{Graph_lib::Point{in_box_w + in_box_lab_w - btn_w, height - in_box_h}, btn_w,
-                   in_box_h, "Scale", cb_change_scale},
-      db{Graph_lib::Point{in_box_lab_w, height - in_box_h}, in_box_w - btn_w, in_box_h, "1:"}
+      point_box{w(), h(), cb_show_points, cb_hide_points},
+      unit_intr_button{Graph_lib::Point{in_box_w + in_box_lab_w - btn_w, h() - in_box_h}, btn_w,
+                       in_box_h, "unit_intr", cb_change_unit_intr},
+      scale_box{Graph_lib::Point{in_box_lab_w, h() - in_box_h}, in_box_w - btn_w, in_box_h, "1:"}
 {
     // не даём пользователю менять размеры окна
-    size_range(width, height, width, height);
+    size_range(w(), h(), w(), h());
 
     // задаём цвет окну
     // this->color(Color::white);
@@ -66,6 +69,9 @@ Graphix_window::Graphix_window(Graph_lib::Point left_corner, pix_amount width, p
         new Function_box{0, cb_draw_graph, cb_hide_graph, cb_rem_func, cb_draw_der, cb_hide_der};
     func_box->set_index(0);
 
+    graphics.push_back(new Segmented_Graphix());
+    derivs.push_back(new Segmented_Graphix());
+
     // и добавляем его в общий список всех Function_box'ов
     enter_menu.push_back(func_box);
 
@@ -77,23 +83,23 @@ Graphix_window::Graphix_window(Graph_lib::Point left_corner, pix_amount width, p
     attach(incr_button);
     attach(decr_button);
     attach(new_button);
-    attach(scale_button);
-    attach(db);
+    attach(unit_intr_button);
+    attach(scale_box);
 
     attach(*func_box);
     attach(point_box);
 }
 
-void Graphix_window::cb_incr_scale(void*, void* widget)
+void Graphix_window::cb_incr_unit_intr(void*, void* widget)
 {
     auto& btn = Graph_lib::reference_to<Button>(widget);
-    dynamic_cast<Graphix_window&>(btn.window()).incr_scale();
+    dynamic_cast<Graphix_window&>(btn.window()).incr_unit_intr();
 }
 
-void Graphix_window::cb_decr_scale(void*, void* widget)
+void Graphix_window::cb_decr_unit_intr(void*, void* widget)
 {
     auto& btn = Graph_lib::reference_to<Button>(widget);
-    dynamic_cast<Graphix_window&>(btn.window()).decr_scale();
+    dynamic_cast<Graphix_window&>(btn.window()).decr_unit_intr();
 }
 
 void Graphix_window::cb_draw_graph(void*, void* widget)
@@ -150,40 +156,40 @@ void Graphix_window::cb_hide_points(void*, void* widget)
     dynamic_cast<Graphix_window&>(btn.window()).hide_points();
 }
 
-void Graphix_window::cb_change_scale(void*, void* widget)
+void Graphix_window::cb_change_unit_intr(void*, void* widget)
 {
     auto& btn = Graph_lib::reference_to<Button>(widget);
-    dynamic_cast<Graphix_window&>(btn.window()).change_scale();
+    dynamic_cast<Graphix_window&>(btn.window()).change_unit_intr();
 }
 
-void Graphix_window::change_scale()
+void Graphix_window::change_unit_intr()
 {
     // домножаем пользовательский масштаб на длину единичного отрезка
     try
     {
-        double new_scale = stod(db.get_string()) * distance;
-        update_scale(new_scale);
+        double new_unit_intr = stod(scale_box.get_string()) * mark_intr;
+        update_unit_intr(new_unit_intr);
     }
     catch (...)
     {
-        db.put_string("invalid unit_intr");
+        scale_box.put_string("invalid input");
     }
 
     button_pushed = true;
 }
 
-void Graphix_window::incr_scale()
+void Graphix_window::incr_unit_intr()
 {
-    update_scale(unit_intr * scale_coef);
-    db.put_string(to_string(unit_intr * distance));
+    update_unit_intr(unit_intr * unit_intr_coef);
+    scale_box.put_string(to_string(unit_intr / mark_intr));
 
     button_pushed = true;
 }
 
-void Graphix_window::decr_scale()
+void Graphix_window::decr_unit_intr()
 {
-    update_scale(unit_intr / scale_coef);
-    db.put_string(to_string(unit_intr * distance));
+    update_unit_intr(unit_intr / unit_intr_coef);
+    scale_box.put_string(to_string(unit_intr / mark_intr));
 
     button_pushed = true;
 }
@@ -199,7 +205,7 @@ void Graphix_window::draw_graphix(size_t func_index)
 
 void Graphix_window::hide_graphix(size_t func_index)
 {
-    clear_graphix(func_index);
+    clear_graphix(func_index, false);
 
     // прячем график
     enter_menu[func_index]->graph_hide();
@@ -221,9 +227,12 @@ void Graphix_window::draw_deriv(size_t der_index)
 
 void Graphix_window::hide_deriv(size_t der_index)
 {
-    clear_deriv(der_index);
+    clear_deriv(der_index, false);
 
     enter_menu[der_index]->der_hide();
+
+    if (enter_menu[der_index]->is_input_valid())
+        enter_menu[der_index]->set_der_str("");
 
     button_pushed = true;
 }
@@ -261,9 +270,8 @@ void Graphix_window::new_func_box()
     // добавляем новый function_бокс в соотв. вектор
     enter_menu.push_back(func_box);
 
-    // увеличиваем размер вектора с графиками (резервируем под новую сегментированную функцию)
-    // TODO: нужно написать конструктор по умолчанию для всех наших классов...
-    graphics.push_back(vector<Graphix*>{});
+    graphics.push_back(new Segmented_Graphix());
+    derivs.push_back(new Segmented_Graphix());
 
     inputed_strings.push_back(empty_str);
     inputed_funcs.push_back(empty_func);
@@ -283,7 +291,7 @@ void Graphix_window::rem_func_box(size_t func_index)
     // проходимся по всем function_боксам начиная со следующего
     for (size_t j = func_index + 1; j < enter_menu.size(); ++j)
     {
-        // двигаем их вверх и меняем номер на пердыдущий
+        // двигаем их вверх и меняем номер на предыдущий
         enter_menu[j]->move(0, -func_box_h);
         enter_menu[j]->set_index(enter_menu[j]->get_index() - 1);
     }
@@ -298,13 +306,7 @@ void Graphix_window::rem_func_box(size_t func_index)
     clear_graphix(func_index);
     clear_deriv(func_index);
 
-    // также изменяем размеры самого вектора
-    if (func_index > 0)
-        graphics.erase(graphics.begin() + func_index);
-    else
-        graphics.clear();
-
-    // FIXME: почему-то не работает erase graphics.erase(graphics.begin())
+    graphics.erase(graphics.begin() + func_index);
 
     // возвращаем кнопку "new_button" на экран, если был удален хоть один
     if (enter_menu.size() == max_functions_amount - 1)

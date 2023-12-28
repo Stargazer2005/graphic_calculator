@@ -15,8 +15,8 @@ namespace Math_calc {
 class function_crosses : public function_roots
 {
   public:
-    function_crosses(std::pair<Math_func::function, Math_func::function> funcs, double min_x,
-                     double max_x, double max_y, double _precision);
+    function_crosses(std::pair<Math_func::function, Math_func::function> funcs,
+                     Math_calc::Point left_bottom, Math_calc::Point right_top, double _precision);
 
     // methods
 
@@ -43,7 +43,7 @@ class function_crosses : public function_roots
 
     // RETURNS: все пересечения двух мат. функций (точки: пары вида (x,y))
     // (по известным макс., мин. значениям)
-    std::vector<Point> crosses (double min_x, double max_x, double max_y)
+    std::vector<Point> crosses (Math_calc::Point left_bottom, Point right_top)
         const;  // (чтобы не хранить границы внутри класса, передаём их в аргументы)
 
     // ~methods

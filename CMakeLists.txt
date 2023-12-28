@@ -15,7 +15,7 @@ set(HEADERS
     frontend/Graphix_calc/Graphix.h
     frontend/Graphix_calc/Function_box.h
     frontend/Graphix_calc/Point_box.h
-    frontend/Graphix_calc/Dext_box.h
+    frontend/Graphix_calc/Bothput_box.h
     frontend/Graphix_calc/Numbed_button.h
     frontend/Graphix_calc/Segmented_Graphix.h
 
@@ -53,7 +53,7 @@ set(SOURCES
     frontend/Graphix_calc/Graphix.cpp
     frontend/Graphix_calc/Function_box.cpp
     frontend/Graphix_calc/Point_box.cpp
-    frontend/Graphix_calc/Dext_box.cpp
+    frontend/Graphix_calc/Bothput_box.cpp
     frontend/Graphix_calc/Segmented_Graphix.cpp
 
     frontend/utility/utilities.cpp

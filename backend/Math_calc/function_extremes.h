@@ -14,8 +14,8 @@ namespace Math_calc {
 class function_extremes : public function_roots
 {
   public:
-    function_extremes(Math_func::function _func, double min_x, double max_x, double max_y,
-                      double _precision);
+    function_extremes(Math_func::function _func, Math_calc::Point left_bottom,
+                      Math_calc::Point right_top, double _precision);
 
     // methods
 
@@ -54,7 +54,7 @@ class function_extremes : public function_roots
 
     // RETURNS: все локальные экстремумы (точки: пары вида (x,y))
     // (проходясь перебором по сегментам)
-    std::vector<Point> extremes (double min_x, double max_x, double max_y) const;
+    std::vector<Point> extremes (Math_calc::Point left_bottom, Point right_top) const;
 
     // ~methods
 };

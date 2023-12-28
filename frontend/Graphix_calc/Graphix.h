@@ -13,14 +13,8 @@ namespace Graphix_calc {
 class Graphix : public Graph_lib::Shape
 {
   public:
-    Graphix(std::function<double(double)> func, double min_x, double max_x,
-            Graph_lib::Point center, int point_amount, double unit_intr);
-
-    std::vector<Graph_lib::Point> get_points () const { return points; }
-
-  private:
-    void add_point(Graph_lib::Point);
-    std::vector<Graph_lib::Point> points;
+    Graphix(std::function<double(double)> func, double min_x, double max_x, Graph_lib::Point origin,
+            int point_amount, double unit_intr);
 };
 
 }  // namespace Graphix_calc

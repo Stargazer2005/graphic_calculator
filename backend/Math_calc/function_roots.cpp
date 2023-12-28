@@ -16,13 +16,13 @@ using Math_func::function;
 using Backend_utilities::absolute;
 
 namespace Math_calc {
+function_roots::function_roots() {}
 
-function_roots::function_roots() : precision{0}, f{function("99999999")}, points{vector<Point>{}} {}
-
-function_roots::function_roots(function _func, double min_x, double max_x, double max_y,
+function_roots::function_roots(function _func, Point left_bottom, Point right_top,
                                double _precision)
     // FIXME: сейчас тут есть проверка на точность, которой быть не должно
-    : precision{_precision < 0.01 ? _precision : 0.01}, f{_func}, points{roots(min_x, max_x, max_y)}
+    : precision{_precision < 0.01 ? _precision : 0.01}, f{_func},
+      points{roots(left_bottom, right_top)}
 
 {
 }
@@ -76,10 +76,10 @@ double function_roots::root_on_interval(Segment seg) const
     return (seg.start + seg.end) / 2;
 }
 
-vector<Point> function_roots::roots(double min_x, double max_x, double max_y) const
+vector<Point> function_roots::roots(Point left_bottom, Point right_top) const
 {
     vector<Point> res;
-    for (const auto& seg : domain_segments(f.calculate, min_x, max_x, max_y, precision))
+    for (const auto& seg : domain_segments(f.calculate, left_bottom, right_top, precision))
     {
         for (const auto& local_seg : estimated_segment(seg))
         {

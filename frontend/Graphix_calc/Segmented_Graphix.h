@@ -1,6 +1,7 @@
 #pragma once
 
 // std libs
+#include <functional>
 #include <string>
 
 // Graph_lib
@@ -15,43 +16,42 @@
 namespace Graphix_calc {
 
 // функция, поделенная на сегменты, связанные с её областью определения
-class Segmented_Graphix
+class Segmented_Graphix : public Graph_lib::Shape
 {
   public:
-    Segmented_Graphix(Math_func::function _func, double unit_intr, Graph_lib::Point origin,
-                      int r_border, int h_border);
+    Segmented_Graphix() = default;
+    Segmented_Graphix(std::function<double(double)> _calc, double unit_intr,
+                      Graph_lib::Point origin, Graph_lib::Point left_bottom,
+                      Graph_lib::Point right_top);
 
     // methods
 
-    std::vector<Graphix_calc::Graphix*> get_segmented_graphix () const { return seged_graphix; }
-
-    std::vector<Graphix_calc::Graphix*> get_segmented_deriv () const { return seged_deriv; }
+    void set_color (Graph_lib::Color c);
 
   private:
     // vars
 
-    // значение строки
-    Math_func::function func;
+    std::function<double(double)> calc;
+
     // список отрезков, на котором рисуем функцию
     std::vector<Math_calc::Segment> func_segs;
-    std::vector<Math_calc::Segment> segs_der;
 
     // отсегментированная функция
     std::vector<Graphix_calc::Graphix*> seged_graphix;
-    std::vector<Graphix_calc::Graphix*> seged_deriv;
 
     // methods
 
-    std::vector<Math_calc::Segment> derivative_segment (int l_border, int r_border, int h_border,
-                                                        double unit_intr) const;
-    std::vector<Math_calc::Segment> segments (int l_border, int r_border, int h_border,
-                                              double unit_intr) const;
+    void draw_lines () const override;
+
+    std::vector<Math_calc::Segment> segments (double unit_intr, Graph_lib::Point origin,
+                                              Graph_lib::Point left_bottom,
+                                              Graph_lib::Point right_top) const;
 
     // функция, создающая вектор Graphix - раздробленная функция на отрезки
-    std::vector<Graphix_calc::Graphix*> segmented_graphix (double unit_intr, Graph_lib::Point center,
-                                                           int max_x) const;
-    std::vector<Graphix_calc::Graphix*> segmented_deriv (double unit_intr, Graph_lib::Point center,
-                                                         int max_x) const;
+    std::vector<Graphix_calc::Graphix*> segmented_graphix (double unit_intr,
+                                                           Graph_lib::Point origin,
+                                                           Graph_lib::Point left_bottom,
+                                                           Graph_lib::Point right_top) const;
 };
 
 }  // namespace Graphix_calc

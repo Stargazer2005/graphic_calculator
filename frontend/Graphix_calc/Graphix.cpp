@@ -1,48 +1,41 @@
-
 #include "Graphix.h"
 
 // std libs
 #include <stdexcept>
-using std::invalid_argument;
 using std::function;
+using std::invalid_argument;
+
+// utility
+#include "../utility/utilities.h"
+using namespace Frontend_utilities;
 
 namespace Graphix_calc {
 
-Graphix::Graphix(function<double(double)> func, double min_x, double max_x,
-                 Graph_lib::Point center, int point_amount, double unit_intr)
+Graphix::Graphix(function<double(double)> func, double min_x, double max_x, Graph_lib::Point origin,
+                 int point_amount, double unit_intr)
 {
-    auto convert_to_pix = [&] (double x, double y) -> Graph_lib::Point
-    {
-        return Graph_lib::Point{center.x + static_cast<int>(x * unit_intr),
-                                center.y - static_cast<int>(y * unit_intr)};
-    };
-
     if (max_x - min_x <= 0)
         invalid_argument("bad graphing range");
 
     if (point_amount <= 0)
         invalid_argument("non-positive graphing count");
-    else if (point_amount == 2)
+
+    if (point_amount == 2)
     {
-        add_point(convert_to_pix(min_x, func(min_x)));
-        add_point(convert_to_pix(max_x, func(max_x)));
+        add(convert_to_pix(origin, {min_x, func(min_x)}, unit_intr));
+        add(convert_to_pix(origin, {max_x, func(max_x)}, unit_intr));
     }
     else
     {
-        double dist = (max_x - min_x) / point_amount;
+        double dist = (max_x - min_x) / double(point_amount);
         double r = min_x;
         for (int i = 0; i < point_amount; ++i)
         {
-            add_point(Graph_lib::Point{center.x + int(r * unit_intr), center.y - int(func(r) * unit_intr)});
+            add(Graph_lib::Point{origin.x + int(r * unit_intr),
+                                 origin.y - int(func(r) * unit_intr)});
             r += dist;
         }
     }
-}
-
-void Graphix::add_point(Graph_lib::Point p)
-{
-    add(p);
-    points.push_back(p);
 }
 
 }  // namespace Graphix_calc

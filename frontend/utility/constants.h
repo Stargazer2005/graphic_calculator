@@ -20,13 +20,13 @@ const std::string empty_str = "";
 const Math_func::function empty_func{"0"};
 
 // минимальное количество пикселей для ед. отрезка
-constexpr int min_scale = 2;
+constexpr int min_unit_intr = 2;
 // максимальное количество пикселей для ед. отрезка
-constexpr int max_scale = 1024;
+constexpr int max_unit_intr = 1024;
 // максимальное количество вводимых функций пользователем (тип связан с использованием в векторах)
 constexpr unsigned long long int max_functions_amount = 6;
 
-constexpr double scale_coef = 2;
+constexpr double unit_intr_coef = 2;
 
 constexpr pix_amount margin = 20;
 constexpr pix_amount padding = 10;
@@ -59,6 +59,6 @@ constexpr pix_amount func_box_h = in_box_h + 2 * btn_h + out_box_h + padding;
 
 constexpr int height_buff = 3;
 
-constexpr pix_amount distance = 50;
+constexpr pix_amount mark_intr = 50;
 
 }  // namespace Frontend_consts

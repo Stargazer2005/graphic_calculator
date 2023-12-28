@@ -1,4 +1,3 @@
-
 #include "Function_box.h"
 
 // Graphix_calc

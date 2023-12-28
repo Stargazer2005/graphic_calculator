@@ -7,7 +7,7 @@
 // Graphix_calc
 #include "../../backend/Math_func/function.h"
 #include "../Graphix_calc/Axis.h"
-#include "../Graphix_calc/Dext_box.h"
+#include "../Graphix_calc/Bothput_box.h"
 #include "../Graphix_calc/Function_box.h"
 #include "../Graphix_calc/Graphix.h"
 #include "../Graphix_calc/Point_box.h"
@@ -39,6 +39,7 @@ class Graphix_window : public Graph_lib::Window
             ;
 
         cout << "some button pushed" << endl;
+        cout << "unit_intr: " << unit_intr << endl;
         cout << "inputed_strings: ";
         print(inputed_strings);
         cout << "inputed_func_strs: ";
@@ -55,7 +56,7 @@ class Graphix_window : public Graph_lib::Window
     // vars
 
     // общее значение масштаба: количество пикселей в единичном отрезке!?
-    pix_amount unit_intr;
+    double unit_intr;
     // начало координат в пикселях (используется только в Graph_lib::Graphix и методах на
     // отображение точки)
     Graph_lib::Point origin;
@@ -79,9 +80,9 @@ class Graphix_window : public Graph_lib::Window
     std::vector<std::string> inputed_strings;
     std::vector<Math_func::function> inputed_funcs;
     // общий вектор со всеми сегментированными функциями (графиками)
-    std::vector<std::vector<Graphix_calc::Graphix*>> graphics;
+    std::vector<Graphix_calc::Segmented_Graphix*> graphics;
     // общий вектор со всеми сегментированными производными функций (графиками)
-    std::vector<std::vector<Graphix_calc::Graphix*>> derivs;
+    std::vector<Graphix_calc::Segmented_Graphix*> derivs;
     // ветор, содержащий все зависимости функций друг от друга
     // vector<vector<size_t>> dependencies;
 
@@ -90,9 +91,9 @@ class Graphix_window : public Graph_lib::Window
     // общий массив всех точек на экране
     std::vector<Graph_lib::Marks*> all_points;
 
-    Graph_lib::Button scale_button;
+    Graph_lib::Button unit_intr_button;
 
-    Graphix_calc::Dext_box db;
+    Graphix_calc::Bothput_box scale_box;
 
     bool is_points_visible{false};
     bool button_pushed{false};
@@ -103,8 +104,8 @@ class Graphix_window : public Graph_lib::Window
     // callbacks
 
     static void cb_quit (void*, void* widget);
-    static void cb_incr_scale (void*, void* widget);
-    static void cb_decr_scale (void*, void* widget);
+    static void cb_incr_unit_intr (void*, void* widget);
+    static void cb_decr_unit_intr (void*, void* widget);
     static void cb_draw_graph (void*, void* widget);
     static void cb_hide_graph (void*, void* widget);
     static void cb_draw_der (void*, void* widget);
@@ -113,7 +114,7 @@ class Graphix_window : public Graph_lib::Window
     static void cb_new_func (void*, void* widget);
     static void cb_show_points (void*, void* widget);
     static void cb_hide_points (void*, void* widget);
-    static void cb_change_scale (void*, void* widget);
+    static void cb_change_unit_intr (void*, void* widget);
 
     // функции, которые вызывают callbacks
 
@@ -125,20 +126,20 @@ class Graphix_window : public Graph_lib::Window
     }
 
     // вспомогательная функция, меняющая текущий масштаб
-    void update_scale (double new_scale);
+    void update_unit_intr (double new_unit_intr);
 
-    void change_scale ();
+    void change_unit_intr ();
 
-    void incr_scale ();
+    void incr_unit_intr ();
 
-    void decr_scale ();
+    void decr_unit_intr ();
 
     // вспомогательная функция, полностью перерисовывающая график (без нажатия кнопки)
     void update_graphix (size_t func_index);
 
     // вспомогательная фунция, отчищающая память и удаляющая строку из вектора введенных
     // пользователем строк
-    void clear_graphix (size_t func_index);
+    void clear_graphix (size_t func_index, bool need_delete = true);
 
     void draw_graphix (size_t func_index);
 
@@ -147,7 +148,7 @@ class Graphix_window : public Graph_lib::Window
     // вспомогательная функция, полностью перерисовывающая производную (без нажатия кнопки))
     void update_deriv (size_t der_index);
 
-    void clear_deriv (size_t der_index);
+    void clear_deriv (size_t der_index, bool need_delete = true);
 
     void draw_deriv (size_t der_index);
 

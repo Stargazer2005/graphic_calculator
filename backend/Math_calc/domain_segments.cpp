@@ -4,17 +4,25 @@
 using std::function;
 using std::vector;
 
+#include "../temp_help.h"
+
 namespace Math_calc {
 
-vector<Segment> domain_segments (const function<double(double)>& calc, double min_x, double max_x,
-                                 double max_y, double precision)
+vector<Segment> domain_segments (const function<double(double)>& calc, Math_calc::Point left_bottom,
+                                 Math_calc::Point right_top, double precision)
 {
-    max_x *= 2;  // для большей точности
-    double min_y = -max_y;
+    double max_x = right_top.x;
+    double max_y = right_top.y * 2;  // для большей точности
+    double min_x = left_bottom.x;
+    double min_y = left_bottom.y * 2;  // для большей точности
+
     std::vector<Segment> res;
+
     // MEANS: начало отрезка уже было записано
     bool is_x_started = false;
+
     Segment seg;
+
     for (double x = min_x; x < max_x; x += precision)
     {
         if (!is_x_started)
@@ -24,7 +32,7 @@ vector<Segment> domain_segments (const function<double(double)>& calc, double mi
             try
             {
                 double y = calc(x);
-                if (((min_y / 2) < y) && (y < max_y / 2))
+                if ((y > min_y) && (y < max_y))
                 {
                     seg.start = x;
                     is_x_started = true;
@@ -41,25 +49,30 @@ vector<Segment> domain_segments (const function<double(double)>& calc, double mi
             try
             {
                 double y = calc(x);
-                if ((y > max_y / 2) or (y < min_y / 2))
+                // в случае, если значение функции превысило допустимое - обрезаем отрезок
+                // предыдущим значением
+                if ((y > max_y) || (y < min_y))
                 {
                     seg.end = x - precision;
                     is_x_started = false;
                     if (seg.start < seg.end)
                         res.push_back(seg);
+                    seg = Segment();
                 }
             }
             catch (...)
             {
-                // в этом случае обрезаем отрезок предыдущим значением, так как на текущем мы
+                // в этом случае также обрезаем отрезок предыдущим значением, так как на текущем мы
                 // получили ошибку
                 seg.end = x - precision;
                 is_x_started = false;
                 if (seg.start < seg.end)
                     res.push_back(seg);
+                seg = Segment();
             }
         }
     }
+
     // если в самом конце не успели закрыть отрезок, делаем это правой границей (скорее всего, мы её
     // просто перескочили или дошли до max_x - precision)
     if (is_x_started)
@@ -68,6 +81,11 @@ vector<Segment> domain_segments (const function<double(double)>& calc, double mi
         if (seg.start < seg.end)
             res.push_back(seg);
     }
+
+    // for (const auto& i : res)
+    //     cout << "{" << i.start << ", " << i.end << "}, ";
+    // cout << endl;
+
     return res;
 }
 

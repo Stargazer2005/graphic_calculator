@@ -16,6 +16,8 @@ namespace Math_func {
 class function
 {
   public:
+    function() = default;
+
     function(std::string _func_str);
 
     function(const function&);

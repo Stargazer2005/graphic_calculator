@@ -10,27 +10,26 @@ using std::vector;
 
 // utility
 #include "../utility/utilities.h"
-using Backend_utilities::absolute;  // (при использовании std::abs происходит неявное
-                                    // преобразование)
+using Backend_utilities::absolute;
 
 namespace Math_calc {
 
 function_crosses::function_crosses(std::pair<Math_func::function, Math_func::function> funcs,
-                                   double min_x, double max_x, double max_y, double _precision)
+                                   Point left_bottom, Point right_top, double _precision)
     // рассматриваем иксы пересечения функций, как точки-корни для функции - их разницы
     : function_roots{Math_func::function{funcs.first.get_func_str() + "-(" +
                                          funcs.second.get_func_str() + ")"},
-                     min_x, max_x, max_y, _precision},
+                     left_bottom, right_top, _precision},
       // FIXME: сейчас тут есть проверка на точность, которой быть не должно
       precision{_precision < 0.01 ? _precision : 0.01}, f{funcs.first},
-      points{crosses(min_x, max_x, max_y)}
+      points{crosses(left_bottom, right_top)}
 {
 }
 
-vector<Point> function_crosses::crosses(double min_x, double max_x, double max_y) const
+vector<Point> function_crosses::crosses(Point left_bottom, Point right_top) const
 {
     vector<Point> res;
-    for (const auto& seg : domain_segments(f.calculate, min_x, max_x, max_y, precision))
+    for (const auto& seg : domain_segments(f.calculate, left_bottom, right_top, precision))
     {
         for (const auto& local_seg : estimated_segment(seg))
         {

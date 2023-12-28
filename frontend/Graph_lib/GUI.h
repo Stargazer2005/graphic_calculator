@@ -30,8 +30,8 @@ class Widget
     // можем двигать и на отрицательные
     virtual void move (int dx, int dy)
     {
-        if (dx > loc.x || dy > loc.y)
-            throw std::invalid_argument("bad dx or dy");
+        // if (dx > loc.x || dy > loc.y)
+        //     throw std::invalid_argument("bad dx or dy");
 
         hide();
         pw->position(loc.x += dx, loc.y += dy);

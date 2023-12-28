@@ -1,4 +1,3 @@
-
 #include "Graphix_window.h"
 
 // std libs
@@ -18,15 +17,17 @@ using namespace Graphix_calc;
 // utility
 #include "../utility/constants.h"
 using namespace Frontend_consts;
+#include "../utility/utilities.h"
+using namespace Frontend_utilities;
 
 namespace Frontend {
 
-void Graphix_window::update_scale(double new_scale)
+void Graphix_window::update_unit_intr(double new_unit_intr)
 {
     // если выбранный масштаб допустим
-    if (new_scale < max_scale && new_scale > min_scale)
+    if (new_unit_intr < max_unit_intr && new_unit_intr > min_unit_intr)
     {
-        unit_intr = new_scale;
+        unit_intr = new_unit_intr;
 
         // детачим оси и высвобождаем память
         detach(*x_axis);
@@ -36,10 +37,11 @@ void Graphix_window::update_scale(double new_scale)
 
         // создаём новые оси и задаём цвет
 
-        x_axis = new Axis{Axis::Orientation::horisontal, origin, w() - func_box_w, unit_intr, "X"};
+        x_axis = new Axis{
+            Axis::Orientation::horisontal, origin, w() - func_box_w, unit_intr, mark_intr, "X"};
         x_axis->set_color(Color::Color_type::dark_cyan);
 
-        y_axis = new Axis{Axis::Orientation::vertical, origin, h(), unit_intr, "Y"};
+        y_axis = new Axis{Axis::Orientation::vertical, origin, h(), unit_intr, mark_intr, "Y"};
         y_axis->set_color(Color::Color_type::dark_cyan);
 
         // аттачим новые оси
@@ -64,9 +66,6 @@ void Graphix_window::update_scale(double new_scale)
 
 void Graphix_window::update_graphix(size_t func_index)
 {
-    // чистим старый график и точки
-    clear_graphix(func_index);
-
     // записываем в вектор введенных строк то, что ввёл пользователь и заодно проверяем
     update_inputed_func(func_index);
 
@@ -77,47 +76,38 @@ void Graphix_window::update_graphix(size_t func_index)
         auto func = inputed_funcs[func_index];
 
         // создаём сегментированную функцию
-        Segmented_Graphix seged_func(func, unit_intr, origin, w(), h());
+        auto seged_graphix =
+            new Segmented_Graphix(func.calculate, unit_intr, origin, {func_box_w, h()}, {w(), 0});
 
-        // график - композиция нескольких графиков, каждый из которых определен на своём сегменте
-        auto graphic = seged_func.get_segmented_graphix();
+        seged_graphix->set_color(Color::black);
 
-        //  аттачим сегментированную функцию
-        for (const auto& graphic_part : graphic)
-        {
-            graphic_part->set_color(Color::black);
-            attach(*graphic_part);
-        }
+        attach(*seged_graphix);
 
         // записываем новую функцию в общий массив всех графиков
         if (graphics.size() > func_index)
-            graphics[func_index] = graphic;
+        {
+            clear_graphix(func_index);
+            graphics[func_index] = seged_graphix;
+        }
         else
-            graphics.push_back(graphic);
+            graphics.push_back(seged_graphix);
     }
 }
 
-void Graphix_window::clear_graphix(size_t func_index)
+void Graphix_window::clear_graphix(size_t func_index, bool need_delete)
 {
-    if (graphics.size() > func_index)
-    {
-        auto graphic = graphics[func_index];
+    auto& seged_graphix = graphics[func_index];
 
-        // убираем все спрятанные фрагменты графика с экрана
-        for (const auto& graphic_part : graphic)
-            detach(*graphic_part);
+    detach(*seged_graphix);
 
-        graphics[func_index].clear();
-    }
+    if (enter_menu[func_index]->is_input_valid() && need_delete)
+        delete seged_graphix;
 
     clear_inputed_func(func_index);
 }
 
 void Graphix_window::update_deriv(size_t der_index)
 {
-    // чистим старый график и точки
-    clear_deriv(der_index);
-
     // записываем в вектор введенных строк то, что ввёл пользователь
     update_inputed_func(der_index);
 
@@ -128,36 +118,32 @@ void Graphix_window::update_deriv(size_t der_index)
         auto func = inputed_funcs[der_index];
 
         // создаём сегментированную функцию
-        Segmented_Graphix seged_func(func, unit_intr, origin, w(), h());
-        auto deriv = seged_func.get_segmented_deriv();
+        auto seged_deriv = new Segmented_Graphix(func.differentiate, unit_intr, origin,
+                                                 {func_box_w, h()}, {w(), 0});
 
-        // аттачим сегментированную функцию
-        for (const auto& deriv_part : deriv)
-        {
-            deriv_part->set_color(Color::dark_red);
-            attach(*deriv_part);
-        }
+        seged_deriv->set_color(Color::dark_red);
+
+        attach(*seged_deriv);
 
         // записываем новую функцию в общий массив всех графиков
         if (derivs.size() > der_index)
-            derivs[der_index] = deriv;
+        {
+            clear_deriv(der_index);
+            derivs[der_index] = seged_deriv;
+        }
         else
-            derivs.push_back(deriv);
+            derivs.push_back(seged_deriv);
     }
 }
 
-void Graphix_window::clear_deriv(size_t der_index)
+void Graphix_window::clear_deriv(size_t der_index, bool need_delete)
 {
-    if (derivs.size() > der_index)
-    {
-        auto deriv = derivs[der_index];
+    auto& seged_deriv = derivs[der_index];
 
-        // убираем все спрятанные фрагменты графика с экрана
-        for (const auto& deriv_part : deriv)
-            detach(*deriv_part);
+    detach(*seged_deriv);
 
-        derivs[der_index].clear();
-    }
+    if (enter_menu[der_index]->is_input_valid() && need_delete)
+        delete seged_deriv;
 }
 
 void Graphix_window::update_points()
@@ -165,22 +151,12 @@ void Graphix_window::update_points()
     // чистим память от всех предыдущих точек
     clear_points();
 
-    cout << "check1" << endl;
-
     fill_inputed_funcs();
 
-    cout << "check2" << endl;
-
-    // воспомогательная функция, которая переводит бэкендовы вещественные точки в пиксельные
-    auto convert_to_pix = [&] (Math_calc::Point p) -> Graph_lib::Point {
-        return {origin.x + int(p.x * unit_intr), origin.y - int(p.y * unit_intr)};
-    };
-
     // переводим границы экрана в вещественные, чтобы использовать для бэкендовских функций
+    auto min_point = convert_to_real(origin, {func_box_w, h()}, unit_intr);
+    auto max_point = convert_to_real(origin, {w(), 0}, unit_intr);
 
-    double min_x = -((double)w() / (2 * unit_intr)) + func_box_w / (2 * unit_intr);
-    double max_x = -min_x;
-    double max_y = (double)h() / (2 * unit_intr);
     double point_prec = (((double)w() / (unit_intr * 2500)));
 
     // проходимся по всем строкам, куда пользователь вводит функции и рисуем их экстремумы, корни и
@@ -197,25 +173,22 @@ void Graphix_window::update_points()
 
         if (is_valid)
         {
-            cout << "check3" << endl;
-            Math_calc::function_roots fr{func, min_x, max_x, max_y, point_prec};
-            cout << "check4" << endl;
+            Math_calc::function_roots fr{func, min_point, max_point, point_prec};
             // создаём марки, добавляем их на окно
             dots = new Marks{"x"};
             for (const auto& p : fr.get_function_roots())
-                dots->add(convert_to_pix(p));
+                dots->add(convert_to_pix(origin, p, unit_intr));
             attach(*dots);
 
             // и добавляем в общий массив всех точек на экране
             all_points.push_back(dots);
 
-            Math_calc::function_extremes fe{func, min_x, max_x, max_y, point_prec};
-            cout << "check5" << endl;
+            Math_calc::function_extremes fe{func, min_point, max_point, point_prec};
 
             // создаём марки, добавляем их на окно
             Marks* dots = new Marks{"#"};
             for (const auto& p : fe.get_function_extremes())
-                dots->add(convert_to_pix(p));
+                dots->add(convert_to_pix(origin, p, unit_intr));
             attach(*dots);
 
             // и добавляем в общий массив всех точек на экране
@@ -230,13 +203,11 @@ void Graphix_window::update_points()
 
             if (oth_function_box->is_input_valid())
             {
-                cout << "check6" << endl;
-                Math_calc::function_crosses fc{{func, oth_func}, min_x, max_x, max_y, point_prec};
-                cout << "check7" << endl;
+                Math_calc::function_crosses fc{{func, oth_func}, min_point, max_point, point_prec};
                 // создаём марки, добавляем их на окно
                 dots = new Marks{"o"};
                 for (const auto& p : fc.get_functions_crosses())
-                    dots->add(convert_to_pix(p));
+                    dots->add(convert_to_pix(origin, p, unit_intr));
                 attach(*dots);
                 // и добавляем в общий массив всех точек на экране
                 all_points.push_back(dots);
