@@ -4,8 +4,6 @@
 using std::function;
 using std::vector;
 
-#include "../temp_help.h"
-
 namespace Math_calc {
 
 vector<Segment> domain_segments (const function<double(double)>& calc, Math_calc::Point left_bottom,
@@ -21,6 +19,7 @@ vector<Segment> domain_segments (const function<double(double)>& calc, Math_calc
     // MEANS: начало отрезка уже было записано
     bool is_x_started = false;
 
+    // MEANS: текущий отрезок
     Segment seg;
 
     for (double x = min_x; x < max_x; x += precision)
@@ -82,6 +81,7 @@ vector<Segment> domain_segments (const function<double(double)>& calc, Math_calc
             res.push_back(seg);
     }
 
+    // (этот кусок может пригодится для поиска нужных формул точности)
     // for (const auto& i : res)
     //     cout << "{" << i.start << ", " << i.end << "}, ";
     // cout << endl;

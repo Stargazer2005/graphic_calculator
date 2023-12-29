@@ -1,5 +1,8 @@
 #include "utilities.h"
 
+// std libs
+#include <stdexcept>
+
 using namespace std;
 
 namespace Backend_utilities {
@@ -38,14 +41,13 @@ string spaces_deleted (const string& s)
 
 double absolute (double x) { return x >= 0 ? x : -x; }
 
-bool replace (string& str, const string& from, const string& to)
+void replace (string& str, const string& from, const string& to)
 {
 
     size_t start_pos = str.find(from);
     if (start_pos == string::npos)
-        return false;
+        throw std::invalid_argument("bad from string");
     str.replace(start_pos, from.length(), to);
-    return true;
 }
 
 }  // namespace Backend_utilities

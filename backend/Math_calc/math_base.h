@@ -1,5 +1,8 @@
 #pragma once
 
+// std libs
+#include <stdexcept>
+
 namespace Math_calc {
 
 // MEANS: вещественная точка
@@ -19,7 +22,12 @@ struct Point
 // MEANS: вещественный отрезок
 struct Segment
 {
-    inline Segment(double _start, double _end) : start{_start}, end{_end} {}
+    inline Segment(double _start, double _end) : start{_start}, end{_end}
+    {
+        // (код ошибки таков, так как по сути length = end - start < 0)
+        if (start > end)
+            throw std::invalid_argument("bad segment length");
+    }
 
     inline Segment() : start{-0}, end{0} {}
 

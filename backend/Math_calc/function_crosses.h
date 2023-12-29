@@ -20,7 +20,8 @@ class function_crosses : public function_roots
 
     // methods
 
-    inline std::vector<Point> get_functions_crosses () const { return points; }
+    // (перегрузка явного преобразования типов)
+    inline explicit operator std::vector<Math_calc::Point> () const { return points; }
 
     // ~methods
 
@@ -42,7 +43,6 @@ class function_crosses : public function_roots
     // methods
 
     // RETURNS: все пересечения двух мат. функций (точки: пары вида (x,y))
-    // (по известным макс., мин. значениям)
     std::vector<Point> crosses (Math_calc::Point left_bottom, Point right_top)
         const;  // (чтобы не хранить границы внутри класса, передаём их в аргументы)
 

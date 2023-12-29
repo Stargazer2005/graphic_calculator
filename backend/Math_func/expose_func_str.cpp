@@ -97,13 +97,15 @@ void expose_func_str::expose_dep_func()
             // заменяем в func_str выражение y_n на то, что оно означает
             // (заключаем в скобки, чтобы не нарушать мат. порядок действий)
 
-            // TODO: выводить тип ошибки только в первичной функции, где нету y_n
+            // TODO: выводить полный тип ошибки только в первичной функции, где нету y_n
             // TODO: а во всех остальных просто писать, что такая-то такая ошибочна
 
             // пустая строка - самая очевидная ошибка, её менять нету смысла
             if (!all_funcs_str[est_index].empty())
                 Backend_utilities::replace(func_str, "y_" + readed_est_number,
                                            '(' + all_funcs_str[est_index] + ')');
+            else
+                func_str = all_funcs_str[est_index];
         }
     }
 }

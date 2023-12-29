@@ -49,7 +49,9 @@ vector<Segment> Segmented_Graphix::segments(double unit_intr, Graph_lib::Point o
                                             Graph_lib::Point right_top) const
 {
     // эксперементально вычесленная удачная точность для деления на сегменты
+    // (говно неработающее)
     // double prec_seg = ((double(r_border) / sqrt(unit_intr))) / (abs(max_unit_intr - unit_intr));
+
     // FIXME: естественно, она не должна быть константой
     double prec_seg = 0.0001;
 

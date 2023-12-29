@@ -13,7 +13,7 @@ namespace Graphix_calc {
 class Graphix : public Graph_lib::Shape
 {
   public:
-    Graphix(std::function<double(double)> func, double min_x, double max_x, Graph_lib::Point origin,
+    Graphix(std::function<double(double)> calc, double min_x, double max_x, Graph_lib::Point origin,
             int point_amount, double unit_intr);
 };
 

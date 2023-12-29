@@ -5,12 +5,13 @@
 #include "Graph.h"
 #include "Window.h"
 
+#include "../../backend.h"
+
 namespace Graph_lib {
 
-using Address = void*;                        // Address is a synonym for void*
-using Callback = void (*)(Address, Address);  // FLTK's required function type for all callbacks
+using Callback = void (*)(void*, void*);  // FLTK's required function type for all callbacks
 
-template <class W> W& reference_to (Address pw)
+template <class W> W& reference_to (void* pw)
 // treat an address as a reference to a W
 {
     return *static_cast<W*>(pw);
@@ -30,8 +31,8 @@ class Widget
     // можем двигать и на отрицательные
     virtual void move (int dx, int dy)
     {
-        // if (dx > loc.x || dy > loc.y)
-        //     throw std::invalid_argument("bad dx or dy");
+        if (dx + loc.x < 0 || dy + loc.y < 0)
+            throw std::invalid_argument("bad dx or dy");
 
         hide();
         pw->position(loc.x += dx, loc.y += dy);

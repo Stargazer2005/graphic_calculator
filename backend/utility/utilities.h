@@ -28,7 +28,6 @@ std::string spaces_deleted (const std::string& s);
 double absolute (double x);
 
 // DOES: заменяет кусочек строки другим, модифицируя саму строку
-// RETURNS: факт того, что всё прошло успешно (bool)
-bool replace (std::string& str, const std::string& from, const std::string& to);
+void replace (std::string& str, const std::string& from, const std::string& to);
 
 }  // namespace Backend_utilities

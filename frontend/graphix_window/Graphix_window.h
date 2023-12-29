@@ -21,12 +21,14 @@
 #include "../Graph_lib/Graph.h"
 #include "../Graph_lib/Window.h"
 
-namespace Frontend {
+namespace Graphix_win {
 
 // класс окна с осями и возможностью добавлять графики
 class Graphix_window : public Graph_lib::Window
 {
   public:
+    Graphix_window();
+
     Graphix_window(Graph_lib::Point left_corner, pix_amount width, pix_amount height,
                    const std::string& title, pix_amount unit_intr);
 
@@ -73,7 +75,7 @@ class Graphix_window : public Graph_lib::Window
     // кнопка "создать новый график"
     Graph_lib::Button new_button;
 
-    // вектор полей ввода(группы поля ввода и трёх кнопок: draw, hide, remove)
+    // вектор полей ввода (группы поля ввода и трёх кнопок: draw, hide, remove)
     std::vector<Graphix_calc::Function_box*> enter_menu;
 
     // общий вектор введенных пользователем строк
@@ -83,8 +85,6 @@ class Graphix_window : public Graph_lib::Window
     std::vector<Graphix_calc::Segmented_Graphix*> graphics;
     // общий вектор со всеми сегментированными производными функций (графиками)
     std::vector<Graphix_calc::Segmented_Graphix*> derivs;
-    // ветор, содержащий все зависимости функций друг от друга
-    // vector<vector<size_t>> dependencies;
 
     // меню с общим полем для точек
     Graphix_calc::Point_box point_box;
@@ -100,6 +100,10 @@ class Graphix_window : public Graph_lib::Window
     bool quit_button_pushed{false};
 
     // methods
+
+    void init () override;
+
+    void initial_attach ();
 
     // callbacks
 
@@ -159,8 +163,6 @@ class Graphix_window : public Graph_lib::Window
     // вспомогательная фунция, добавляющая в вектор введенных пользователем строк тек
     void update_inputed_func (size_t func_index, bool need_update_strings = true);
 
-    void clear_inputed_func (size_t func_index);
-
     // вспомогательная фунция, добавляющая в вектор введенных пользователем строк всё из enter_menu
     void fill_inputed_funcs ();
 
@@ -176,4 +178,4 @@ class Graphix_window : public Graph_lib::Window
     void hide_points ();
 };
 
-}  // namespace Frontend
+}  // namespace Graphix_win

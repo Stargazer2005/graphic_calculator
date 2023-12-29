@@ -20,7 +20,7 @@ using namespace Frontend_consts;
 #include "../utility/utilities.h"
 using namespace Frontend_utilities;
 
-namespace Frontend {
+namespace Graphix_win {
 
 void Graphix_window::update_unit_intr(double new_unit_intr)
 {
@@ -84,13 +84,8 @@ void Graphix_window::update_graphix(size_t func_index)
         attach(*seged_graphix);
 
         // записываем новую функцию в общий массив всех графиков
-        if (graphics.size() > func_index)
-        {
-            clear_graphix(func_index);
-            graphics[func_index] = seged_graphix;
-        }
-        else
-            graphics.push_back(seged_graphix);
+        clear_graphix(func_index);
+        graphics[func_index] = seged_graphix;
     }
 }
 
@@ -100,10 +95,8 @@ void Graphix_window::clear_graphix(size_t func_index, bool need_delete)
 
     detach(*seged_graphix);
 
-    if (enter_menu[func_index]->is_input_valid() && need_delete)
+    if (need_delete)
         delete seged_graphix;
-
-    clear_inputed_func(func_index);
 }
 
 void Graphix_window::update_deriv(size_t der_index)
@@ -126,13 +119,8 @@ void Graphix_window::update_deriv(size_t der_index)
         attach(*seged_deriv);
 
         // записываем новую функцию в общий массив всех графиков
-        if (derivs.size() > der_index)
-        {
-            clear_deriv(der_index);
-            derivs[der_index] = seged_deriv;
-        }
-        else
-            derivs.push_back(seged_deriv);
+        clear_deriv(der_index);
+        derivs[der_index] = seged_deriv;
     }
 }
 
@@ -142,7 +130,7 @@ void Graphix_window::clear_deriv(size_t der_index, bool need_delete)
 
     detach(*seged_deriv);
 
-    if (enter_menu[der_index]->is_input_valid() && need_delete)
+    if (need_delete)
         delete seged_deriv;
 }
 
@@ -154,10 +142,11 @@ void Graphix_window::update_points()
     fill_inputed_funcs();
 
     // переводим границы экрана в вещественные, чтобы использовать для бэкендовских функций
-    auto min_point = convert_to_real(origin, {func_box_w, h()}, unit_intr);
-    auto max_point = convert_to_real(origin, {w(), 0}, unit_intr);
+    auto left_bottom = convert_to_real(origin, {func_box_w, h()}, unit_intr);
+    auto right_top = convert_to_real(origin, {w(), 0}, unit_intr);
 
-    double point_prec = (((double)w() / (unit_intr * 2500)));
+    // FIXME: естественно, она не должна быть константой
+    double point_prec = 0.0001;
 
     // проходимся по всем строкам, куда пользователь вводит функции и рисуем их экстремумы, корни и
     // всевозможные пересечения (если они не скрыты)
@@ -171,23 +160,28 @@ void Graphix_window::update_points()
 
         Marks* dots = new Marks{empty_str};
 
+        vector<Math_calc::Point> points;
+
         if (is_valid)
         {
-            Math_calc::function_roots fr{func, min_point, max_point, point_prec};
+
+            points = vector<Math_calc::Point>(
+                Math_calc::function_roots{func, left_bottom, right_top, point_prec});
             // создаём марки, добавляем их на окно
             dots = new Marks{"x"};
-            for (const auto& p : fr.get_function_roots())
+            for (const auto& p : points)
                 dots->add(convert_to_pix(origin, p, unit_intr));
             attach(*dots);
 
             // и добавляем в общий массив всех точек на экране
             all_points.push_back(dots);
 
-            Math_calc::function_extremes fe{func, min_point, max_point, point_prec};
+            points = vector<Math_calc::Point>(
+                Math_calc::function_extremes{func, left_bottom, right_top, point_prec});
 
             // создаём марки, добавляем их на окно
             Marks* dots = new Marks{"#"};
-            for (const auto& p : fe.get_function_extremes())
+            for (const auto& p : points)
                 dots->add(convert_to_pix(origin, p, unit_intr));
             attach(*dots);
 
@@ -201,12 +195,14 @@ void Graphix_window::update_points()
             auto oth_function_box = enter_menu[j];
             auto oth_func = inputed_funcs[j];
 
-            if (oth_function_box->is_input_valid())
+            if (is_valid && oth_function_box->is_input_valid())
             {
-                Math_calc::function_crosses fc{{func, oth_func}, min_point, max_point, point_prec};
+                points = vector<Math_calc::Point>(Math_calc::function_crosses{
+                    {func, oth_func}, left_bottom, right_top, point_prec});
+
                 // создаём марки, добавляем их на окно
                 dots = new Marks{"o"};
-                for (const auto& p : fc.get_functions_crosses())
+                for (const auto& p : points)
                     dots->add(convert_to_pix(origin, p, unit_intr));
                 attach(*dots);
                 // и добавляем в общий массив всех точек на экране
@@ -219,7 +215,10 @@ void Graphix_window::update_points()
 void Graphix_window::clear_points()
 {
     for (const auto& points : all_points)
+    {
         detach(*points);
+        delete points;
+    }
 
     all_points.clear();
 }
@@ -252,9 +251,13 @@ void Graphix_window::update_inputed_func(size_t func_index, bool need_update_str
         // создаём функцию (чтобы потенциально проверить на ошибки)
         Math_func::function func{estimated_func_str};
 
+        cout << func.get_func_str() << endl;
+
         // если попытка раскрытия зависимостей создания функции не вызвали ошибок, то всё
         // шикарно, предполагаемая функция действительно норм
         inputed_funcs[func_index] = func;
+
+        cout << inputed_funcs[func_index].get_func_str() << endl;
 
         enter_menu[func_index]->input_valid();
         enter_menu[func_index]->set_message(empty_str);
@@ -264,25 +267,11 @@ void Graphix_window::update_inputed_func(size_t func_index, bool need_update_str
     {
         if (func_index < enter_menu.size())
         {
-            // inputed_funcs[func_index] = empty_func;
-            // выводим ошибку и прячем график
+            clear_graphix(func_index, false);
             enter_menu[func_index]->set_message(string{e.what()});
             enter_menu[func_index]->input_invalid();
         }
-
-        if (string{e.what()} == "self-usage or loop")
-        {
-            // print(dependences);
-            // апдейтим все зависимые функции
-            for (const auto& n : dependences)
-                update_inputed_func(n - 1, false);
-        }
     }
-}
-
-void Graphix_window::clear_inputed_func(size_t func_index)
-{
-    inputed_funcs[func_index] = empty_func;
 }
 
 void Graphix_window::fill_inputed_funcs()
@@ -291,4 +280,4 @@ void Graphix_window::fill_inputed_funcs()
         update_inputed_func(i);
 }
 
-}  // namespace Frontend
+}  // namespace Graphix_win

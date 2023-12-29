@@ -11,7 +11,7 @@ using namespace Frontend_utilities;
 
 namespace Graphix_calc {
 
-Graphix::Graphix(function<double(double)> func, double min_x, double max_x, Graph_lib::Point origin,
+Graphix::Graphix(function<double(double)> calc, double min_x, double max_x, Graph_lib::Point origin,
                  int point_amount, double unit_intr)
 {
     if (max_x - min_x <= 0)
@@ -22,8 +22,8 @@ Graphix::Graphix(function<double(double)> func, double min_x, double max_x, Grap
 
     if (point_amount == 2)
     {
-        add(convert_to_pix(origin, {min_x, func(min_x)}, unit_intr));
-        add(convert_to_pix(origin, {max_x, func(max_x)}, unit_intr));
+        add(convert_to_pix(origin, {min_x, calc(min_x)}, unit_intr));
+        add(convert_to_pix(origin, {max_x, calc(max_x)}, unit_intr));
     }
     else
     {
@@ -32,7 +32,7 @@ Graphix::Graphix(function<double(double)> func, double min_x, double max_x, Grap
         for (int i = 0; i < point_amount; ++i)
         {
             add(Graph_lib::Point{origin.x + int(r * unit_intr),
-                                 origin.y - int(func(r) * unit_intr)});
+                                 origin.y - int(calc(r) * unit_intr)});
             r += dist;
         }
     }

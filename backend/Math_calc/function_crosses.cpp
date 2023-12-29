@@ -20,9 +20,7 @@ function_crosses::function_crosses(std::pair<Math_func::function, Math_func::fun
     : function_roots{Math_func::function{funcs.first.get_func_str() + "-(" +
                                          funcs.second.get_func_str() + ")"},
                      left_bottom, right_top, _precision},
-      // FIXME: сейчас тут есть проверка на точность, которой быть не должно
-      precision{_precision < 0.01 ? _precision : 0.01}, f{funcs.first},
-      points{crosses(left_bottom, right_top)}
+      precision{_precision}, f{funcs.first}, points{crosses(left_bottom, right_top)}
 {
 }
 

@@ -19,9 +19,7 @@ namespace Math_calc {
 
 function_extremes::function_extremes(function _func, Point left_bottom, Point right_top,
                                      double _precision)
-    // FIXME: сейчас тут есть проверка на точность, которой быть не должно
-    : precision{_precision < 0.01 ? _precision : 0.01}, f{_func},
-      points{extremes(left_bottom, right_top)}
+    : precision{_precision}, f{_func}, points{extremes(left_bottom, right_top)}
 {
 }
 
@@ -36,7 +34,7 @@ std::vector<Segment> function_extremes::estimated_segment(ExtremeType extr, Segm
         {
             // если функция меньше меньше своего текущего значения и слева, и справа, то она в точке
             // минимума
-            // FIXME: а мы на кой черт на два то домножаем?
+            // IDK: а мы на кой черт на два то домножаем?
             if ((f(x) < f(x - 2 * precision)) && (f(x) < f(x + 2 * precision)))
             {
                 res.push_back({
@@ -54,7 +52,7 @@ std::vector<Segment> function_extremes::estimated_segment(ExtremeType extr, Segm
         {
             // если функция меньше больше своего текущего значения и слева, и справа, то она в точке
             // максимума
-            // FIXME: а мы на кой черт на два то домножаем?
+            // IDK: а мы на кой черт на два то домножаем?
             if ((f(x) > f(x - 2 * precision)) && (f(x) > f(x + 2 * precision)))
             {
                 res.push_back({

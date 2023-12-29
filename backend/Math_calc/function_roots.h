@@ -7,7 +7,7 @@
 // Math_calc
 #include "math_base.h"
 
-// Math_function
+// Math_func
 #include "../Math_func/function.h"
 
 namespace Math_calc {
@@ -16,13 +16,14 @@ namespace Math_calc {
 class function_roots
 {
   public:
-    function_roots();
+    function_roots() = default;
     function_roots(Math_func::function _func, Math_calc::Point left_bottom,
                    Math_calc::Point right_top, double _precision);
 
     // methods
 
-    inline std::vector<Point> get_function_roots () const { return points; }
+    // (перегрузка явного преобразования типов)
+    inline explicit operator std::vector<Math_calc::Point> () const { return points; }
 
     // ~methods
 
@@ -55,7 +56,6 @@ class function_roots
     // methods
 
     // RETURNS: все корни (точки: пары вида (x,y))
-    // (проходясь перебором по сегментам)
     std::vector<Point> roots (Math_calc::Point left_bottom, Point right_top) const;
 
     // ~methods

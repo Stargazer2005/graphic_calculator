@@ -19,7 +19,8 @@ class function_extremes : public function_roots
 
     // methods
 
-    inline std::vector<Point> get_function_extremes () const { return points; }
+    // (перегрузка явного преобразования типов)
+    inline explicit operator std::vector<Math_calc::Point> () const { return points; }
 
     // ~methods
 

@@ -16,14 +16,10 @@ using Math_func::function;
 using Backend_utilities::absolute;
 
 namespace Math_calc {
-function_roots::function_roots() {}
 
 function_roots::function_roots(function _func, Point left_bottom, Point right_top,
                                double _precision)
-    // FIXME: сейчас тут есть проверка на точность, которой быть не должно
-    : precision{_precision < 0.01 ? _precision : 0.01}, f{_func},
-      points{roots(left_bottom, right_top)}
-
+    : precision{_precision}, f{_func}, points{roots(left_bottom, right_top)}
 {
 }
 
@@ -37,7 +33,7 @@ vector<Segment> function_roots::estimated_segment(Segment seg) const
         if ((f(x)) * f(x - precision) <= 0)
         {
             res.push_back({
-                (x - precision) - precision,
+                x - precision,
                 x + precision,
             });
         }
@@ -45,7 +41,7 @@ vector<Segment> function_roots::estimated_segment(Segment seg) const
     // если на интервале нет изменения знаков, то
     // возможно функция касается оси x(например x^2)
     if (res.empty())
-        return std::vector<Segment>{{seg.start, seg.end}};
+        return std::vector<Segment>{seg};
     return res;
 }
 
@@ -86,10 +82,9 @@ vector<Point> function_roots::roots(Point left_bottom, Point right_top) const
             double x = root_on_interval(local_seg);
             double y = f(x);
             // если точка достаточно близка к нулю, добавляем её
-            // (эта проверка нужна потому, что для root_on_interval могло потребоваться куда
+            // проверка нужна потому, что для root_on_interval могло потребоваться куда
             // большее количество приближений, но так как мы ему дали лишь max_count, ему ничего
-            // не мешало вернуть ответ, который совсем не близок к нулю по y) (п.с. точность
-            // использования метода ограничена доступной памятью)
+            // не мешало вернуть ответ, который совсем не близок к нулю по y
             if (absolute(y) < precision * 20)
                 res.push_back(Point{x, 0});
         }

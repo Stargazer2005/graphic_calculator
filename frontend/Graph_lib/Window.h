@@ -51,7 +51,7 @@ class Window : public Fl_Window
     pix_amount width;
     pix_amount height;
 
-    void init ();
+    virtual void init ();
 };
 
 int gui_main ();  // invoke GUI library's main event loop

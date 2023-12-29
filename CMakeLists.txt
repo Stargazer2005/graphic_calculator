@@ -60,6 +60,7 @@ set(SOURCES
 
     frontend/graphix_window/Graphix_window.cpp
     frontend/graphix_window/Graphix_window_updaters.cpp
+    frontend/graphix_window/Graphix_window_init.cpp
     
 # back
     backend/Math_calc/domain_segments.cpp
