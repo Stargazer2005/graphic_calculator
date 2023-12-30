@@ -48,7 +48,7 @@ vector<Segment> domain_segments (const function<double(double)>& calc, Math_calc
             try
             {
                 double y = calc(x);
-                // в случае, если значение функции превысило допустимое - обрезаем отрезок
+                // в случае, если значение мат. функции превысило допустимое - обрезаем отрезок
                 // предыдущим значением
                 if ((y > max_y) || (y < min_y))
                 {

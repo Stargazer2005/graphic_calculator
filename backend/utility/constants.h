@@ -24,16 +24,19 @@ constexpr char c_exp = 'e';
 constexpr char c_ln = 'l';
 constexpr char uminus = 'u';
 
-// MEANS: строка с разрешенными мат. функциями
+// MEANS: строка с разрешенными элементар. мат. функциями
 const std::string math_func_chars = "sctelu";
 
 // MEANS: строка с разрешенными мат. операциями
 const std::string math_oper_chars = "+-*/^";
 
+// MEANS: "сколь угодно малое" приращение x
 constexpr double delta_x = 0.00001;
 
 // MEANS: золотое сечение
 const double phi = (1 + sqrt(5)) / 2;
-constexpr int max_count = 10000;
+
+// MEANS: максимальное кол-во проходов по поиску особой точки
+constexpr unsigned int max_count = 10000;
 
 }  // namespace Backend_consts

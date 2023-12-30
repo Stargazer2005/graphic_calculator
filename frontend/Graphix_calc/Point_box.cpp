@@ -14,12 +14,17 @@ namespace Graphix_calc {
 
 Point_box::Point_box(pix_amount window_w, pix_amount window_h, void cb_show(void*, void*),
                      void cb_hide(void*, void*))
-    : Widget{Point{window_w, window_h}, 1, 1, "", nullptr},
-      show_button{new Button{Point{window_w - btn_w * 2 - padding, window_h - btn_h}, btn_w, btn_h,
-                             "Show", cb_show}},
+    : show_button{new Button{Point{window_w - btn_w * 2 - margin / 2, window_h - btn_h}, btn_w,
+                             btn_h, "Show", cb_show}},
       hide_button{
           new Button{Point{window_w - btn_w, window_h - btn_h}, btn_w, btn_h, "Hide", cb_hide}}
 {
+}
+
+Point_box::~Point_box()
+{
+    delete show_button;
+    delete hide_button;
 }
 
 void Point_box::attach(Graph_lib::Window& win)

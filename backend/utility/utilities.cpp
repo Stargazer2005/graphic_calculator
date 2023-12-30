@@ -2,7 +2,6 @@
 
 // std libs
 #include <stdexcept>
-
 using namespace std;
 
 namespace Backend_utilities {
@@ -14,7 +13,7 @@ char s_to_c (const string& s)
     if (s[0] >= '0' && s[0] <= '9')  // если число
         return ('n');                // заменяем на спец. символ
     else
-        return (s[0]);  // первая буква отражает название функции
+        return (s[0]);  // первая буква отражает название элементар. мат. функции
 }
 
 bool is_double (const std::string& str)

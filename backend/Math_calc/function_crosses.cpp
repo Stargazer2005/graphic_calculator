@@ -16,7 +16,7 @@ namespace Math_calc {
 
 function_crosses::function_crosses(std::pair<Math_func::function, Math_func::function> funcs,
                                    Point left_bottom, Point right_top, double _precision)
-    // рассматриваем иксы пересечения функций, как точки-корни для функции - их разницы
+    // рассматриваем иксы пересечения мат. функций, как точки-корни для мат. функции - их разницы
     : function_roots{Math_func::function{funcs.first.get_func_str() + "-(" +
                                          funcs.second.get_func_str() + ")"},
                      left_bottom, right_top, _precision},

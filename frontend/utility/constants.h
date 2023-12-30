@@ -5,7 +5,7 @@
 
 // Graphix_calc
 #include "../Graphix_calc/Graphix.h"
-#include "../Graphix_calc/Segmented_Graphix.h"
+#include "../Graphix_calc/Segmented_graphix.h"
 
 // Backend
 #include "../../backend.h"
@@ -14,51 +14,69 @@ namespace Frontend_consts {
 
 const std::string empty_str = "";
 
-// (мы можем использовать такую запись функции не боясь за точки пересечения)
+// (мы можем использовать такую запись мат. функции не боясь за точки пересечения)
 // (это связано с тем, что у нас в любом случае изначально enter_menu[i]->is_input_valid = false)
-// (т.е. у только что созданных новых Function_box'ов не берется y = 0 в расчет для точек)
+// (т.е. у только что созданных новых Function_box'ов не берется этот y = 0 в расчет для точек)
+
+// MEANS: пустая (нулевая) мат. функция
 const Math_func::function empty_func{"0"};
 
-// минимальное количество пикселей для ед. отрезка
-constexpr int min_unit_intr = 2;
-// максимальное количество пикселей для ед. отрезка
-constexpr int max_unit_intr = 1024;
-// максимальное количество вводимых функций пользователем (тип связан с использованием в векторах)
-constexpr unsigned long long int max_functions_amount = 6;
+// MEANS: минимальное кол-во пикселей в ед. отрезке
+constexpr pix_amount min_unit_intr = 2;
+// MEANS: максимальное кол-во пикселей в ед. отрезке
+constexpr pix_amount max_unit_intr = 32768;
 
+// MEANS: максимальное количество вводимых мат. функций пользователем
+constexpr unsigned long long int max_functions_amount = 7;
+
+// MEANS: коэф. увеличения/уменьшения ед. отрезка при изменении масштаба
 constexpr double unit_intr_coef = 2;
 
+// MEANS: вспомогательный отступ
 constexpr pix_amount margin = 20;
-constexpr pix_amount padding = 10;
 
-// стандартная ширина кнопки
+// MEANS: стандартная ширина кнопки
 constexpr pix_amount btn_w = 70;
-// стандартная высота кнопки
+// MEANS: стандартная высота кнопки
 constexpr pix_amount btn_h = 20;
 
-// сторона квадратной кнопки (кнопки изменения масштаба)
+// MEANS: сторона квадратной кнопки (кнопки изменения масштаба)
 constexpr pix_amount scl_btn_side = 30;
 
-// пиксели, захваченные лейблом для in_box (т.е. "y = ")
-constexpr pix_amount in_box_lab_w = 30;
+// MEANS: кол-во пикселей, захваченных лейблом для in_box (т.е. "y = ")
+constexpr pix_amount in_box_label_w = 30;
 
-// длина поля для ввода исключая его лейбл (т.е. "y = ")
-constexpr pix_amount in_box_w = btn_w * 3 + padding * 2 - in_box_lab_w;
-// высота поля для ввода
+// MEANS: длина поля для ввода (исключая его лейбл "y = ")
+constexpr pix_amount in_box_w = btn_w * 3 + margin - in_box_label_w;
+// MEANS: высота поля для ввода
 constexpr pix_amount in_box_h = 30;
 
-// длина поля вывода
-constexpr pix_amount out_box_w = in_box_w + in_box_lab_w;
-// высота поля вывода
+// MEANS: длина поля вывода
+constexpr pix_amount out_box_w = in_box_w + in_box_label_w;
+// MEANS: высота поля вывода
 constexpr pix_amount out_box_h = 20;
 
-// длина всей структуры, где пользователь может рисовать графики
+// MEANS: длина всего бокса, где пользователь может рисовать графики
 constexpr pix_amount func_box_w = out_box_w;
-// высота всей структуры, где пользователь может рисовать графики
-constexpr pix_amount func_box_h = in_box_h + 2 * btn_h + out_box_h + padding;
+// MEANS: высота всего бокса, где пользователь может рисовать графики
+constexpr pix_amount func_box_h = in_box_h + 2 * btn_h + out_box_h + margin / 2;
 
-constexpr int height_buff = 3;
+// MEANS: расстояние, на котором находится линия-ограничитель
+constexpr pix_amount border_dist = func_box_w + 1;
 
+// MEANS: размер маркируемого отрезка, на котором ставится насечка
 constexpr pix_amount mark_intr = 50;
+
+// MEANS: стандартный размер текста для насечек
+constexpr unsigned int notch_font_size = 12;
+
+// MEANS: длина насечки
+constexpr pix_amount notch_side = 8;
+
+// MEANS: количество знаков после точки для подписей к насечкам на осях
+constexpr unsigned int notch_marks_format_prec = 3;
+
+// MEANS: количество знаков после точки для строки масштаба
+constexpr unsigned int scale_format_prec = 5;
 
 }  // namespace Frontend_consts

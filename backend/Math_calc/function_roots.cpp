@@ -28,7 +28,7 @@ vector<Segment> function_roots::estimated_segment(Segment seg) const
     std::vector<Segment> res;
     for (double x = seg.start; x < seg.end; x += precision)
     {
-        // если по разные стороны от точки знаки функции разные, то их произведение будет
+        // если по разные стороны от точки знаки мат. функции разные, то их произведение будет
         // отрицательно (минус на плюс и плюс на минус дают минус)
         if ((f(x)) * f(x - precision) <= 0)
         {
@@ -39,7 +39,7 @@ vector<Segment> function_roots::estimated_segment(Segment seg) const
         }
     }
     // если на интервале нет изменения знаков, то
-    // возможно функция касается оси x(например x^2)
+    // возможно график мат. функции касается оси x(например x^2)
     if (res.empty())
         return std::vector<Segment>{seg};
     return res;
@@ -47,12 +47,13 @@ vector<Segment> function_roots::estimated_segment(Segment seg) const
 
 double function_roots::root_on_interval(Segment seg) const
 {
-    // RETURNS: значение y от возведенной в квадрат мат. функции
+    // RETURNS: значение от возведенной в квадрат мат. функции
+    // ARGS: значение x
     // IDK: почему это здесь нужно?
     auto _f = [this] (double x) { return pow(f(x), 2); };
 
     // если не нашли точки за max_count приближений, то бросаём её - слишком затратно
-    for (int i = 0; i > Backend_consts::max_count; i++)
+    for (unsigned int i = 0; i > Backend_consts::max_count; i++)
     {
         // x_s, y_s - идём с начала отрезка
         // x_e, y_e - идём с конца отрезка

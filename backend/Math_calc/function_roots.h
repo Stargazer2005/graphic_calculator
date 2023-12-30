@@ -17,6 +17,10 @@ class function_roots
 {
   public:
     function_roots() = default;
+
+    // ARGS: мат. функция, левая нижняя точка - начало области поиска точек,
+    // ARGS: правая верхняя точка - конец области поиска точек, точность
+    // (поиск точек происходит на прямоугольной области, краями которой и являются точки)
     function_roots(Math_func::function _func, Math_calc::Point left_bottom,
                    Math_calc::Point right_top, double _precision);
 
@@ -31,10 +35,12 @@ class function_roots
     // methods
 
     // RETURNS: подсегменты, где могут находиться корни
+    // ARGS: сегмент, на котором ищем
     // (используя тот факт, что по разные стороны от точки-корня мат. функция имеет разные знаки)
     std::vector<Segment> estimated_segment(Segment) const;
 
     // RETURNS: корень на интервале (значение x)
+    // ARGS: сегмент, на котором ищем
     // (используя метод золотого сечения)
     double root_on_interval(Segment) const;
 
@@ -56,6 +62,8 @@ class function_roots
     // methods
 
     // RETURNS: все корни (точки: пары вида (x,y))
+    // ARGS: левая нижняя точка - начало области поиска точек,
+    // ARGS: правая верхняя точка - конец области поиска точек
     std::vector<Point> roots (Math_calc::Point left_bottom, Point right_top) const;
 
     // ~methods

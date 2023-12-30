@@ -1,4 +1,4 @@
-#include "GUI.h"
+#include "Widgets.h"
 
 namespace Graph_lib {
 
@@ -19,11 +19,9 @@ Window::Window(Point top_left_corner, pix_amount _width, pix_amount _height,
 
 void Window::init()
 {
-    resizable(this);
-    show();
+    Fl_Group::resizable(this);
+    Fl_Window::show();
 }
-
-//----------------------------------------------------
 
 void Window::draw()
 {
@@ -32,30 +30,35 @@ void Window::draw()
         shapes[i]->draw();
 }
 
-void Window::attach(Widget& w)
+void Window::attach(Widget& widget)
 {
-    begin();          // FTLK: begin attaching new Fl_Widgets to this window
-    w.attach(*this);  // let the Widget create its Fl_Widgets
-    end();            // FTLK: stop attaching new Fl_Widgets to this window
+    Fl_Group::begin();  // FTLK: начинаем прикреплять к этому окну новые Fl_Widgets.
+    widget.attach(*this);  // позволяем виджету создать свои Fl_Widgets
+    Fl_Group::end();  // FTLK: прекращаем прикреплять новые Fl_Widgets к этому окну
 }
 
-void Window::detach(Widget& w) { w.hide(); }
+void Window::detach(Widget& widget) { widget.hide(); }
 
-void Window::attach(Shape& s) { shapes.push_back(&s); }
+void Window::attach(Shape& shape) { shapes.push_back(&shape); }
 
-void Window::detach(Shape& s)
+void Window::detach(Shape& shape)
 {
-    for (unsigned int i = shapes.size(); 0 < i; --i)  // guess last attached will be first released
-        if (shapes[i - 1] == &s)
-            shapes.erase(shapes.begin() + (i - 1));  // &shapes[i-1]);
+    // последнее прикрепленное будет выпущено первым
+    for (unsigned int i = shapes.size(); 0 < i; --i)
+        if (shapes[i - 1] == &shape)
+            shapes.erase(shapes.begin() + (i - 1));
 }
 
-void Window::put_on_top(Shape& s)
+void Window::put_on_top(Shape& shape)
 {
-    detach(s);
-    attach(s);
+    detach(shape);
+    attach(shape);
 }
 
-int gui_main () { return Fl::run(); }
+void Window::put_on_top(Widget& widget)
+{
+    detach(widget);
+    attach(widget);
+}
 
 }  // namespace Graph_lib

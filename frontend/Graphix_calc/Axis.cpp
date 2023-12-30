@@ -1,10 +1,7 @@
 #include "Axis.h"
 
 // std libs
-#include <stdexcept>
-using std::invalid_argument;
 using std::string;
-using std::to_string;
 
 // Graph_lib
 using Graph_lib::Color;
@@ -21,8 +18,15 @@ namespace Graphix_calc {
 
 Axis::Axis(Orientation orient, Point origin, pix_amount length, double _unit_intr,
            const std::string& label_text)
+    // в этом случае за mark_intr берём unit_intr
     : unit_intr{_unit_intr}, mark_intr{pix_amount(_unit_intr)},
-      label{Point{origin.x - margin, origin.y - length / 2 + margin}, label_text}
+      // надпись располагаем с отступом
+      // IDK: насколько тут плох тернарный оператор?
+      // (просто возникает проблема с запретом копирования Shape)
+      label{orient == Orientation::vertical
+                ? Point{origin.x - margin, origin.y - length / 2 + margin}
+                : Point{origin.x + length / 2 - margin, origin.y - margin},
+            label_text}
 {
     init(orient, origin, length);
 }
@@ -30,9 +34,21 @@ Axis::Axis(Orientation orient, Point origin, pix_amount length, double _unit_int
 Axis::Axis(Orientation orient, Graph_lib::Point origin, pix_amount length, double _unit_intr,
            pix_amount _mark_intr, const std::string& label_text)
     : unit_intr{_unit_intr}, mark_intr{_mark_intr},
-      label{Point{origin.x - margin, origin.y - length / 2 + margin}, label_text}
+      // надпись располагаем с отступом
+      // IDK: насколько тут плох тернарный оператор?
+      // (просто возникает проблема с запретом копирования Shape)
+      label{orient == Orientation::vertical
+                ? Point{origin.x - margin, origin.y - length / 2 + margin}
+                : Point{origin.x + length / 2 - margin, origin.y - margin},
+            label_text}
 {
     init(orient, origin, length);
+}
+
+Axis::~Axis()
+{
+    for (const auto& mark : marks)
+        delete mark;
 }
 
 void Axis::draw_lines() const
@@ -57,35 +73,45 @@ void Axis::init(Orientation orient, Graph_lib::Point origin, pix_amount length)
     {
     case Axis::horisontal:
     {
-        Shape::add(origin);
+        // установка точек для линии оси
         Shape::add(Point{origin.x - length / 2, origin.y});
         Shape::add(Point{origin.x + length / 2, origin.y});
 
-        for (int i = 1; i < length / 2; ++i)
+        // цикл по установке насечек и надписям к ним
+        // (начинаем с единицы, так как начало координат очевидно)
+        for (pix_amount i = 1; i < length / 2; i++)
         {
-            if (i % pix_amount(unit_intr) == 0 && !(i % mark_intr == 0))
-            {
-                notches.add(Point{origin.x + i, origin.y + 2}, Point{origin.x + i, origin.y - 2});
-                notches.add(Point{origin.x - i, origin.y + 2}, Point{origin.x - i, origin.y - 2});
-            }
+            // IDK: по идее, хорошо бы еще единичный отрезок рисовать, но тогда там длины разные
+            // (из-за округления)
 
+            // в этом случае насечка находится на нужном расстоянии от origin
             if (i % mark_intr == 0)
             {
-                notches.add(Point{origin.x + i, origin.y + 4}, Point{origin.x + i, origin.y - 4});
-                notches.add(Point{origin.x - i, origin.y + 4}, Point{origin.x - i, origin.y - 4});
+                // добавляем насечки с двух сторон
+                notches.add(Point{origin.x + i, origin.y + notch_side / 2},
+                            Point{origin.x + i, origin.y - notch_side / 2});
+                notches.add(Point{origin.x - i, origin.y + notch_side / 2},
+                            Point{origin.x - i, origin.y - notch_side / 2});
 
+                // также добавляем текст к этим насечкам
+
+                // MEANS: надпись к насечке
                 Text* mark = new Text(
-                    Point(origin.x + i - 3, origin.y + 20),
-                    format(convert_to_real(origin, {origin.x + i, origin.y}, unit_intr).x));
+                    Point(origin.x + i - notch_side / 2, origin.y + margin),
+                    // (конвертируем, так как надписи к насечками в веществ.)
+                    format(converted_to_real({origin.x + i, origin.y}, origin, unit_intr).x,
+                           notch_marks_format_prec));
                 mark->set_color(Graph_lib::Color::black);
-                mark->set_font_size(12);
+                mark->set_font_size(notch_font_size);
                 marks.push_back(mark);
 
                 mark = new Text(
-                    Point(origin.x - i - 6, origin.y + 20),
-                    format(convert_to_real(origin, {origin.x - i, origin.y}, unit_intr).x));
+                    Point(origin.x - i - notch_side, origin.y + margin),
+                    // (конвертируем, так как надписи к насечками в веществ.)
+                    format(converted_to_real({origin.x - i, origin.y}, origin, unit_intr).x,
+                           notch_marks_format_prec));
                 mark->set_color(Graph_lib::Color::black);
-                mark->set_font_size(12);
+                mark->set_font_size(notch_font_size);
                 marks.push_back(mark);
             }
         }
@@ -93,35 +119,45 @@ void Axis::init(Orientation orient, Graph_lib::Point origin, pix_amount length)
     }
     case Axis::vertical:
     {
+        // установка точек для линии оси
         Shape::add(Point{origin.x, origin.y + length / 2});
-        Shape::add(origin);
         Shape::add(Point{origin.x, origin.y - length / 2});
 
-        for (int i = 1; i < length / 2; ++i)
+        // цикл по установке насечек и надписям к ним
+        // (начинаем с единицы, так как начало координат очевидно)
+        for (pix_amount i = 1; i < length / 2; i++)
         {
-            if (i % pix_amount(unit_intr) == 0 && !(i % mark_intr == 0))
-            {
-                notches.add(Point{origin.x + 2, origin.y + i}, Point{origin.x - 2, origin.y + i});
-                notches.add(Point{origin.x + 2, origin.y - i}, Point{origin.x - 2, origin.y - i});
-            }
+            // IDK: по идее, хорошо бы еще единичный отрезок рисовать, но тогда там длины разные
+            // (из-за округления)
 
+            // в этом случае насечка находится на нужном расстоянии от origin
             if (i % mark_intr == 0)
             {
-                notches.add(Point{origin.x + 4, origin.y + i}, Point{origin.x - 4, origin.y + i});
-                notches.add(Point{origin.x + 4, origin.y - i}, Point{origin.x - 4, origin.y - i});
+                // добавляем насечки с двух сторон
+                notches.add(Point{origin.x + notch_side / 2, origin.y + i},
+                            Point{origin.x - notch_side / 2, origin.y + i});
+                notches.add(Point{origin.x + notch_side / 2, origin.y - i},
+                            Point{origin.x - notch_side / 2, origin.y - i});
 
+                // также добавляем текст к этим насечкам
+
+                // MEANS: надпись к насечке
                 Text* mark = new Text(
-                    Point(origin.x + 20, origin.y + i + 3),
-                    format(convert_to_real(origin, {origin.x, origin.y + i}, unit_intr).y));
+                    Point(origin.x + margin, origin.y + i + notch_side / 2),
+                    // (конвертируем, так как надписи к насечками в веществ.)
+                    format(converted_to_real({origin.x, origin.y + i}, origin, unit_intr).y,
+                           notch_marks_format_prec));
                 mark->set_color(Graph_lib::Color::black);
-                mark->set_font_size(12);
+                mark->set_font_size(notch_font_size);
                 marks.push_back(mark);
 
                 mark = new Text(
-                    Point(origin.x + 20, origin.y - i + 3),
-                    format(convert_to_real(origin, {origin.x, origin.y - i}, unit_intr).y));
+                    Point(origin.x + margin, origin.y - i + notch_side / 2),
+                    // (конвертируем, так как надписи к насечками в веществ.)
+                    format(converted_to_real({origin.x, origin.y - i}, origin, unit_intr).y,
+                           notch_marks_format_prec));
                 mark->set_color(Graph_lib::Color::black);
-                mark->set_font_size(12);
+                mark->set_font_size(notch_font_size);
                 marks.push_back(mark);
             }
         }

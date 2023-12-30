@@ -1,40 +1,36 @@
 #include "utilities.h"
 
 // std libs
-using std::string;
-using std::to_string;
+#include <iomanip>
+using namespace std;
 
 namespace Frontend_utilities {
 
-string format (double num)
+string format (double num, unsigned int after_comma_digits_amount)
 {
-    string s = to_string(num);
+    // (этот код написал ChatGPT)
+    //// сори Илюх, но так более практично
 
-    // remove after-dot zeroes
-    size_t i = s.length() - 1;
-    while (s[i] == '0')
-    {
-        s.erase(i);
-        i--;
-    }
-    if (s[i] == '.')
-        s.erase(i);
+    // устанавливаем точность кол-ва цифр после запятой
+    ostringstream oss;
+    oss << fixed << setprecision(after_comma_digits_amount) << num;
+    string formatted = oss.str();
 
-    // slice after-dot digits
-    int prec = 4;
-    i = s.find('.') + prec;
-    while (i < s.length())
-        s.erase(i);
+    // удаляем незначащие нули после точки
+    size_t found = formatted.find_last_not_of('0');
+    if (formatted[found] == '.')
+        found--;  // если последний символ после нулей - точка, убираем ее тоже
+    formatted = formatted.substr(0, found + 1);
 
-    return s;
+    return formatted;
 }
 
-Graph_lib::Point convert_to_pix (Graph_lib::Point origin, Math_calc::Point p, double unit_intr)
+Graph_lib::Point converted_to_pix (Math_calc::Point p, Graph_lib::Point origin, double unit_intr)
 {
-    return {origin.x + pix_amount(p.x * unit_intr), origin.y + pix_amount(-p.y * unit_intr)};
+    return {origin.x + pix_amount(p.x * unit_intr), origin.y - pix_amount(p.y * unit_intr)};
 }
 
-Math_calc::Point convert_to_real (Graph_lib::Point origin, Graph_lib::Point p, double unit_intr)
+Math_calc::Point converted_to_real (Graph_lib::Point p, Graph_lib::Point origin, double unit_intr)
 {
     return {(double(p.x) - double(origin.x)) / unit_intr,
             (-double(p.y) + double(origin.y)) / unit_intr};

@@ -1,51 +1,74 @@
-## Струкрутра проекта
-[//]: # FIXME
+## Структура проекта
 
 ```console
 graphic_calculator/
 |
-|───frontend/
-|       |───Graphix_calc/
-|       |       |---Axis.cpp
+| ─── frontend/
+|       | ─── Graph_lib/
+|       |       |---Shapes.h
+|       |       |---Shapes.cpp
+|       |       |---Widgets.h
+|       |       |---Widgets.cpp
+|       |       |---Window.h
+|       |       |---Window.cpp
+|       |       |---Point.h
+|       |       `---fltk.h
+|       |
+|       | ─── Graphix_calc/
 |       |       |---Axis.h
-|       |       |---Graphix.cpp
+|       |       |---Axis.cpp
 |       |       |---Graphix.h
-|       |       |---Function_box.cpp
+|       |       |---Graphix.cpp
+|       |       |---Segmented_graphix.h
+|       |       |---Segmented_graphix.cpp
+|       |       |
 |       |       |---Function_box.h
-|       |       |---Point_box.cpp
+|       |       |---Function_box.cpp
 |       |       |---Point_box.h
-|       |       |---Numbed_button.h
-|       |       |---Segmented_Graphix.cpp
-|       |       `---Segmented_Graphix.h
+|       |       |---Point_box.cpp
+|       |       |---Bothput_box.h
+|       |       |---Bothput_box.cpp
+|       |       `---Numbed_button.h
 |       |
-|       |───utility/
-|       |       `---constants.h
+|       | ─── Graphix_window/
+|       |       |---Graphix_window.h
+|       |       |---Graphix_window_init.cpp
+|       |       |---Graphix_window_callbacks.cpp
+|       |       `---Graphix_window_updaters.cpp
 |       |
-|       |---Graphix_window.cpp
-|       `---Graphix_window.h
+|       ` ─── utility/
+|               |---constants.h
+|               |---utilities.cpp
+|               `---utility.h
 |
-|───backend/
-|       |───Math_calc/ 
+| ─── backend/
+|       | ─── Math_calc/ 
 |       |       |---domain_segments.cpp
 |       |       |---domain_segments.h
-|       |       |---function_extremes.cpp
-|       |       |---function_extremes.h
-|       |       |---function_crosses.cpp
-|       |       |---function_crosses.h
-|       |       |---function_roots.cpp
+|       |       |
 |       |       |---function_roots.h
+|       |       |---function_roots.cpp
+|       |       |---function_extremes.h
+|       |       |---function_extremes.cpp
+|       |       |---function_crosses.h
+|       |       |---function_crosses.cpp
 |       |       `---math_base.h
 |       |
-|       |───utility/
+|       | ─── Math_func/ 
+|       |       |---expose_func_str.h
+|       |       |---expose_func_str.cpp
+|       |       |
+|       |       |---function.h
+|       |       |---function.cpp
+|       |       `---function_validation.cpp
+|       |
+|       | ─── utility/
 |       |       |---constants.h
 |       |       |---utilities.cpp
 |       |       `---utility.h
 |       |
-|       |---expose_dep_function.cpp
-|       |---expose_dep_function.h
-|       |---function_string.cpp
-|       |---function_string.h
-|       `---function_string_checkers.cpp
+|       `---temp_help.h
+|
 |
 |---frontend.h
 |---backend.h
@@ -53,11 +76,19 @@ graphic_calculator/
 
 ```
 
-## Идеалогия
+## Некоторая идеалогия кода
 
 Фронтенд: пиксели и графики
 Бэкенд: числа с плавающей запятой и функции
 
-std::string func_strs - обозначающие математические функции
-Math_func::function funcs - екземпляры класса, с методом calculate, который используя func_strs считает y по x которые
-Graphix_calc::Graphix graphics - фигуры, представляющие собой графики, построенные по funcs
+std::string func_str 
+        - строка обозначающая математическую функцию
+
+Math_func::function func 
+        - математическая функция (с методом calculate и differentiate)
+
+Graphix_calc::Graphix graphix 
+        - фигура, представляющая собой график, построенный по лямбде от мат. функции
+
+Graphix_calc::Segmented_graphix seged_graphix 
+        - фигура, представляющая собоой тот же график, но правильный по О.Д.З.

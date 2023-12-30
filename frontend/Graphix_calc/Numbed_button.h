@@ -1,26 +1,43 @@
 #pragma once
 
 // Graph_lib
-#include "../Graph_lib/GUI.h"
+#include "../Graph_lib/Widgets.h"
 
 namespace Graphix_calc {
 
-// класс кнопки, которая имеет номер
+// MEANS: кнопка, которая имеет номер
 class Numbed_button : public Graph_lib::Button
 {
   public:
-    using Graph_lib::Button::Button;
+    inline Numbed_button(Graph_lib::Point _loc, pix_amount _width, pix_amount _height,
+                         const std::string& label, void callback(void*, void*))
+        : Graph_lib::Button{_loc, _width, _height, label, callback}, number{0}
+    {
+    }
+
+    inline Numbed_button(Graph_lib::Point _loc, pix_amount _width, pix_amount _height,
+                         const std::string& label, unsigned long long _number,
+                         void callback(void*, void*))
+        : Graph_lib::Button{_loc, _width, _height, label, callback}, number{_number}
+    {
+    }
+
+    ~Numbed_button() = default;
 
     // methods
 
-    int get_number () const { return number; }
+    inline unsigned long long get_number () const { return number; }
 
-    void set_number (int value) { number = value; }
+    inline void set_number (unsigned long long value) { number = value; }
+
+    // ~methods
 
   private:
     // vars
 
-    int number;
+    unsigned long long number;
+
+    // ~vars
 };
 
 }  // namespace Graphix_calc

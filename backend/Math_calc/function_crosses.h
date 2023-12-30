@@ -15,6 +15,9 @@ namespace Math_calc {
 class function_crosses : public function_roots
 {
   public:
+    // ARGS: пара мат. функций, левая нижняя точка - начало области поиска точек,
+    // ARGS: правая верхняя точка - конец области поиска точек, точность
+    // (поиск точек происходит на прямоугольной области, краями которой и являются точки)
     function_crosses(std::pair<Math_func::function, Math_func::function> funcs,
                      Math_calc::Point left_bottom, Math_calc::Point right_top, double _precision);
 
@@ -43,6 +46,8 @@ class function_crosses : public function_roots
     // methods
 
     // RETURNS: все пересечения двух мат. функций (точки: пары вида (x,y))
+    // ARGS: левая нижняя точка - начало области поиска точек,
+    // ARGS: правая верхняя точка - конец области поиска точек
     std::vector<Point> crosses (Math_calc::Point left_bottom, Point right_top)
         const;  // (чтобы не хранить границы внутри класса, передаём их в аргументы)
 

@@ -1,7 +1,10 @@
+// std libs
 #include <iostream>
 #include <vector>
 using std::cout;
 using std::endl;
+
+// TEMP: временная функция для простого дебага, удалить когда-нибудь
 
 // DOES: выводит все элементы вектора в консоль
 template <typename T> void print (const std::vector<T>& v)

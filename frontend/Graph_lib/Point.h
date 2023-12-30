@@ -6,25 +6,33 @@ namespace Graph_lib {
 
 struct Point
 {
-    pix_amount x, y;
+    inline Point() : x{0}, y{0} {}
 
-    Point() : x{0}, y{0} {}
+    inline constexpr Point(pix_amount _x, pix_amount _y) : x{_x}, y{_y} {}
 
-    constexpr Point(pix_amount _x, pix_amount _y) : x{_x}, y{_y} {}
+    // methods
 
-    Point& operator+= (Point d)
+    inline Point& operator+= (Point d)
     {
         x += d.x;
         y += d.y;
         return *this;
     }
 
-    Point& operator-= (Point d)
+    inline Point& operator-= (Point d)
     {
         x -= d.x;
         y -= d.y;
         return *this;
     }
+
+    // ~methods
+
+    // vars
+
+    pix_amount x, y;
+
+    // ~vars
 };
 
 inline Point operator+ (Point a, Point b) { return a += b; }

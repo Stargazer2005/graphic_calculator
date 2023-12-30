@@ -11,6 +11,7 @@ namespace Math_func {
 class expose_func_str
 {
   public:
+    // ARGS: все мат. функции в виде строк, раскрываемая мат. функция в виде строки
     expose_func_str(const std::vector<std::string>& _all_funcs_str, std::string& _func_str);
 
     // methods
@@ -23,6 +24,7 @@ class expose_func_str
     // methods
 
     // DOES: раскрывает все зависимости, модифицируя строку
+    // DOES: генерирует ошибки в том случае, ввод инвалиден
     void expose_dep_func ();
 
     // ~methods

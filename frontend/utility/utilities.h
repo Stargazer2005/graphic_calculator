@@ -9,10 +9,16 @@
 
 namespace Frontend_utilities {
 
-std::string format (double num);
+// RETURNS: отформатированная строка
+// ARGS: веществ. число, кол-во знаков после точки
+std::string format (double num, unsigned int after_comma_digits_amount = 2);
 
-Graph_lib::Point convert_to_pix (Graph_lib::Point origin, Math_calc::Point p, double unit_intr);
+// RETURNS: пиксельная точка
+// ARGS: веществ. точка, начало координат, ед. отрезок
+Graph_lib::Point converted_to_pix (Math_calc::Point p, Graph_lib::Point origin, double unit_intr);
 
-Math_calc::Point convert_to_real (Graph_lib::Point origin, Graph_lib::Point p, double unit_intr);
+// RETURNS: веществ. точка
+// ARGS: пиксельная точка, начало координат, ед. отрезок
+Math_calc::Point converted_to_real (Graph_lib::Point p, Graph_lib::Point origin, double unit_intr);
 
 }  // namespace Frontend_utilities

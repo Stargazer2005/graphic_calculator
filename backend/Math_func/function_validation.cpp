@@ -147,13 +147,7 @@ void function::func_str_validation() const
 
 void function::func_lexs_validation() const
 {
-    // MEANS: строка с разрешенными мат. операциями
-    const string math_oper_chars = "+-*/^";
-
-    // MEANS: строка с разрешенными мат. функциями
-    const string math_func_chars = "sctelu";
-
-    // MEANS: вектор, со всеми разрешенными лексемами, обозначающими мат. функции
+    // MEANS: вектор, со всеми разрешенными лексемами, обозначающими элем. мат. функции
     const vector<string> functions{"sin", "cos", "tan", "exp", "ln", "um"};
 
     for (size_t i = 0; i < lexs.size(); i++)
@@ -181,7 +175,7 @@ void function::func_lexs_validation() const
                 {
                     if (lexs.size() > 1)
                     {
-                        // если есть скобка, то это лишняя функция
+                        // если есть скобка, то это посторонняя элем. мат. функция
                         if (lexs[i + 1] == "(")
                             throw invalid_argument("invalid function name '" + lexs[i] + "'");
                         else
@@ -206,8 +200,8 @@ void function::func_lexs_validation() const
             {
                 if (lexs.size() > 1 && i != lexs.size() - 1)
                 {
-                    // если есть скобка, то это лишняя функция
-                    // ситуация рода: "x(x)"
+                    // если есть скобка, то это посторонняя элем. мат. функция
+                    // (ситуация рода: "x(x)")
                     if (lexs[i + 1] == "(")
                         throw invalid_argument("invalid function name '" + lexs[i] + "'");
                 }

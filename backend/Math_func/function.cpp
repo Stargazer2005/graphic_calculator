@@ -27,11 +27,14 @@ function::function(const function& func)
 {
 }
 
-function function::operator= (const function& func)
+function& function::operator= (const function& func)
 {
-    func_str = func.func_str;
-    lexs = func.lexs;
-    rev_pol = func.rev_pol;
+    if (this != &func)
+    {
+        func_str = func.func_str;
+        lexs = func.lexs;
+        rev_pol = func.rev_pol;
+    }
 
     return *this;
 }
@@ -254,12 +257,6 @@ vector<string> function::reverse_polish() const
 
 double function::calc(double x) const
 {
-    // MEANS: строка с разрешенными мат. операциями
-    const string math_oper_chars = "+-*/^";
-
-    // MEANS: строка с с разрешенными мат. функциями
-    const string math_func_chars = "sctelu";
-
     // MEANS: стэк, куда складываем уже посчитанные числа
     // IDK: а это точно так?
     stack<double> calced_numbs;
@@ -282,7 +279,7 @@ double function::calc(double x) const
         if (c_in_s(l_c, math_func_chars))
         {
             l = calced_numbs.top();  // запоминаем только последний
-                                     // (так как функции унарны)
+                                     // (так как элем. мат. функции унарны)
             calced_numbs.pop();
             switch (l_c)
             {
@@ -311,7 +308,7 @@ double function::calc(double x) const
             l = calced_numbs.top();
             calced_numbs.pop();
             p = calced_numbs.top();  // также запоминаем предпоследний
-                                     // (так как операции бинарны)
+                                     // (так как мат. операции бинарны)
             calced_numbs.pop();
             switch (l_c)
             {
