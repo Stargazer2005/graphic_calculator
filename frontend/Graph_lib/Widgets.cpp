@@ -8,7 +8,7 @@ namespace Graph_lib {
 
 void Widget::move(int dx, int dy)
 {
-    if (dx + loc.x < 0 || dy + loc.y < 0)
+    if (dx + int(loc.x) < 0 || dy + int(loc.y) < 0)
         throw std::invalid_argument("bad dx or dy");
 
     hide();

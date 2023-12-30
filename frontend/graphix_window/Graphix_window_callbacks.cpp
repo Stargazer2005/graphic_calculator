@@ -22,6 +22,28 @@ using namespace Graphix_calc;
 using namespace Frontend_consts;
 using namespace Frontend_utilities;
 
+// temporary
+#include "../../backend/temp_help.h"
+
+void Graphix_window::wait_for_button()
+{
+    while (!some_button_pushed && Fl::wait())
+        ;
+
+    // TEMP: временные выводы в консоль
+
+    cout << "some button pushed" << endl;
+    cout << "unit_intr: " << unit_intr << endl;
+    cout << "inputed_strings: ";
+    print(inputed_strings);
+    cout << "inputed_func_strs: ";
+    print(inputed_funcs);
+    cout << endl << endl;
+
+    some_button_pushed = false;
+    Fl::redraw();
+}
+
 // callbacks
 
 void Graphix_window::cb_incr_unit_intr(void*, void* widget)

@@ -33,24 +33,7 @@ class Graphix_window : public Graph_lib::Window
     // methods
 
     // DOES: запускает цикл ожидания нажатия кнопки и перересовывает всё в этом случае
-    inline void wait_for_button ()
-    {
-        while (!some_button_pushed && Fl::wait())
-            ;
-
-        // TEMP: временные выводы в консоль
-
-        cout << "some button pushed" << endl;
-        cout << "unit_intr: " << unit_intr << endl;
-        cout << "inputed_strings: ";
-        print(inputed_strings);
-        cout << "inputed_func_strs: ";
-        print(inputed_funcs);
-        cout << endl << endl;
-
-        some_button_pushed = false;
-        Fl::redraw();
-    }
+    void wait_for_button ();
 
     bool window_is_open () const { return !quit_button_pushed; }
 

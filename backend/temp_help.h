@@ -4,6 +4,17 @@
 using std::cout;
 using std::endl;
 
+#include "Math_func/function.h"
+
+// TEMP: временная функция для простого дебага, удалить когда-нибудь
+
+// RETURNS: поток ostream, в который вывели мат. функцию в виде строки
+// ARGS: поток типа std::ostream, мат. функция
+inline std::ostream& operator<< (std::ostream& os, const Math_func::function& func)
+{
+    return os << func.get_func_str();
+}
+
 // TEMP: временная функция для простого дебага, удалить когда-нибудь
 
 // DOES: выводит все элементы вектора в консоль

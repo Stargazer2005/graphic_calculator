@@ -48,9 +48,6 @@ void expose_func_str::expose_dep_func()
         // MEANS: текущий символ
         char ch = func_str[i];
 
-        // MEANS: следующий символ
-        char next_ch = func_str[i + 1];
-
         if (ch == 'y')
         {
             // считываемый предполагаемый номер мат. функции

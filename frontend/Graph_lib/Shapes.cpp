@@ -73,10 +73,9 @@ void Open_polyline::draw_lines() const
     {
         fl_color(fill_color().as_uint());
         fl_begin_complex_polygon();
-        for (int i = 0; i < number_of_points(); ++i)
-        {
+        for (size_t i = 0; i < number_of_points(); ++i)
             fl_vertex(point(i).x, point(i).y);
-        }
+
         fl_end_complex_polygon();
         fl_color(color().as_uint());  // reset color
     }
@@ -101,7 +100,7 @@ void Closed_polyline::draw_lines() const
 void Lines::draw_lines() const
 {
     if (color().visibility())
-        for (int i = 1; i < number_of_points(); i += 2)
+        for (size_t i = 1; i < number_of_points(); i += 2)
             fl_line(point(i - 1).x, point(i - 1).y, point(i).x, point(i).y);
 }
 
@@ -132,7 +131,7 @@ void draw_mark (Point _loc, char c)
 void Marked_polyline::draw_lines() const
 {
     Open_polyline::draw_lines();
-    for (int i = 0; i < number_of_points(); ++i)
+    for (size_t i = 0; i < number_of_points(); ++i)
         draw_mark(point(i), mark[i % mark.size()]);
 }
 
