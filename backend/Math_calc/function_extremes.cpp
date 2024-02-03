@@ -35,12 +35,18 @@ std::vector<Segment> function_extremes::estimated_segment(ExtremeType extr, Segm
             // если значение мат. функции меньше своего значения и слева, и справа,
             // то она в точке минимума
             // IDK: а мы на кой черт на два то домножаем?
-            if ((f(x) < f(x - 2 * precision)) && (f(x) < f(x + 2 * precision)))
+            try
             {
-                res.push_back({
-                    x - 2 * precision,
-                    x + 2 * precision,
-                });
+                if ((f(x) < f(x - 2 * precision)) && (f(x) < f(x + 2 * precision)))
+                {
+                    res.push_back({
+                        x - 2 * precision,
+                        x + 2 * precision,
+                    });
+                }
+            }
+            catch (...)
+            {
             }
         }
         break;
@@ -53,12 +59,18 @@ std::vector<Segment> function_extremes::estimated_segment(ExtremeType extr, Segm
             // если значение мат. функции больше своего значения и слева, и справа,
             // то она в точке максимума
             // IDK: а мы на кой черт на два то домножаем?
-            if ((f(x) > f(x - 2 * precision)) && (f(x) > f(x + 2 * precision)))
+            try
             {
-                res.push_back({
-                    x - 2 * precision,
-                    x + 2 * precision,
-                });
+                if ((f(x) > f(x - 2 * precision)) && (f(x) > f(x + 2 * precision)))
+                {
+                    res.push_back({
+                        x - 2 * precision,
+                        x + 2 * precision,
+                    });
+                }
+            }
+            catch (...)
+            {
             }
         }
         break;

@@ -30,12 +30,18 @@ vector<Segment> function_roots::estimated_segment(Segment seg) const
     {
         // если по разные стороны от точки знаки мат. функции разные, то их произведение будет
         // отрицательно (минус на плюс и плюс на минус дают минус)
-        if ((f(x)) * f(x - precision) <= 0)
+        try
         {
-            res.push_back({
-                x - precision,
-                x + precision,
-            });
+            if ((f(x)) * f(x - precision) <= 0)
+            {
+                res.push_back({
+                    x - precision,
+                    x + precision,
+                });
+            }
+        }
+        catch (...)
+        {
         }
     }
     // если на интервале нет изменения знаков, то
