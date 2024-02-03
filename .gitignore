@@ -1,0 +1,8 @@
+# Files
+*.ini
+*.exe
+
+# Folders
+/build
+/.vscode
+
