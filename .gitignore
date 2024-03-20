@@ -1,4 +1,8 @@
 # Files
 *.ini
+*.exe
 
-build/
+# Folders
+/build
+/.vscode
+
